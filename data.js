@@ -39,6 +39,18 @@ const mosqueLocations = [
      { lat: 23.756045, lng: 90.3725928, name: "Rapa Plaza (5th floor)" },
      { lat: 23.8135411, lng: 90.4194757, name: "যমুনা ফিউচার পার্ক (Level-5)" },
      { lat: 23.7432458, lng: 90.4051305, name: "মনোয়ারা হসপিটাল (প্রা:) লিমিটেড (বেইলী রোড)" },
+     { lat: 24.7610107, lng: 90.4062004, name: "গোলপুকুর পাড় আহলে হাদীস জামে মসজিদ" },
+     { lat: 23.8642761, lng: 90.3937878, name: "মসজিদ আল-মাগফিরাহ" },
+     { lat: 23.8108299, lng: 90.3638027, name: "মাদ্রাসায়ে দারুল উলুম জামে মাসজিদ" },
+     { lat: 23.7351315, lng: 90.3844759, name: "Nurjahan Super Market (4th Floor)" },
+     { lat: 23.8757843, lng: 90.3905213, name: "Uttara Sector 11 Baitun Nur Jame Masjid" },
+     { lat: 23.8734465, lng: 90.3790575, name: "Baitun Noor Jaame Masjid" },
+     { lat: 23.7804734, lng: 90.4090101, name: "Female Prayer Hall, Masjid-e-Gausul Azam" },
+     { lat: 24.7427573, lng: 90.4039432, name: "কাজী নাজিমুদ্দিন আহলেহাদীছ জামে মসজিদ" },
+     { lat: 22.2457031, lng: 91.8121038, name: "Shah Amanat International Airport" },
+     { lat: 22.327246, lng: 91.8077981, name: "Lucky Plaza (5th Floor)" },
+     { lat: 22.3485518, lng: 91.8227226, name: "VIP Tower" },
+
 
 
 ];
