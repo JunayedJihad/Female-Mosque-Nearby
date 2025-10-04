@@ -36,6 +36,34 @@
     @media (max-width: 640px) {
       .legend-icon { width: 16px; height: 16px; }
     }
+
+    .directions-btn {
+      display: inline-block;
+      background-color: #3b82f6 !important;
+      color: white !important;
+      padding: 6px 12px;
+      margin-top: 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 0.2s;
+      border: none;
+    }
+
+    .directions-btn:hover {
+      background-color: #2563eb !important;
+      color: white !important;
+    }
+
+    .leaflet-popup-content a.directions-btn {
+      background-color: #3b82f6 !important;
+      color: white !important;
+    }
+
+    .leaflet-popup-content a.directions-btn:hover {
+      background-color: #2563eb !important;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen">
@@ -126,12 +154,12 @@
   <script>
     // Mosque locations
     const mosqueLocations = [
-      { lat: 23.7330997, lng: 90.3840055, name: "ঢাকা নিউ মার্কেট বায়তুল আমান জামে মসজিদ" },
+      { lat: 23.7330997, lng: 90.3840055, name: "ঢাকা নিউ মার্কেট বায়তুল আমান জামে মসজিদ" },
       { lat: 23.7384379, lng: 90.3891563, name: "কাটাবন মসজিদ" },
       { lat: 23.7294178, lng: 90.4127594, name: "বায়তুল মোকাররম জাতীয় মসজিদ" },
       { lat: 23.7381504, lng: 90.3685832, name: "Shimanto Square Rooftop Jame Mosque" },
       { lat: 23.7368804, lng: 90.3864357, name: "ইস্টার্ন মল্লিকা শপিং কমপ্লেক্স (ছাদে)" },
-      { lat: 23.734676, lng: 90.39474, name: "ঢাকা বিশ্ববিদ্যালয় কেন্দ্রীয় জামে মসজিদ" },
+      { lat: 23.734676, lng: 90.39474, name: "ঢাকা বিশ্ববিদ্যালয় কেন্দ্রীয় জামে মসজিদ" },
       { lat: 23.8742161, lng: 90.3995441, name: "North Tower (Market) 8th floor, Uttara House Building" },
       { lat: 23.745376, lng: 90.3679045, name: "Ibn Sina Diagnostic and Imaging Center (Basement)" },
       { lat: 23.7511665, lng: 90.3906431, name: "বসুন্ধরা শপিং কমপ্লেক্স, পান্থপথ" },
@@ -202,6 +230,23 @@
       if(userLocation && userMarker) userMarker.setIcon(bluePin);
     });
 
+    // Function to detect user's device and generate appropriate maps URL
+    function getDirectionsUrl(lat, lng) {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const isAndroid = /Android/.test(navigator.userAgent);
+
+      if (isIOS) {
+        // Apple Maps URL for iOS devices
+        return `maps://maps.apple.com/?daddr=${lat},${lng}&dirflg=d`;
+      } else if (isAndroid) {
+        // Google Maps URL for Android devices
+        return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+      } else {
+        // Google Maps web URL for desktop and other devices
+        return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+      }
+    }
+
     function displayMosques(userLat=null, userLng=null){
       mosqueMarkers.forEach(m=>map.removeLayer(m));
       mosqueMarkers=[];
@@ -215,6 +260,11 @@
         const marker=L.marker([m.lat,m.lng],{icon}).addTo(map);
         let popupContent=`<strong>${m.name}</strong>`;
         if(distance!==null) popupContent+=`<br>Distance: ${distance.toFixed(2)} km`;
+
+        // Add Get Directions button
+        const directionsUrl = getDirectionsUrl(m.lat, m.lng);
+        popupContent += `<br><a href="${directionsUrl}" target="_blank" class="directions-btn">🧭 Get Directions</a>`;
+
         marker.bindPopup(popupContent);
         mosqueMarkers.push(marker);
       });
