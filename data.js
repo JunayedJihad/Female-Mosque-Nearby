@@ -33,6 +33,12 @@ const mosqueLocations = [
      { lat: 23.7503749, lng: 90.3721352, name: "মসজিদ-উত-তাকওয়া" },
      { lat: 23.7996102, lng: 90.4455599, name: "Masjid Al Mustafa" },
      { lat: 22.2816046, lng: 91.7886261, name: "বিএনএস ঈশা খান মসজিদ" },
+     { lat: 23.7806962, lng: 90.4079559, name: "মসজিদে গাউসুল আজম" },
+     { lat: 23.8695983, lng: 90.3977706, name: "Uttara 7 No Sector Jame Mosjid" },
+     { lat: 23.8617235, lng: 90.4030247, name: "Uttara 4 No Sector Jame Mosjid" },
+     { lat: 23.756045, lng: 90.3725928, name: "Rapa Plaza (5th floor)" },
+     { lat: 23.8135411, lng: 90.4194757, name: "যমুনা ফিউচার পার্ক (Level-5)" },
+     { lat: 23.7432458, lng: 90.4051305, name: "মনোয়ারা হসপিটাল (প্রা:) লিমিটেড (বেইলী রোড)" },
 
 
 ];
