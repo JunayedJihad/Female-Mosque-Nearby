@@ -26,6 +26,13 @@ const mosqueLocations = [
      { lat: 23.7937869, lng: 90.4126031, name: "গুলশান ২ ডিসিসি সুপার মার্কেট" },
      { lat: 23.8007575, lng: 90.405201, name: "গুলশান সোসাইটি জামে মসজিদ" },
      { lat: 23.7637473, lng: 90.3852519, name: "উত্তর মণিপুরী পাড়া জামে মসজিদ" },
-     { lat: 23.7637473, lng: 90.3852519, name: "উত্তর মণিপুরী পাড়া জামে মসজিদ" },
+     { lat: 23.7415845, lng: 90.4078696, name: "Capital Siraj Centre (Bailey Road)" },
+     { lat: 23.7388837, lng: 90.4031417, name: "Circuit House Jame Mosque" },
+     { lat: 23.7387333, lng: 90.411505, name: "Masjid As Siddique Complex, Shantinagar" },
+     { lat: 23.7390265, lng: 90.4123732, name: "Eastern Plus Shopping Complex" },
+     { lat: 23.7503749, lng: 90.3721352, name: "মসজিদ-উত-তাকওয়া" },
+     { lat: 22.2816046, lng: 91.7886261, name: "বিএনএস ঈশা খান মসজিদ" },
+     { lat: 22.2816046, lng: 91.7886261, name: "বিএনএস ঈশা খান মসজিদ" },
+     { lat: 22.2816046, lng: 91.7886261, name: "বিএনএস ঈশা খান মসজিদ" },
 
 ];
