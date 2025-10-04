@@ -10,7 +10,7 @@ const mosqueLocations = [
      { lat: 23.734676, lng: 90.39474, name: "ঢাকা বিশ্ববিদ্যালয় কেন্দ্রীয় জামে মসজিদ" },
      { lat: 23.8742161, lng: 90.3995441, name: "North Tower (Market) 8th floor, Uttara House Building" },
      { lat: 23.745376, lng: 90.3679045, name: "Ibn Sina Diagnostic and Imaging Center (Basement)" },
-     { lat: 23.7511665, lng: 90.3906431, name: "বসুন্ধরা শপিং কমপ্লেক্স, পান্থপথ" },
+     { lat: 23.7511665, lng: 90.3906431, name: "বসুন্ধরা শপিং কমপ্লেক্স (Level 4, Western Part of the mall)" },
      { lat: 23.745376, lng: 90.3679045, name: "টুইন টাওয়ার শপিং সেন্টার (৪র্থ তলা)" },
      { lat: 23.733941, lng: 90.3831743, name: "চাঁদনি চকের ৩য় তলায় (নিউমার্কেটের উল্টোদিকে)" },
      { lat: 23.7528438, lng: 90.3793711, name: "স্কয়ার হসপিটাল" },
@@ -31,8 +31,8 @@ const mosqueLocations = [
      { lat: 23.7387333, lng: 90.411505, name: "Masjid As Siddique Complex, Shantinagar" },
      { lat: 23.7390265, lng: 90.4123732, name: "Eastern Plus Shopping Complex" },
      { lat: 23.7503749, lng: 90.3721352, name: "মসজিদ-উত-তাকওয়া" },
+     { lat: 23.7996102, lng: 90.4455599, name: "Masjid Al Mustafa" },
      { lat: 22.2816046, lng: 91.7886261, name: "বিএনএস ঈশা খান মসজিদ" },
-     { lat: 22.2816046, lng: 91.7886261, name: "বিএনএস ঈশা খান মসজিদ" },
-     { lat: 22.2816046, lng: 91.7886261, name: "বিএনএস ঈশা খান মসজিদ" },
+
 
 ];
