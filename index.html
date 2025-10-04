@@ -36,9 +36,129 @@
     @media (max-width: 640px) {
       .legend-icon { width: 16px; height: 16px; }
     }
+
+    .directions-btn {
+      display: inline-block;
+      background-color: #3b82f6 !important;
+      color: white !important;
+      padding: 6px 12px;
+      margin-top: 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 0.2s;
+      border: none;
+    }
+
+    .directions-btn:hover {
+      background-color: #2563eb !important;
+      color: white !important;
+    }
+
+    .leaflet-popup-content a.directions-btn {
+      background-color: #3b82f6 !important;
+      color: white !important;
+    }
+
+    .leaflet-popup-content a.directions-btn:hover {
+      background-color: #2563eb !important;
+    }
+
+    /* Dark Mode Toggle Button */
+    .dark-mode-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+    }
+
+    .dark-mode-toggle:hover {
+      transform: scale(1.1) rotate(10deg);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .dark-mode-toggle:active {
+      transform: scale(0.95);
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+      background: linear-gradient(to bottom right, #1a1a2e, #16213e) !important;
+    }
+
+    body.dark-mode .bg-white {
+      background-color: #2d3748 !important;
+      color: #e2e8f0 !important;
+    }
+
+    body.dark-mode .text-gray-600 {
+      color: #cbd5e0 !important;
+    }
+
+    body.dark-mode .text-gray-700 {
+      color: #e2e8f0 !important;
+    }
+
+    body.dark-mode .text-gray-800 {
+      color: #f7fafc !important;
+    }
+
+    body.dark-mode .border-gray-300 {
+      border-color: #4a5568 !important;
+    }
+
+    body.dark-mode .border-gray-200 {
+      border-color: #4a5568 !important;
+    }
+
+    body.dark-mode input {
+      background-color: #1a202c !important;
+      color: #e2e8f0 !important;
+    }
+
+    body.dark-mode input::placeholder {
+      color: #a0aec0 !important;
+    }
+
+    body.dark-mode .dark-mode-toggle {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    }
+
+    body.dark-mode .dark-mode-toggle:hover {
+      box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6);
+    }
+
+    @media (max-width: 640px) {
+      .dark-mode-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        top: 15px;
+        right: 15px;
+      }
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen">
+  <!-- Dark Mode Toggle Button -->
+  <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+    🌙
+  </button>
+
   <div class="container mx-auto px-4 py-8 max-w-4xl">
     <!-- Header -->
     <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -124,14 +244,34 @@
 
 
   <script>
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+
+    // Check for saved dark mode preference
+    const isDarkMode = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
+    if (isDarkMode && isDarkMode.split('=')[1] === 'true') {
+      body.classList.add('dark-mode');
+      darkModeToggle.textContent = '☀️';
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      const isDark = body.classList.contains('dark-mode');
+      darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+
+      // Save preference in cookie (expires in 365 days)
+      document.cookie = `darkMode=${isDark}; max-age=${365*24*60*60}; path=/`;
+    });
+
     // Mosque locations
     const mosqueLocations = [
-      { lat: 23.7330997, lng: 90.3840055, name: "ঢাকা নিউ মার্কেট বায়তুল আমান জামে মসজিদ" },
+      { lat: 23.7330997, lng: 90.3840055, name: "ঢাকা নিউ মার্কেট বায়তুল আমান জামে মসজিদ" },
       { lat: 23.7384379, lng: 90.3891563, name: "কাটাবন মসজিদ" },
       { lat: 23.7294178, lng: 90.4127594, name: "বায়তুল মোকাররম জাতীয় মসজিদ" },
       { lat: 23.7381504, lng: 90.3685832, name: "Shimanto Square Rooftop Jame Mosque" },
       { lat: 23.7368804, lng: 90.3864357, name: "ইস্টার্ন মল্লিকা শপিং কমপ্লেক্স (ছাদে)" },
-      { lat: 23.734676, lng: 90.39474, name: "ঢাকা বিশ্ববিদ্যালয় কেন্দ্রীয় জামে মসজিদ" },
+      { lat: 23.734676, lng: 90.39474, name: "ঢাকা বিশ্ববিদ্যালয় কেন্দ্রীয় জামে মসজিদ" },
       { lat: 23.8742161, lng: 90.3995441, name: "North Tower (Market) 8th floor, Uttara House Building" },
       { lat: 23.745376, lng: 90.3679045, name: "Ibn Sina Diagnostic and Imaging Center (Basement)" },
       { lat: 23.7511665, lng: 90.3906431, name: "বসুন্ধরা শপিং কমপ্লেক্স, পান্থপথ" },
@@ -202,6 +342,23 @@
       if(userLocation && userMarker) userMarker.setIcon(bluePin);
     });
 
+    // Function to detect user's device and generate appropriate maps URL
+    function getDirectionsUrl(lat, lng) {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const isAndroid = /Android/.test(navigator.userAgent);
+
+      if (isIOS) {
+        // Apple Maps URL for iOS devices
+        return `maps://maps.apple.com/?daddr=${lat},${lng}&dirflg=d`;
+      } else if (isAndroid) {
+        // Google Maps URL for Android devices
+        return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+      } else {
+        // Google Maps web URL for desktop and other devices
+        return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+      }
+    }
+
     function displayMosques(userLat=null, userLng=null){
       mosqueMarkers.forEach(m=>map.removeLayer(m));
       mosqueMarkers=[];
@@ -215,6 +372,11 @@
         const marker=L.marker([m.lat,m.lng],{icon}).addTo(map);
         let popupContent=`<strong>${m.name}</strong>`;
         if(distance!==null) popupContent+=`<br>Distance: ${distance.toFixed(2)} km`;
+
+        // Add Get Directions button
+        const directionsUrl = getDirectionsUrl(m.lat, m.lng);
+        popupContent += `<br><a href="${directionsUrl}" target="_blank" class="directions-btn">🧭 Get Directions</a>`;
+
         marker.bindPopup(popupContent);
         mosqueMarkers.push(marker);
       });
