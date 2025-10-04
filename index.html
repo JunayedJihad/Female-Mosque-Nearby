@@ -64,9 +64,101 @@
     .leaflet-popup-content a.directions-btn:hover {
       background-color: #2563eb !important;
     }
+
+    /* Dark Mode Toggle Button */
+    .dark-mode-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+    }
+
+    .dark-mode-toggle:hover {
+      transform: scale(1.1) rotate(10deg);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .dark-mode-toggle:active {
+      transform: scale(0.95);
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+      background: linear-gradient(to bottom right, #1a1a2e, #16213e) !important;
+    }
+
+    body.dark-mode .bg-white {
+      background-color: #2d3748 !important;
+      color: #e2e8f0 !important;
+    }
+
+    body.dark-mode .text-gray-600 {
+      color: #cbd5e0 !important;
+    }
+
+    body.dark-mode .text-gray-700 {
+      color: #e2e8f0 !important;
+    }
+
+    body.dark-mode .text-gray-800 {
+      color: #f7fafc !important;
+    }
+
+    body.dark-mode .border-gray-300 {
+      border-color: #4a5568 !important;
+    }
+
+    body.dark-mode .border-gray-200 {
+      border-color: #4a5568 !important;
+    }
+
+    body.dark-mode input {
+      background-color: #1a202c !important;
+      color: #e2e8f0 !important;
+    }
+
+    body.dark-mode input::placeholder {
+      color: #a0aec0 !important;
+    }
+
+    body.dark-mode .dark-mode-toggle {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    }
+
+    body.dark-mode .dark-mode-toggle:hover {
+      box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6);
+    }
+
+    @media (max-width: 640px) {
+      .dark-mode-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        top: 15px;
+        right: 15px;
+      }
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen">
+  <!-- Dark Mode Toggle Button -->
+  <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+    🌙
+  </button>
+
   <div class="container mx-auto px-4 py-8 max-w-4xl">
     <!-- Header -->
     <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -152,6 +244,26 @@
 
 
   <script>
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+
+    // Check for saved dark mode preference
+    const isDarkMode = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
+    if (isDarkMode && isDarkMode.split('=')[1] === 'true') {
+      body.classList.add('dark-mode');
+      darkModeToggle.textContent = '☀️';
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      const isDark = body.classList.contains('dark-mode');
+      darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+
+      // Save preference in cookie (expires in 365 days)
+      document.cookie = `darkMode=${isDark}; max-age=${365*24*60*60}; path=/`;
+    });
+
     // Mosque locations
     const mosqueLocations = [
       { lat: 23.7330997, lng: 90.3840055, name: "ঢাকা নিউ মার্কেট বায়তুল আমান জামে মসজিদ" },
