@@ -106,6 +106,75 @@
 
     displayMosques();
 
+    // Mosque List Modal Functionality
+    const mosqueModal = document.getElementById('mosqueModal');
+    const viewAllMosquesBtn = document.getElementById('viewAllMosquesBtn');
+    const closeMosqueModal = document.getElementById('closeMosqueModal');
+    const mosqueListContainer = document.getElementById('mosqueListContainer');
+    const mosqueCount = document.getElementById('mosqueCount');
+
+    function populateMosqueList() {
+      mosqueListContainer.innerHTML = '';
+      mosqueCount.textContent = `${mosqueLocations.length} Mosques`;
+
+      mosqueLocations.forEach((mosque, index) => {
+        const item = document.createElement('div');
+        item.className = 'mosque-list-item';
+        item.innerHTML = `
+          <div class="mosque-list-number">${index + 1}</div>
+          <div class="mosque-list-name">${mosque.name}</div>
+        `;
+
+        item.addEventListener('click', () => {
+          // Close modal
+          mosqueModal.classList.remove('active');
+
+          // Zoom to mosque on map
+          map.setView([mosque.lat, mosque.lng], 16);
+
+          // Find and open the marker popup
+          mosqueMarkers.forEach(marker => {
+            const markerLatLng = marker.getLatLng();
+            if (markerLatLng.lat === mosque.lat && markerLatLng.lng === mosque.lng) {
+              marker.openPopup();
+            }
+          });
+
+          // Scroll to map
+          document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        mosqueListContainer.appendChild(item);
+      });
+    }
+
+    viewAllMosquesBtn.addEventListener('click', () => {
+      populateMosqueList();
+      mosqueModal.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    });
+
+    closeMosqueModal.addEventListener('click', () => {
+      mosqueModal.classList.remove('active');
+      document.body.style.overflow = 'auto'; // Restore scrolling
+    });
+
+    // Close modal when clicking outside
+    mosqueModal.addEventListener('click', (e) => {
+      if (e.target === mosqueModal) {
+        mosqueModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mosqueModal.classList.contains('active')) {
+        mosqueModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
     // Autocomplete functionality
     const searchInput = document.getElementById('searchInput');
     const suggestionsList = document.getElementById('suggestionsList');
@@ -135,7 +204,7 @@
       // Debounce API calls
       debounceTimer = setTimeout(() => {
         fetchSuggestions(query);
-      }, 250);
+      }, 100);
     });
 
     // Clear button functionality
