@@ -128,6 +128,7 @@
         item.addEventListener('click', () => {
           // Close modal
           mosqueModal.classList.remove('active');
+          document.body.style.overflow = 'auto';
 
           // Zoom to mosque on map
           map.setView([mosque.lat, mosque.lng], 16);
