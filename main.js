@@ -115,7 +115,7 @@
 
     function populateMosqueList() {
       mosqueListContainer.innerHTML = '';
-      mosqueCount.textContent = `${mosqueLocations.length} Mosques`;
+      mosqueCount.textContent = `${mosqueLocations.length} Places`;
 
       mosqueLocations.forEach((mosque, index) => {
         const item = document.createElement('div');
