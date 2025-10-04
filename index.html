@@ -13,56 +13,71 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
   />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
   <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-attachment: fixed;
+    }
+
     #map {
-      height: 500px;
+      height: 550px;
       width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
     @media (max-width: 1024px) {
-      #map { height: 400px; }
+      #map { height: 450px; }
     }
     @media (max-width: 640px) {
-      #map { height: 300px; }
+      #map { height: 350px; }
     }
 
     .legend-icon {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
     }
     @media (max-width: 1024px) {
-      .legend-icon { width: 20px; height: 20px; }
+      .legend-icon { width: 24px; height: 24px; }
     }
     @media (max-width: 640px) {
-      .legend-icon { width: 16px; height: 16px; }
+      .legend-icon { width: 20px; height: 20px; }
     }
 
     .directions-btn {
       display: inline-block;
-      background-color: #3b82f6 !important;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
       color: white !important;
-      padding: 6px 12px;
-      margin-top: 8px;
-      border-radius: 6px;
+      padding: 8px 16px;
+      margin-top: 10px;
+      border-radius: 25px;
       text-decoration: none;
       font-size: 14px;
       font-weight: 600;
-      transition: background-color 0.2s;
+      transition: all 0.3s;
       border: none;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
     .directions-btn:hover {
-      background-color: #2563eb !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
       color: white !important;
     }
 
     .leaflet-popup-content a.directions-btn {
-      background-color: #3b82f6 !important;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
       color: white !important;
     }
 
     .leaflet-popup-content a.directions-btn:hover {
-      background-color: #2563eb !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
     }
 
     /* Dark Mode Toggle Button */
@@ -71,62 +86,108 @@
       top: 20px;
       right: 20px;
       z-index: 1000;
-      width: 40px;
-      height: 40px;
+      width: 65px;
+      height: 65px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border: none;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      border: 3px solid white;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(251, 191, 36, 0.5);
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 21px;
+      font-size: 32px;
     }
 
     .dark-mode-toggle:hover {
-      transform: scale(1.1) rotate(10deg);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      transform: scale(1.15) rotate(15deg);
+      box-shadow: 0 12px 35px rgba(251, 191, 36, 0.7);
     }
 
     .dark-mode-toggle:active {
       transform: scale(0.95);
     }
 
+    /* Glass morphism effect */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Animated gradient button */
+    .gradient-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 3s ease infinite;
+      transition: all 0.3s;
+    }
+
+    .gradient-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Search button gradient */
+    .search-btn {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      transition: all 0.3s;
+    }
+
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+    }
+
+    /* Input focus effect */
+    input:focus {
+      transform: scale(1.02);
+      transition: all 0.3s;
+    }
+
     /* Dark Mode Styles */
     body.dark-mode {
-      background: linear-gradient(to bottom right, #1a1a2e, #16213e) !important;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%) !important;
     }
 
-    body.dark-mode .bg-white {
-      background-color: #2d3748 !important;
+    body.dark-mode .glass-card {
+      background: rgba(45, 55, 72, 0.95) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
       color: #e2e8f0 !important;
     }
 
-    body.dark-mode .text-gray-600 {
-      color: #cbd5e0 !important;
-    }
-
-    body.dark-mode .text-gray-700 {
-      color: #e2e8f0 !important;
-    }
-
+    body.dark-mode .text-gray-600,
+    body.dark-mode .text-gray-700,
     body.dark-mode .text-gray-800 {
-      color: #f7fafc !important;
+      color: #e2e8f0 !important;
     }
 
-    body.dark-mode .border-gray-300 {
-      border-color: #4a5568 !important;
-    }
-
-    body.dark-mode .border-gray-200 {
-      border-color: #4a5568 !important;
+    body.dark-mode .text-purple-800 {
+      color: #c4b5fd !important;
     }
 
     body.dark-mode input {
-      background-color: #1a202c !important;
+      background-color: rgba(26, 32, 44, 0.8) !important;
       color: #e2e8f0 !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
     }
 
     body.dark-mode input::placeholder {
@@ -134,114 +195,320 @@
     }
 
     body.dark-mode .dark-mode-toggle {
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-      box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
     }
 
     body.dark-mode .dark-mode-toggle:hover {
-      box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.7);
+    }
+
+    /* Title gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    body.dark-mode .gradient-text {
+      background: linear-gradient(135deg, #a78bfa 0%, #f093fb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Pulse animation for Find Nearby button */
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 20px rgba(102, 126, 234, 0);
+      }
+    }
+
+    .pulse-btn {
+      animation: pulse 2s infinite;
+    }
+
+    /* Legend styling */
+    .legend-item {
+      background: rgba(255, 255, 255, 0.5);
+      padding: 12px;
+      border-radius: 15px;
+      transition: all 0.3s;
+    }
+
+    .legend-item:hover {
+      background: rgba(255, 255, 255, 0.8);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .legend-item {
+      background: rgba(45, 55, 72, 0.5);
+    }
+
+    body.dark-mode .legend-item:hover {
+      background: rgba(45, 55, 72, 0.8);
+    }
+
+    /* Autocomplete Suggestions */
+    .suggestions-container {
+      position: relative;
+    }
+
+    .suggestions-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 20px;
+      margin-top: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: none;
+    }
+
+    .suggestions-list.active {
+      display: block;
+    }
+
+    .suggestion-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      font-size: 15px;
+    }
+
+    .suggestion-item:first-child {
+      border-radius: 20px 20px 0 0;
+    }
+
+    .suggestion-item:last-child {
+      border-radius: 0 0 20px 20px;
+      border-bottom: none;
+    }
+
+    .suggestion-item:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .suggestion-item .suggestion-icon {
+      margin-right: 8px;
+    }
+
+    body.dark-mode .suggestions-list {
+      background: rgba(45, 55, 72, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    body.dark-mode .suggestion-item {
+      color: #e2e8f0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .suggestion-item:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    /* Custom scrollbar for suggestions */
+    .suggestions-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .suggestions-list::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
+    }
+
+    .suggestions-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
+    }
+
+    /* Clear button for search input */
+    .search-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: white;
+      transition: all 0.3s;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(245, 87, 108, 0.3);
+    }
+
+    .clear-btn.active {
+      display: flex;
+    }
+
+    .clear-btn:hover {
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 6px 15px rgba(245, 87, 108, 0.5);
+    }
+
+    .clear-btn:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    body.dark-mode .clear-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    }
+
+    body.dark-mode .clear-btn:hover {
+      box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Adjust search section spacing */
+    .search-section {
+      position: relative;
+      z-index: 100;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 640px) {
+      .search-section {
+        margin-bottom: 2rem;
+      }
     }
 
     @media (max-width: 640px) {
       .dark-mode-toggle {
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
+        width: 55px;
+        height: 55px;
+        font-size: 28px;
         top: 15px;
+        right: 15px;
+      }
+
+      .suggestions-list {
+        max-height: 200px;
+      }
+
+      .clear-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
         right: 15px;
       }
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen">
+<body>
   <!-- Dark Mode Toggle Button -->
-  <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle Dark Mode">
+  <button id="darkModeToggle" class="dark-mode-toggle float-animation" aria-label="Toggle Dark Mode">
     🌙
   </button>
 
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="container mx-auto px-4 py-8 max-w-5xl">
     <!-- Header -->
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-      <h1 class="text-3xl font-bold text-purple-800 mb-2">
-        Female Prayer Place Nearby
-      </h1>
-      <p class="text-gray-600">
-        Find nearby mosques with female prayer facilities
-      </p>
+    <div class="glass-card rounded-3xl shadow-2xl p-8 mb-8 transform hover:scale-105 transition-all duration-300">
+      <div class="text-center">
+        <h1 class="text-5xl md:text-6xl font-extrabold gradient-text mb-3">
+          HerPrayerPlace
+        </h1>
+        <p class="text-gray-600 text-lg md:text-xl font-medium">
+          ✨ Discover nearby places with female prayer facilities ✨
+        </p>
+      </div>
     </div>
 
     <!-- Find Nearby Button -->
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8">
       <button
         id="findNearbyBtn"
-        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 text-lg sm:text-base"
+        class="w-full gradient-btn pulse-btn text-white font-bold py-4 px-8 rounded-full text-xl shadow-2xl transition duration-300"
       >
         📍 Find Nearby Mosques
       </button>
-      <p id="statusMsg" class="text-sm text-gray-500 mt-2 text-center"></p>
+      <p id="statusMsg" class="text-sm font-medium mt-3 text-center"></p>
     </div>
 
     <!-- Map -->
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-      <div
-        id="map"
-        class="rounded-lg overflow-hidden border-2 border-gray-200"
-      ></div>
+    <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8">
+      <div id="map"></div>
     </div>
 
     <!-- Search by Location -->
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">
-        Find by Location
+    <div class="glass-card rounded-3xl shadow-2xl p-8 mb-8 search-section">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+        🔍 Search by Location
       </h2>
-      <div class="flex flex-col sm:flex-row gap-2">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Enter location name..."
-          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
-        />
+      <div class="flex flex-col gap-3">
+        <div class="suggestions-container">
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Enter location name..."
+              autocomplete="off"
+              class="w-full px-6 py-4 pr-14 border-2 border-purple-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400 text-lg font-medium shadow-lg"
+            />
+            <button id="clearBtn" class="clear-btn" aria-label="Clear search">✕</button>
+          </div>
+          <div id="suggestionsList" class="suggestions-list"></div>
+        </div>
         <button
           id="searchBtn"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition duration-200 text-base"
+          class="search-btn text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg w-full sm:w-auto"
         >
-          Search
+          Find Now
         </button>
       </div>
     </div>
 
     <!-- Legend -->
-    <div class="bg-white rounded-lg shadow-lg p-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">Legend</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div class="flex items-center gap-2">
+    <div class="glass-card rounded-3xl shadow-2xl p-8">
+      <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">📌 Legend</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="legend-item flex items-center gap-3">
           <img src="pin (1).png" class="legend-icon" alt="Your Location" />
-          <span class="text-sm text-gray-700">Your Location (Blue)</span>
+          <span class="text-sm md:text-base font-semibold text-gray-700">Your Location</span>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="legend-item flex items-center gap-3">
           <img src="pin.png" class="legend-icon" alt="Nearby Mosques" />
-          <span class="text-sm text-gray-700">Mosques within 1km (Red)</span>
+          <span class="text-sm md:text-base font-semibold text-gray-700">Places within 1km</span>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="legend-item flex items-center gap-3">
           <img src="pin (2).png" class="legend-icon" alt="All Mosques" />
-          <span class="text-sm text-gray-700">All Mosques (Gray)</span>
+          <span class="text-sm md:text-base font-semibold text-gray-700">All the places</span>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Suggest Mosques -->
-<p class="mb-4 px-4">
-  <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6"
-     id="findNearbyBtn"
-     class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 rounded-full transition duration-200 text-base sm:text-sm w-full max-w-lg mx-auto block text-center"
-  >
-    Suggest New Mosques
-  </a>
-</p>
-
-
-
+  <div class="text-center pb-8 px-4">
+    <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6"
+       class="inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-4 px-10 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 text-lg"
+    >
+      ➕ Suggest New Mosques
+    </a>
+  </div>
 
   <script>
     // Dark Mode Toggle
@@ -289,10 +556,8 @@
       { lat: 23.8023381, lng: 90.4023117, name: "Bangladesh Navy Headquarters Mosque" },
       { lat: 23.7937869, lng: 90.4126031, name: "গুলশান ২ ডিসিসি সুপার মার্কেট" },
       { lat: 23.8007575, lng: 90.405201, name: "গুলশান সোসাইটি জামে মসজিদ" },
-      { lat: 23.7637473, lng: 90.3852519, name: "উত্তর মণিপুরী পাড়া জামে মসজিদ" }, //.....
       { lat: 23.7637473, lng: 90.3852519, name: "উত্তর মণিপুরী পাড়া জামে মসজিদ" },
-
-
+      { lat: 23.7637473, lng: 90.3852519, name: "উত্তর মণিপুরী পাড়া জামে মসজিদ" },
     ];
 
     let map = L.map("map").setView([23.8103, 90.4125], 12);
@@ -348,13 +613,10 @@
       const isAndroid = /Android/.test(navigator.userAgent);
 
       if (isIOS) {
-        // Apple Maps URL for iOS devices
         return `maps://maps.apple.com/?daddr=${lat},${lng}&dirflg=d`;
       } else if (isAndroid) {
-        // Google Maps URL for Android devices
         return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
       } else {
-        // Google Maps web URL for desktop and other devices
         return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
       }
     }
@@ -384,169 +646,249 @@
 
     displayMosques();
 
-    // Geolocation and search functionality remains the same, automatically uses responsive markers and map height
-    // Find nearby mosques
-      document
-        .getElementById("findNearbyBtn")
-        .addEventListener("click", function () {
-          const statusMsg = document.getElementById("statusMsg");
-          statusMsg.textContent = "Requesting location access...";
-          statusMsg.className = "text-sm text-blue-600 mt-2 text-center";
+    // Autocomplete functionality
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsList = document.getElementById('suggestionsList');
+    const clearBtn = document.getElementById('clearBtn');
+    let debounceTimer;
 
-          if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-              function (position) {
-                userLocation = {
-                  lat: position.coords.latitude,
-                  lng: position.coords.longitude,
-                };
+    // Show/hide clear button
+    searchInput.addEventListener('input', function() {
+      const query = this.value.trim();
 
-                console.log("User location:", userLocation);
-
-                // Remove previous user marker and radius if exists
-                if (userMarker) {
-                  map.removeLayer(userMarker);
-                }
-                if (radiusCircle) {
-                  map.removeLayer(radiusCircle);
-                }
-
-                // Add 1km radius circle
-                radiusCircle = L.circle([userLocation.lat, userLocation.lng], {
-                  color: "#8b5cf6",
-                  fillColor: "#c4b5fd",
-                  fillOpacity: 0.2,
-                  radius: 1000,
-                }).addTo(map);
-
-                // Add user marker
-                userMarker = L.marker([userLocation.lat, userLocation.lng], {
-                  icon: bluePin,
-                }).addTo(map);
-                userMarker
-                  .bindPopup("<strong>Your Location</strong>")
-                  .openPopup();
-
-                // Center map on user location
-                map.setView([userLocation.lat, userLocation.lng], 14);
-
-                // Display mosques with distance calculation
-                displayMosques(userLocation.lat, userLocation.lng);
-
-                statusMsg.textContent =
-                  "Location found! Showing nearby mosques within 1 km.";
-                statusMsg.className = "text-sm text-green-600 mt-2 text-center";
-              },
-              function (error) {
-                let errorMsg = "Unable to get location. ";
-                switch (error.code) {
-                  case error.PERMISSION_DENIED:
-                    errorMsg +=
-                      "Permission denied. Please allow location access.";
-                    break;
-                  case error.POSITION_UNAVAILABLE:
-                    errorMsg += "Position unavailable.";
-                    break;
-                  case error.TIMEOUT:
-                    errorMsg += "Request timeout.";
-                    break;
-                  default:
-                    errorMsg += "Unknown error.";
-                }
-                console.error("Geolocation error:", error);
-                statusMsg.textContent = errorMsg;
-                statusMsg.className = "text-sm text-red-600 mt-2 text-center";
-              },
-              {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0,
-              }
-            );
-          } else {
-            statusMsg.textContent =
-              "Geolocation is not supported by your browser.";
-            statusMsg.className = "text-sm text-red-600 mt-2 text-center";
-          }
-        });
-
-      // Search by location
-      document
-        .getElementById("searchBtn")
-        .addEventListener("click", function () {
-          searchLocation();
-        });
-
-      document
-        .getElementById("searchInput")
-        .addEventListener("keypress", function (e) {
-          if (e.key === "Enter") {
-            searchLocation();
-          }
-        });
-
-      function searchLocation() {
-        const searchQuery = document.getElementById("searchInput").value.trim();
-        if (!searchQuery) {
-          alert("Please enter a location to search");
-          return;
-        }
-
-        fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-            searchQuery
-          )}&limit=1`
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            if (data && data.length > 0) {
-              const result = data[0];
-              const searchLat = parseFloat(result.lat);
-              const searchLng = parseFloat(result.lon);
-
-              // Remove previous user marker and radius if exists
-              if (userMarker) {
-                map.removeLayer(userMarker);
-              }
-              if (radiusCircle) {
-                map.removeLayer(radiusCircle);
-              }
-
-              // Add 1km radius circle
-              radiusCircle = L.circle([searchLat, searchLng], {
-                color: "#8b5cf6",
-                fillColor: "#c4b5fd",
-                fillOpacity: 0.2,
-                radius: 1000,
-              }).addTo(map);
-
-              // Add marker at searched location
-              userMarker = L.marker([searchLat, searchLng], {
-                icon: bluePin,
-              }).addTo(map);
-              userMarker
-                .bindPopup(
-                  `<strong>Searched Location</strong><br>${result.display_name}`
-                )
-                .openPopup();
-
-              // Center map
-              map.setView([searchLat, searchLng], 14);
-
-              // Update user location
-              userLocation = { lat: searchLat, lng: searchLng };
-
-              // Display mosques with distance calculation
-              displayMosques(searchLat, searchLng);
-            } else {
-              alert("Location not found. Please try a different search term.");
-            }
-          })
-          .catch((error) => {
-            console.error("Search error:", error);
-            alert("Error searching location. Please try again.");
-          });
+      // Toggle clear button visibility
+      if (query.length > 0) {
+        clearBtn.classList.add('active');
+      } else {
+        clearBtn.classList.remove('active');
       }
+
+      // Clear previous timer
+      clearTimeout(debounceTimer);
+
+      if (query.length < 2) {
+        suggestionsList.classList.remove('active');
+        suggestionsList.innerHTML = '';
+        return;
+      }
+
+      // Debounce API calls
+      debounceTimer = setTimeout(() => {
+        fetchSuggestions(query);
+      }, 250);
+    });
+
+    // Clear button functionality
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      clearBtn.classList.remove('active');
+      suggestionsList.classList.remove('active');
+      suggestionsList.innerHTML = '';
+      searchInput.focus();
+    });
+
+    function fetchSuggestions(query) {
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1`)
+        .then(response => response.json())
+        .then(data => {
+          displaySuggestions(data);
+        })
+        .catch(error => {
+          console.error('Suggestion fetch error:', error);
+        });
+    }
+
+    function displaySuggestions(suggestions) {
+      suggestionsList.innerHTML = '';
+
+      if (suggestions.length === 0) {
+        suggestionsList.classList.remove('active');
+        return;
+      }
+
+      suggestions.forEach(suggestion => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+
+        const icon = getLocationIcon(suggestion.type);
+        item.innerHTML = `<span class="suggestion-icon">${icon}</span>${suggestion.display_name}`;
+
+        item.addEventListener('click', () => {
+          searchInput.value = suggestion.display_name;
+          suggestionsList.classList.remove('active');
+          suggestionsList.innerHTML = '';
+          clearBtn.classList.add('active');
+
+          // Trigger search with selected suggestion
+          performSearch(parseFloat(suggestion.lat), parseFloat(suggestion.lon), suggestion.display_name);
+        });
+
+        suggestionsList.appendChild(item);
+      });
+
+      suggestionsList.classList.add('active');
+    }
+
+    function getLocationIcon(type) {
+      const icons = {
+        'city': '🏙️',
+        'town': '🏘️',
+        'village': '🏡',
+        'suburb': '🏘️',
+        'neighbourhood': '🏠',
+        'road': '🛣️',
+        'building': '🏢',
+        'hospital': '🏥',
+        'school': '🏫',
+        'university': '🎓',
+        'mosque': '🕌',
+        'restaurant': '🍽️',
+        'cafe': '☕',
+        'shop': '🛍️',
+        'market': '🏪',
+        'park': '🌳',
+        'stadium': '🏟️'
+      };
+      return icons[type] || '📍';
+    }
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+        suggestionsList.classList.remove('active');
+      }
+    });
+
+    // Perform search function
+    function performSearch(lat, lng, displayName) {
+      if (userMarker) {
+        map.removeLayer(userMarker);
+      }
+      if (radiusCircle) {
+        map.removeLayer(radiusCircle);
+      }
+
+      radiusCircle = L.circle([lat, lng], {
+        color: "#667eea",
+        fillColor: "#a78bfa",
+        fillOpacity: 0.2,
+        radius: 1000,
+      }).addTo(map);
+
+      userMarker = L.marker([lat, lng], {
+        icon: bluePin,
+      }).addTo(map);
+      userMarker.bindPopup(`<strong>Searched Location</strong><br>${displayName}`).openPopup();
+
+      map.setView([lat, lng], 14);
+      userLocation = { lat: lat, lng: lng };
+      displayMosques(lat, lng);
+    }
+
+    // Find nearby mosques
+    document.getElementById("findNearbyBtn").addEventListener("click", function () {
+      const statusMsg = document.getElementById("statusMsg");
+      statusMsg.textContent = "Requesting location access...";
+      statusMsg.className = "text-sm font-medium mt-3 text-center text-blue-600";
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+
+            if (userMarker) {
+              map.removeLayer(userMarker);
+            }
+            if (radiusCircle) {
+              map.removeLayer(radiusCircle);
+            }
+
+            radiusCircle = L.circle([userLocation.lat, userLocation.lng], {
+              color: "#667eea",
+              fillColor: "#a78bfa",
+              fillOpacity: 0.2,
+              radius: 1000,
+            }).addTo(map);
+
+            userMarker = L.marker([userLocation.lat, userLocation.lng], {
+              icon: bluePin,
+            }).addTo(map);
+            userMarker.bindPopup("<strong>Your Location</strong>").openPopup();
+
+            map.setView([userLocation.lat, userLocation.lng], 14);
+            displayMosques(userLocation.lat, userLocation.lng);
+
+            statusMsg.textContent = "Location found! Showing nearby mosques within 1 km.";
+            statusMsg.className = "text-sm font-medium mt-3 text-center text-green-600";
+          },
+          function (error) {
+            let errorMsg = "Unable to get location. ";
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                errorMsg += "Permission denied. Please allow location access.";
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMsg += "Position unavailable.";
+                break;
+              case error.TIMEOUT:
+                errorMsg += "Request timeout.";
+                break;
+              default:
+                errorMsg += "Unknown error.";
+            }
+            statusMsg.textContent = errorMsg;
+            statusMsg.className = "text-sm font-medium mt-3 text-center text-red-600";
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+          }
+        );
+      } else {
+        statusMsg.textContent = "Geolocation is not supported by your browser.";
+        statusMsg.className = "text-sm font-medium mt-3 text-center text-red-600";
+      }
+    });
+
+    // Search by location
+    document.getElementById("searchBtn").addEventListener("click", searchLocation);
+    document.getElementById("searchInput").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        // Close suggestions and search
+        suggestionsList.classList.remove('active');
+        searchLocation();
+      }
+    });
+
+    function searchLocation() {
+      const searchQuery = document.getElementById("searchInput").value.trim();
+      if (!searchQuery) {
+        alert("Please enter a location to search");
+        return;
+      }
+
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data && data.length > 0) {
+            const result = data[0];
+            const searchLat = parseFloat(result.lat);
+            const searchLng = parseFloat(result.lon);
+
+            performSearch(searchLat, searchLng, result.display_name);
+          } else {
+            alert("Location not found. Please try a different search term.");
+          }
+        })
+        .catch((error) => {
+          console.error("Search error:", error);
+          alert("Error searching location. Please try again.");
+        });
+    }
   </script>
 </body>
 </html>
