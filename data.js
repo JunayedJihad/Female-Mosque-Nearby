@@ -1,4 +1,4 @@
-// Mosque locations
+// // Mosque locations
 
 const mosqueLocations = [
 
@@ -66,8 +66,62 @@ const mosqueLocations = [
      { lat: 22.3570752, lng: 91.8374316, name: "Bali Arcade" },
      { lat: 22.3578816, lng: 91.8373068, name: "Moti Complex (3rd floor)" },
      { lat: 22.3677924, lng: 91.8317302, name: "Mosjide Belal" },
+     { lat: 22.3346994, lng: 91.83275, name: "Baitul Ikram Jame Mosque" },
+     { lat: 23.7733537, lng: 90.3913189, name: "Shaheenbag Kendrio Boro Masjid" },
+     { lat: 23.7607185, lng: 90.4404913, name: "Hazi Noorbanu Jame Mosjid" },
+     { lat: 23.7828226, lng: 90.3935689, name: "Mohakhali DOHS Mosque" },
+     { lat: 23.7667828, lng: 90.4440343, name: "আল আকসা জামে মসজিদ" },
+     { lat: 23.8228731, lng: 90.3906175, name: "ASW Mega Food Park, ECB Chottor" },
+     { lat: 22.351114, lng: 91.8299907, name: "Bangladesh Petroleum Corporation Jame Mosque" },
+     { lat: 23.8009571, lng: 90.4514271, name: "Masjid Al Mustafa" },
+     { lat: 23.7174756, lng: 90.4059408, name: "PeyalaWala Jame Masjid ~ Bangshal" },
+     { lat: 23.7173601, lng: 90.4203193, name: "Rajdhani Super Market" },
+     { lat: 23.7941634, lng: 90.3510566, name: "জামিউল ফাত্তাহ সাদা মাজার মসজিদ" },
+     { lat: 23.7446139, lng: 90.4115303, name: "Anarkoli Super Market (5th floor)" },
+     { lat: 23.7463096, lng: 90.4121631, name: "Fortune Shopping Mal (Top floor)" },
+     { lat: 23.7625246, lng: 90.4362479, name: "Farazy Hospital Limited - Banasree" },
+     { lat: 23.80676, lng: 90.368966, name: "Shah Ali Plaza, Mirpur-10" },
+     { lat: 23.8294917, lng: 90.4194361, name: "Rajuk Trade Centre Mall (Top floor)" },
+     { lat: 23.1656775, lng: 89.2080697, name: "Collectorate Mosque" },
+     { lat: 23.8684861, lng: 90.3885656, name: "Baitul Aman Jame Masjid, Uttara Sector 14" },
      
 
 
 
+
 ];
+
+
+
+// let mosqueLocations = [];
+// // Load from Firebase
+// import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+// import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+// const firebaseConfig = {
+//   apiKey: "AIzaSyALo1YQ2M1GeoH9mORVV7dYSOl2FSCTc84",
+//   authDomain: "herprayerplace.firebaseapp.com",
+//   projectId: "herprayerplace",
+//   storageBucket: "herprayerplace.firebasestorage.app",
+//   messagingSenderId: "956020903317",
+//   appId: "1:956020903317:web:030c848fbaa10d3e86ba9c"
+// };
+// const app = initializeApp(firebaseConfig);
+// const db = getFirestore(app);
+// async function loadMosques() {
+//   try {
+//     const querySnapshot = await getDocs(collection(db, 'mosques'));
+//     mosqueLocations = [];
+//     querySnapshot.forEach((doc) => {
+//       const data = doc.data();
+//       mosqueLocations.push({
+//         name: data.name,
+//         lat: data.lat,
+//         lng: data.lng
+//       });
+//     });
+//     displayMosques();
+//   } catch (error) {
+//     console.error('Error loading mosques:', error);
+//   }
+// }
+// loadMosques();

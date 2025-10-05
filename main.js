@@ -236,7 +236,7 @@ searchInput.addEventListener('input', function() {
   // Debounce API calls
   debounceTimer = setTimeout(() => {
     fetchSuggestions(query);
-  }, 100);
+  }, 250);
 });
 
 // Clear button functionality
