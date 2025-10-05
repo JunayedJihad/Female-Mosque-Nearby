@@ -372,12 +372,18 @@
      margin-bottom: 2rem;
    }
 
-   /* Compact Distance Slider Styles */
+   /* Compact Distance Slider Styles - Inside Map Section */
    .distance-slider-compact {
      display: flex;
      align-items: center;
      gap: 15px;
-     padding: 15px 20px;
+     padding: 15px 0 0 0;
+     margin-top: 20px;
+     border-top: 1px solid rgba(102, 126, 234, 0.2);
+   }
+
+   body.dark-mode .distance-slider-compact {
+     border-top: 1px solid rgba(167, 139, 250, 0.3);
    }
 
    .distance-label-text {
@@ -556,11 +562,12 @@
        right: 15px;
      }
 
-     /* Distance slider compact */
+     /* Distance slider compact - inside map section */
      .distance-slider-compact {
        flex-direction: column;
        gap: 10px;
-       padding: 12px 15px;
+       padding: 12px 0 0 0;
+       margin-top: 15px;
      }
 
      .distance-label-text {

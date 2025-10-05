@@ -14,8 +14,8 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
   />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
- <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Dark Mode Toggle Button -->
@@ -47,13 +47,10 @@
       <p id="statusMsg" class="text-sm font-medium mt-3 text-center"></p>
     </div>
 
-    <!-- Map -->
+    <!-- Map with Slider -->
     <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8">
       <div id="map"></div>
-    </div>
-
-    <!-- Compact Distance Slider (Below Map) -->
-    <div class="glass-card rounded-3xl shadow-2xl mb-8">
+      <!-- Distance Slider Inside Map Section -->
       <div class="distance-slider-compact">
         <span class="distance-label-text">Search Radius:</span>
         <input
@@ -104,7 +101,7 @@
     </div>
 
     <!-- Legend -->
-    <div class="glass-card rounded-3xl shadow-2xl p-8">
+    <!-- <div class="glass-card rounded-3xl shadow-2xl p-8">
       <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">📌 Legend</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="legend-item flex items-center gap-3">
@@ -120,17 +117,19 @@
           <span class="text-sm md:text-base font-semibold text-gray-700">All Mosques</span>
         </div>
       </div>
-    </div>
-  </div>
+    </div> -->
 
-  <!-- Suggest Mosques -->
-  <div class="text-center pb-8 px-4">
+    <!-- Suggest Mosques -->
+  <div class="text-center mt-4 px-4">
     <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6"
        class="inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-4 px-10 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 text-lg"
     >
-      ➕ Suggest New Mosques
+      ➕ Suggest New Places
     </a>
   </div>
+
+  </div>
+
 
   <!-- Mosque List Modal -->
   <div id="mosqueModal" class="mosque-modal">
