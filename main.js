@@ -246,6 +246,26 @@ clearBtn.addEventListener('click', function() {
   suggestionsList.classList.remove('active');
   suggestionsList.innerHTML = '';
   searchInput.focus();
+
+  // Clear status message
+  statusMsg.textContent = '';
+  statusMsg.className = 'text-sm font-medium mt-3 text-center';
+
+  // Remove user marker and radius circle if they exist
+  if (userMarker) {
+    map.removeLayer(userMarker);
+    userMarker = null;
+  }
+  if (radiusCircle) {
+    map.removeLayer(radiusCircle);
+    radiusCircle = null;
+  }
+
+  // Reset user location
+  userLocation = null;
+
+  // Redisplay all mosques without distance calculation
+  displayMosques();
 });
 
 function fetchSuggestions(query) {
@@ -344,6 +364,11 @@ function performSearch(lat, lng, displayName) {
   map.setView([lat, lng], 14);
   userLocation = { lat: lat, lng: lng };
   displayMosques(lat, lng);
+
+  // Update status message
+  const statusMsg = document.getElementById('statusMsg');
+  statusMsg.textContent = `Location found! Showing nearby mosques within ${currentRadius} km.`;
+  statusMsg.className = "text-sm font-medium mt-3 text-center text-green-600";
 }
 
 // Find nearby mosques
