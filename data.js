@@ -50,6 +50,23 @@ const mosqueLocations = [
      { lat: 22.2457031, lng: 91.8121038, name: "Shah Amanat International Airport" },
      { lat: 22.327246, lng: 91.8077981, name: "Lucky Plaza (5th Floor)" },
      { lat: 22.3485518, lng: 91.8227226, name: "VIP Tower" },
+     { lat: 22.363333, lng: 91.8357196, name: "পার্কভিউ হসপিটাল লিমিটেড" },
+     { lat: 22.3593115, lng: 91.8238642, name: "Blue View Healthcare Ltd" },
+     { lat: 22.3611729, lng: 91.8271077, name: "মিমি সুপার মার্কেট" },
+     { lat: 22.3411767, lng: 91.8366974, name: "আন্দরকিল্লা শাহী জামে মসজিদ" },
+     { lat: 22.3568482, lng: 91.82471, name: "Mehedibag CDA Jame Mosque" },
+     { lat: 22.3617259, lng: 91.8271378, name: "Afmi Plaza (Top Floor)" },
+     { lat: 22.2353771, lng: 91.7927707, name: "Patenga Sea Beach Hazrat Khoaz Khizir Jaame Masjid" },
+     { lat: 22.3620433, lng: 91.8217946, name: "Sanmar Ocean City" },
+     { lat: 22.3371614, lng: 91.8308592, name: "Golam Rasul Market (4th floor)" },
+     { lat: 22.3400747, lng: 91.8398454, name: "ইসলামী ব্যাংক লিমিটেড (Teribazar)" },
+     { lat: 22.3272985, lng: 91.8125538, name: "Akhtaruzzaman Center (Ground floor)" },
+     { lat: 22.3429126, lng: 91.8345002, name: "Kadam Mobarak Shahi Jame Masjid" },
+     { lat: 22.3478123, lng: 91.8194247, name: "Ameen Center (2nd floor)" },
+     { lat: 22.3570752, lng: 91.8374316, name: "Bali Arcade" },
+     { lat: 22.3578816, lng: 91.8373068, name: "Moti Complex (3rd floor)" },
+     { lat: 22.3677924, lng: 91.8317302, name: "Mosjide Belal" },
+     
 
 
 
