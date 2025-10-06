@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - HerPrayerPlace</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      border: 2px solid #667eea;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px 0;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .success {
+      background: #10b981;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      display: none;
+    }
+
+    .error {
+      background: #ef4444;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      display: none;
+    }
+
+    .info {
+      background: #f3f4f6;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #667eea;
+    }
+
+    .mosque-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e5e7eb;
+    }
+
+    .delete-btn {
+      width: auto;
+      padding: 8px 15px;
+      background: #ef4444;
+      font-size: 14px;
+    }
+
+    .loading {
+      text-align: center;
+      color: #667eea;
+      font-weight: bold;
+      display: none;
+    }
+
+    #extractedInfo {
+      background: #ecfdf5;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      border: 2px solid #10b981;
+      display: none;
+    }
+
+    #extractedInfo p {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+
+    .logout-btn {
+      width: auto;
+      padding: 10px 20px;
+      background: #ef4444;
+      float: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 400px; width: 100%;">
+      <h2 style="margin-bottom: 20px; color: #667eea; text-align: center;">Admin Login</h2>
+      <input type="email" id="adminEmail" placeholder="Email" style="width: 100%; padding: 15px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; margin-bottom: 10px;">
+      <input type="password" id="adminPassword" placeholder="Password" style="width: 100%; padding: 15px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px;">
+      <button onclick="login()" style="width: 100%; padding: 15px; margin-top: 10px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer;">Login</button>
+      <p id="loginError" style="color: red; margin-top: 10px; display: none; text-align: center;">Login failed</p>
+    </div>
+  </div>
+
+  <div id="adminPanel" style="display: none;">
+    <div class="container">
+      <!-- Header -->
+      <div class="card">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <h1>HerPrayerPlace Admin Panel</h1>
+        <p style="color: #6b7280;">Manage mosque locations</p>
+      </div>
+
+      <!-- Add New Mosque -->
+      <div class="card">
+        <h2>Add New Mosque</h2>
+
+        <div class="info">
+          <strong>Instructions:</strong>
+          <ol style="margin-left: 20px; margin-top: 10px;">
+            <li>Paste any Google Maps link</li>
+            <li>For short links: click it first, then copy the full URL</li>
+            <li>Click "Extract Coordinates"</li>
+            <li>Verify and click "Add to Database"</li>
+          </ol>
+        </div>
+
+        <input type="text" id="mapsLink" placeholder="Paste Google Maps link here...">
+        <button onclick="extractCoordinates()" id="extractBtn">Extract Coordinates</button>
+
+        <div class="loading" id="loading">Processing...</div>
+
+        <div id="extractedInfo">
+          <h3 style="color: #10b981; margin-bottom: 10px;">Extracted Information:</h3>
+          <p><strong>Name:</strong> <span id="extractedName"></span></p>
+          <p><strong>Latitude:</strong> <span id="extractedLat"></span></p>
+          <p><strong>Longitude:</strong> <span id="extractedLng"></span></p>
+          <input type="text" id="editName" placeholder="Edit name if needed..." style="margin-top: 10px;">
+          <button onclick="addToDatabase()" id="addBtn">Add to Database</button>
+        </div>
+
+        <div class="success" id="successMsg">Mosque added successfully!</div>
+        <div class="error" id="errorMsg">Error: Something went wrong</div>
+      </div>
+
+      <!-- Mosque List -->
+      <div class="card">
+        <h2>All Mosques (Total: <span id="totalCount">0</span>)</h2>
+        <button onclick="loadMosques()" style="background: #10b981;">Refresh List</button>
+        <div id="mosqueList" style="margin-top: 20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyALo1YQ2M1GeoH9mORVV7dYSOl2FSCTc84",
+      authDomain: "herprayerplace.firebaseapp.com",
+      projectId: "herprayerplace",
+      storageBucket: "herprayerplace.firebasestorage.app",
+      messagingSenderId: "956020903317",
+      appId: "1:956020903317:web:030c848fbaa10d3e86ba9c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Make globally available
+    window.db = db;
+    window.auth = auth;
+    window.collection = collection;
+    window.addDoc = addDoc;
+    window.getDocs = getDocs;
+    window.deleteDoc = deleteDoc;
+    window.doc = doc;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.signOut = signOut;
+
+    // Check auth state
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadMosques();
+      } else {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('adminPanel').style.display = 'none';
+      }
+    });
+  </script>
+
+  <script>
+    let extractedData = null;
+
+    async function login() {
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value;
+      const errorEl = document.getElementById('loginError');
+
+      try {
+        await window.signInWithEmailAndPassword(window.auth, email, password);
+        errorEl.style.display = 'none';
+      } catch (error) {
+        errorEl.textContent = 'Invalid email or password';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    async function logout() {
+      await window.signOut(window.auth);
+    }
+
+    function extractCoordinates() {
+      const link = document.getElementById('mapsLink').value.trim();
+
+      if (!link) {
+        showError('Please paste a Google Maps link');
+        return;
+      }
+
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('extractedInfo').style.display = 'none';
+
+      try {
+        if (link.includes('goo.gl') || link.includes('maps.app.goo.gl')) {
+          showError('Short link detected! Open it in browser first, then copy the full URL');
+          document.getElementById('loading').style.display = 'none';
+          return;
+        }
+
+        let lat, lng, name = "Unknown Location";
+
+        const patterns = [
+          /@(-?\d+\.\d+),(-?\d+\.\d+)/,
+          /\?q=(-?\d+\.\d+),(-?\d+\.\d+)/,
+          /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/,
+          /ll=(-?\d+\.\d+),(-?\d+\.\d+)/,
+          /center=(-?\d+\.\d+),(-?\d+\.\d+)/
+        ];
+
+        let match = null;
+        for (const pattern of patterns) {
+          match = link.match(pattern);
+          if (match) {
+            lat = parseFloat(match[1]);
+            lng = parseFloat(match[2]);
+            break;
+          }
+        }
+
+        if (!match) {
+          showError('Could not extract coordinates. Make sure you copied the full URL');
+          document.getElementById('loading').style.display = 'none';
+          return;
+        }
+
+        const placeMatch = link.match(/place\/([^\/]+)/);
+        if (placeMatch) {
+          name = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+        }
+
+        extractedData = { name, lat, lng };
+
+        document.getElementById('extractedName').textContent = name;
+        document.getElementById('extractedLat').textContent = lat;
+        document.getElementById('extractedLng').textContent = lng;
+        document.getElementById('editName').value = name;
+        document.getElementById('extractedInfo').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+
+      } catch (error) {
+        showError('Error processing link: ' + error.message);
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
+
+    async function addToDatabase() {
+      if (!extractedData) {
+        showError('Please extract coordinates first');
+        return;
+      }
+
+      const editedName = document.getElementById('editName').value.trim();
+      if (!editedName) {
+        showError('Please enter a mosque name');
+        return;
+      }
+
+      document.getElementById('addBtn').disabled = true;
+      document.getElementById('addBtn').textContent = 'Adding...';
+
+      try {
+        await window.addDoc(window.collection(window.db, 'mosques'), {
+          name: editedName,
+          lat: extractedData.lat,
+          lng: extractedData.lng,
+          createdAt: new Date().toISOString()
+        });
+
+        showSuccess('Mosque added successfully!');
+        document.getElementById('mapsLink').value = '';
+        document.getElementById('extractedInfo').style.display = 'none';
+        extractedData = null;
+
+        loadMosques();
+
+      } catch (error) {
+        showError('Error adding mosque: ' + error.message);
+      }
+
+      document.getElementById('addBtn').disabled = false;
+      document.getElementById('addBtn').textContent = 'Add to Database';
+    }
+
+    async function loadMosques() {
+      try {
+        const querySnapshot = await window.getDocs(window.collection(window.db, 'mosques'));
+        const mosqueList = document.getElementById('mosqueList');
+        mosqueList.innerHTML = '';
+
+        document.getElementById('totalCount').textContent = querySnapshot.size;
+
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const div = document.createElement('div');
+          div.className = 'mosque-item';
+          div.innerHTML = `
+            <div>
+              <strong>${data.name}</strong><br>
+              <small>Lat: ${data.lat}, Lng: ${data.lng}</small>
+            </div>
+            <button class="delete-btn" onclick="deleteMosque('${docSnap.id}', '${data.name.replace(/'/g, "\\'")}')">
+              Delete
+            </button>
+          `;
+          mosqueList.appendChild(div);
+        });
+
+      } catch (error) {
+        showError('Error loading mosques: ' + error.message);
+      }
+    }
+
+    async function deleteMosque(id, name) {
+      if (!confirm(`Are you sure you want to delete "${name}"?`)) {
+        return;
+      }
+
+      try {
+        await window.deleteDoc(window.doc(window.db, 'mosques', id));
+        showSuccess('Mosque deleted successfully');
+        loadMosques();
+      } catch (error) {
+        showError('Error deleting mosque: ' + error.message);
+      }
+    }
+
+    function showSuccess(message) {
+      const el = document.getElementById('successMsg');
+      el.textContent = message;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3000);
+    }
+
+    function showError(message) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = message;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 5000);
+    }
+  </script>
+
+</body>
+</html>

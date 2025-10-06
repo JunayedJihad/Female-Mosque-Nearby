@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HerPrayerPlace</title>
   <link rel="icon" type="image/png" href="muslimah.png" />
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
-    rel="stylesheet"
-  />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
-  />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 </head>
+
 <body>
   <!-- Dark Mode Toggle Button -->
   <button id="darkModeToggle" class="dark-mode-toggle float-animation" aria-label="Toggle Dark Mode">
     🌙
   </button>
+
+  <!-- Admin Login Button -->
+  <a href="admin.html" class="admin-login-btn" aria-label="Admin Login">
+    🔐
+  </a>
 
   <div class="container mx-auto px-4 py-8 max-w-5xl">
     <!-- Header -->
@@ -38,10 +40,8 @@
 
     <!-- Find Nearby Button -->
     <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8">
-      <button
-        id="findNearbyBtn"
-        class="w-full gradient-btn pulse-btn text-white font-bold py-4 px-8 rounded-full text-xl shadow-2xl transition duration-300"
-      >
+      <button id="findNearbyBtn"
+        class="w-full gradient-btn pulse-btn text-white font-bold py-4 px-8 rounded-full text-xl shadow-2xl transition duration-300">
         📍 Find Nearby Places
       </button>
       <p id="statusMsg" class="text-sm font-medium mt-3 text-center"></p>
@@ -53,18 +53,11 @@
       <!-- Distance Slider Inside Map Section -->
       <div class="distance-slider-compact">
         <span class="distance-label-text">Search Radius:</span>
-        <input
-          type="range"
-          id="distanceSlider"
-          min="0.5"
-          max="5"
-          step="0.5"
-          value="1"
-          class="distance-slider"
-        />
+        <input type="range" id="distanceSlider" min="0.5" max="5" step="0.5" value="1" class="distance-slider" />
         <span class="distance-value-compact"><span id="distanceValue">1</span> km</span>
       </div>
     </div>
+
 
     <!-- Search by Location -->
     <div class="glass-card rounded-3xl shadow-2xl p-8 mb-8 search-section">
@@ -74,27 +67,18 @@
       <div class="flex flex-col gap-3">
         <div class="suggestions-container">
           <div class="search-input-wrapper">
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="Enter location name..."
-              autocomplete="off"
-              class="w-full px-6 py-4 pr-14 border-2 border-purple-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400 text-lg font-medium shadow-lg"
-            />
+            <input type="text" id="searchInput" placeholder="Enter location name..." autocomplete="off"
+              class="w-full px-6 py-4 pr-14 border-2 border-purple-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400 text-lg font-medium shadow-lg" />
             <button id="clearBtn" class="clear-btn" aria-label="Clear search">✕</button>
           </div>
           <div id="suggestionsList" class="suggestions-list"></div>
         </div>
-        <button
-          id="searchBtn"
-          class="search-btn text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg w-full sm:w-auto"
-        >
+        <button id="searchBtn"
+          class="search-btn text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg w-full sm:w-auto">
           Search Now
         </button>
-        <button
-          id="viewAllMosquesBtn"
-          class="gradient-btn text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg w-full sm:w-auto"
-        >
+        <button id="viewAllMosquesBtn"
+          class="gradient-btn text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg w-full sm:w-auto">
           View all the places
         </button>
       </div>
@@ -119,14 +103,23 @@
       </div>
     </div> -->
 
-    <!-- Suggest Mosques -->
-  <div class="text-center mt-4 px-4">
-    <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6"
-       class="inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-4 px-10 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 text-lg"
-    >
-      ➕ Suggest New Places
-    </a>
-  </div>
+
+    <!-- Suggest New Places Banner -->
+    <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8 suggest-banner">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+          <div class="suggest-icon">✨</div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800 mb-1">Know a Place We're Missing?</h3>
+            <p class="text-sm text-gray-600">Help other sisters by suggesting new locations!</p>
+          </div>
+        </div>
+        <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6"
+          class="suggest-banner-btn">
+          Suggest Now
+        </a>
+      </div>
+    </div>
 
   </div>
 
@@ -149,7 +142,84 @@
     </div>
   </div>
 
-  <script src="data.js"></script>
+  <!-- Suggestion Popup Modal -->
+  <div id="suggestionPopup" class="suggestion-popup">
+    <div class="suggestion-popup-content">
+      <button id="closeSuggestionPopup" class="suggestion-popup-close" aria-label="Close">✕</button>
+      <div class="suggestion-popup-icon">✨</div>
+      <h3 class="suggestion-popup-title">Help Us Grow!</h3>
+      <p class="suggestion-popup-text">Know a place with female prayer facilities that we're missing? Your contribution helps thousands of sisters!</p>
+      <div class="suggestion-popup-buttons">
+        <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6" class="suggestion-popup-btn-primary">
+          ➕ Suggest a Place
+        </a>
+        <button id="maybeLaterBtn" class="suggestion-popup-btn-secondary">
+          Maybe Later
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="main.js"></script>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyALo1YQ2M1GeoH9mORVV7dYSOl2FSCTc84",
+      authDomain: "herprayerplace.firebaseapp.com",
+      projectId: "herprayerplace",
+      storageBucket: "herprayerplace.firebasestorage.app",
+      messagingSenderId: "956020903317",
+      appId: "1:956020903317:web:030c848fbaa10d3e86ba9c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadMosques() {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'mosques'));
+        window.mosqueLocations = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          window.mosqueLocations.push({
+            name: data.name,
+            lat: data.lat,
+            lng: data.lng
+          });
+        });
+
+        console.log('Loaded mosques:', window.mosqueLocations.length);
+
+        // Call display functions after a brief delay to ensure map is ready
+        // setTimeout(() => {
+        //   if (window.displayMosques) {
+        //     window.displayMosques();
+        //   }
+        //   if (window.populateMosqueList) {
+        //     window.populateMosqueList();
+        //   }
+        // }, 100);
+
+        if (window.displayMosques) {
+            window.displayMosques();
+          }
+          if (window.populateMosqueList) {
+            window.populateMosqueList();
+          }
+
+      } catch (error) {
+        console.error('Error loading mosques:', error);
+      }
+    }
+
+    loadMosques();
+  </script>
+
+
+
 </body>
+
 </html>

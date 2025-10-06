@@ -88,8 +88,117 @@
    }
 
    .dark-mode-toggle:active {
-     transform: scale(0.95);
-   }
+    transform: scale(0.95);
+  }
+
+  /* Admin Login Button */
+  .admin-login-btn {
+    position: relative;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    text-decoration: none;
+  }
+
+  .admin-login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+  }
+
+  .admin-login-btn:active {
+    transform: translateY(-1px);
+  }
+
+  body.dark-mode .admin-login-btn {
+    background: linear-gradient(135deg, #a78bfa 0%, #f093fb 100%);
+    box-shadow: 0 6px 20px rgba(167, 139, 250, 0.4);
+  }
+
+  body.dark-mode .admin-login-btn:hover {
+    box-shadow: 0 10px 30px rgba(167, 139, 250, 0.6);
+  }
+
+  /* Suggest Places Banner */
+  .suggest-banner {
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+    border: 2px solid rgba(52, 211, 153, 0.3);
+    transition: all 0.3s;
+  }
+
+  .suggest-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(52, 211, 153, 0.2);
+    border-color: rgba(52, 211, 153, 0.5);
+  }
+
+  .suggest-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #34d399 0%, #3b82f6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 6px 20px rgba(52, 211, 153, 0.4);
+    animation: pulse-glow 2s infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 6px 20px rgba(52, 211, 153, 0.4);
+    }
+    50% {
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(52, 211, 153, 0.6);
+    }
+  }
+
+  .suggest-banner-btn {
+    background: linear-gradient(135deg, #34d399 0%, #3b82f6 100%);
+    color: white;
+    font-weight: 700;
+    padding: 14px 32px;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 6px 20px rgba(52, 211, 153, 0.3);
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  .suggest-banner-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(52, 211, 153, 0.5);
+    background: linear-gradient(135deg, #10b981 0%, #2563eb 100%);
+  }
+
+  body.dark-mode .suggest-banner {
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    border-color: rgba(52, 211, 153, 0.4);
+  }
+
+  body.dark-mode .suggest-banner:hover {
+    border-color: rgba(52, 211, 153, 0.6);
+  }
+
+  body.dark-mode .suggest-banner h3,
+  body.dark-mode .suggest-banner p {
+    color: #e2e8f0 !important;
+  }
 
    /* Glass morphism effect */
    .glass-card {
@@ -549,6 +658,43 @@
        right: 12px;
      }
 
+     /* Admin login button */
+     .admin-login-btn {
+       width: 42px;
+       height: 42px;
+       font-size: 20px;
+       top: 12px;
+       left: 12px;
+       border-radius: 10px;
+     }
+
+     /* Suggest banner */
+     .suggest-banner {
+       padding: 16px !important;
+     }
+
+     .suggest-icon {
+       width: 50px;
+       height: 50px;
+       font-size: 26px;
+     }
+
+     .suggest-banner h3 {
+       font-size: 16px !important;
+     }
+
+     .suggest-banner p {
+       font-size: 13px !important;
+     }
+
+     .suggest-banner-btn {
+       font-size: 14px;
+       padding: 12px 24px;
+       width: 100%;
+       text-align: center;
+       margin-top: 10px;
+     }
+
      /* Suggestions list */
      .suggestions-list {
        max-height: 200px;
@@ -853,5 +999,203 @@
 
      .mosque-list-name {
        font-size: 13px;
+     }
+   }
+
+   /* Suggestion Popup Modal */
+   .suggestion-popup {
+     display: none;
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background: rgba(0, 0, 0, 0.75);
+     backdrop-filter: blur(8px);
+     z-index: 3000;
+     animation: fadeIn 0.3s ease;
+   }
+
+   .suggestion-popup.active {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     padding: 20px;
+   }
+
+   .suggestion-popup-content {
+     background: white;
+     width: 100%;
+     max-width: 500px;
+     border-radius: 30px;
+     padding: 40px;
+     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+     position: relative;
+     text-align: center;
+     animation: slideUp 0.4s ease;
+   }
+
+   body.dark-mode .suggestion-popup-content {
+     background: rgba(45, 55, 72, 0.98);
+     border: 2px solid rgba(255, 255, 255, 0.1);
+   }
+
+   .suggestion-popup-close {
+     position: absolute;
+     top: 15px;
+     right: 15px;
+     background: rgba(0, 0, 0, 0.1);
+     border: none;
+     width: 35px;
+     height: 35px;
+     border-radius: 50%;
+     cursor: pointer;
+     font-size: 20px;
+     color: #666;
+     transition: all 0.3s;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+   }
+
+   .suggestion-popup-close:hover {
+     background: rgba(0, 0, 0, 0.2);
+     transform: rotate(90deg);
+   }
+
+   body.dark-mode .suggestion-popup-close {
+     background: rgba(255, 255, 255, 0.1);
+     color: #e2e8f0;
+   }
+
+   body.dark-mode .suggestion-popup-close:hover {
+     background: rgba(255, 255, 255, 0.2);
+   }
+
+   .suggestion-popup-icon {
+     width: 80px;
+     height: 80px;
+     margin: 0 auto 20px;
+     background: linear-gradient(135deg, #34d399 0%, #3b82f6 100%);
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 40px;
+     box-shadow: 0 10px 30px rgba(52, 211, 153, 0.4);
+     animation: pulse-glow 2s infinite;
+   }
+
+   .suggestion-popup-title {
+     font-size: 28px;
+     font-weight: 800;
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     -webkit-background-clip: text;
+     -webkit-text-fill-color: transparent;
+     background-clip: text;
+     margin-bottom: 15px;
+   }
+
+   body.dark-mode .suggestion-popup-title {
+     background: linear-gradient(135deg, #a78bfa 0%, #f093fb 100%);
+     -webkit-background-clip: text;
+     -webkit-text-fill-color: transparent;
+     background-clip: text;
+   }
+
+   .suggestion-popup-text {
+     font-size: 16px;
+     color: #4a5568;
+     line-height: 1.6;
+     margin-bottom: 30px;
+   }
+
+   body.dark-mode .suggestion-popup-text {
+     color: #cbd5e0;
+   }
+
+   .suggestion-popup-buttons {
+     display: flex;
+     flex-direction: column;
+     gap: 12px;
+   }
+
+   .suggestion-popup-btn-primary {
+     background: linear-gradient(135deg, #34d399 0%, #3b82f6 100%);
+     color: white;
+     font-weight: 700;
+     padding: 16px 32px;
+     border-radius: 30px;
+     text-decoration: none;
+     transition: all 0.3s;
+     box-shadow: 0 6px 20px rgba(52, 211, 153, 0.3);
+     font-size: 18px;
+     border: none;
+     cursor: pointer;
+   }
+
+   .suggestion-popup-btn-primary:hover {
+     transform: translateY(-3px);
+     box-shadow: 0 10px 30px rgba(52, 211, 153, 0.5);
+   }
+
+   .suggestion-popup-btn-secondary {
+     background: transparent;
+     color: #718096;
+     font-weight: 600;
+     padding: 14px 32px;
+     border-radius: 30px;
+     border: 2px solid #e2e8f0;
+     transition: all 0.3s;
+     font-size: 16px;
+     cursor: pointer;
+   }
+
+   .suggestion-popup-btn-secondary:hover {
+     background: #f7fafc;
+     border-color: #cbd5e0;
+     color: #4a5568;
+   }
+
+   body.dark-mode .suggestion-popup-btn-secondary {
+     color: #cbd5e0;
+     border-color: rgba(255, 255, 255, 0.2);
+   }
+
+   body.dark-mode .suggestion-popup-btn-secondary:hover {
+     background: rgba(255, 255, 255, 0.05);
+     border-color: rgba(255, 255, 255, 0.3);
+     color: #e2e8f0;
+   }
+
+   @media (max-width: 640px) {
+     .suggestion-popup-content {
+       padding: 30px 25px;
+     }
+
+     .suggestion-popup-icon {
+       width: 70px;
+       height: 70px;
+       font-size: 35px;
+       margin-bottom: 15px;
+     }
+
+     .suggestion-popup-title {
+       font-size: 22px;
+     }
+
+     .suggestion-popup-text {
+       font-size: 14px;
+       margin-bottom: 25px;
+     }
+
+     .suggestion-popup-btn-primary {
+       font-size: 16px;
+       padding: 14px 28px;
+     }
+
+     .suggestion-popup-btn-secondary {
+       font-size: 14px;
+       padding: 12px 28px;
      }
    }

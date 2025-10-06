@@ -1,3 +1,5 @@
+// let mosqueLocations = [];
+
 // Dark Mode Toggle
 const darkModeToggle = document.getElementById('darkModeToggle');
 const body = document.body;
@@ -84,7 +86,7 @@ function getDirectionsUrl(lat, lng) {
 function displayMosques(userLat=null, userLng=null){
   mosqueMarkers.forEach(m=>map.removeLayer(m));
   mosqueMarkers=[];
-  mosqueLocations.forEach(m=>{
+  window.mosqueLocations.forEach(m=>{
     let icon=grayPin;
     let distance=null;
     if(userLat!==null && userLng!==null){
@@ -104,7 +106,7 @@ function displayMosques(userLat=null, userLng=null){
   });
 }
 
-displayMosques();
+
 
 // Distance Slider Functionality
 const distanceSlider = document.getElementById('distanceSlider');
@@ -146,9 +148,9 @@ const mosqueCount = document.getElementById('mosqueCount');
 
 function populateMosqueList() {
   mosqueListContainer.innerHTML = '';
-  mosqueCount.textContent = `${mosqueLocations.length} Places`;
+  mosqueCount.textContent = `${window.mosqueLocations.length} Places`;
 
-  mosqueLocations.forEach((mosque, index) => {
+  window.mosqueLocations.forEach((mosque, index) => {
     const item = document.createElement('div');
     item.className = 'mosque-list-item';
     item.innerHTML = `
@@ -179,6 +181,10 @@ function populateMosqueList() {
     mosqueListContainer.appendChild(item);
   });
 }
+
+// Make functions globally accessible for Firebase callback
+window.displayMosques = displayMosques;
+window.populateMosqueList = populateMosqueList;
 
 viewAllMosquesBtn.addEventListener('click', () => {
   populateMosqueList();
@@ -269,7 +275,10 @@ clearBtn.addEventListener('click', function() {
 });
 
 function fetchSuggestions(query) {
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1`)
+  // Bangladesh bounding box coordinates: [southwest_lng, southwest_lat, northeast_lng, northeast_lat]
+  const bangladeshBounds = '88.0,20.5,92.7,26.6';
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
     .then(response => response.json())
     .then(data => {
       displaySuggestions(data);
@@ -457,7 +466,10 @@ function searchLocation() {
     return;
   }
 
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1`)
+  // Bangladesh bounding box coordinates
+  const bangladeshBounds = '88.0,20.5,92.7,26.6';
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
     .then((response) => response.json())
     .then((data) => {
       if (data && data.length > 0) {
@@ -475,3 +487,50 @@ function searchLocation() {
       alert("Error searching location. Please try again.");
     });
 }
+
+// Suggestion Popup Functionality
+const suggestionPopup = document.getElementById('suggestionPopup');
+const closeSuggestionPopup = document.getElementById('closeSuggestionPopup');
+const maybeLaterBtn = document.getElementById('maybeLaterBtn');
+
+// Check if popup was already shown in this session
+const popupShown = sessionStorage.getItem('suggestionPopupShown');
+
+// Show popup after 4 seconds if not shown before
+if (!popupShown) {
+  setTimeout(() => {
+    suggestionPopup.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Mark as shown in session
+    sessionStorage.setItem('suggestionPopupShown', 'true');
+  }, 4000); // 4000ms = 4 seconds
+}
+
+// Close popup when clicking X button
+closeSuggestionPopup.addEventListener('click', () => {
+  suggestionPopup.classList.remove('active');
+  document.body.style.overflow = 'auto';
+});
+
+// Close popup when clicking "Maybe Later"
+maybeLaterBtn.addEventListener('click', () => {
+  suggestionPopup.classList.remove('active');
+  document.body.style.overflow = 'auto';
+});
+
+// Close popup when clicking outside
+suggestionPopup.addEventListener('click', (e) => {
+  if (e.target === suggestionPopup) {
+    suggestionPopup.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+});
+
+// Close popup with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && suggestionPopup.classList.contains('active')) {
+    suggestionPopup.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+});
