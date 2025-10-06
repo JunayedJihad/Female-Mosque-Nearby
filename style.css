@@ -93,7 +93,7 @@
 
   /* Admin Login Button */
   .admin-login-btn {
-    position: relative;
+    position: fixed;
     top: 20px;
     left: 20px;
     z-index: 1000;
