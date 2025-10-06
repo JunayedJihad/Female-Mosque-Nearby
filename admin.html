@@ -64,6 +64,7 @@
       font-weight: bold;
       cursor: pointer;
       margin: 10px 0;
+      transition: all 0.3s;
     }
 
     button:hover {
@@ -95,6 +96,15 @@
       display: none;
     }
 
+    .warning {
+      background: #f59e0b;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      display: none;
+    }
+
     .info {
       background: #f3f4f6;
       padding: 15px;
@@ -112,6 +122,11 @@
       justify-content: space-between;
       align-items: center;
       border: 1px solid #e5e7eb;
+    }
+
+    .mosque-item.duplicate {
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
     }
 
     .delete-btn {
@@ -148,6 +163,103 @@
       background: #ef4444;
       float: right;
     }
+
+    .search-bar {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .search-bar input {
+      padding-right: 45px;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-40%);
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-clear.active {
+      display: flex;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 20px;
+      color: #6b7280;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      input, textarea {
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      button {
+        padding: 12px;
+        font-size: 16px;
+      }
+
+      .mosque-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .delete-btn {
+        width: 100%;
+      }
+
+      .logout-btn {
+        float: none;
+        width: 100%;
+        margin-bottom: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      .info ol {
+        margin-left: 15px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -181,11 +293,12 @@
             <li>Paste any Google Maps link</li>
             <li>For short links: click it first, then copy the full URL</li>
             <li>Click "Extract Coordinates"</li>
+            <li>System will check for duplicates automatically</li>
             <li>Verify and click "Add to Database"</li>
           </ol>
         </div>
 
-        <input type="text" id="mapsLink" placeholder="Paste Google Maps link here...">
+        <input type="text" id="mapsLink" placeholder="Paste Google Maps link here..." oninput="clearDuplicateHighlights()">
         <button onclick="extractCoordinates()" id="extractBtn">Extract Coordinates</button>
 
         <div class="loading" id="loading">Processing...</div>
@@ -199,6 +312,7 @@
           <button onclick="addToDatabase()" id="addBtn">Add to Database</button>
         </div>
 
+        <div class="warning" id="warningMsg"></div>
         <div class="success" id="successMsg">Mosque added successfully!</div>
         <div class="error" id="errorMsg">Error: Something went wrong</div>
       </div>
@@ -206,7 +320,15 @@
       <!-- Mosque List -->
       <div class="card">
         <h2>All Mosques (Total: <span id="totalCount">0</span>)</h2>
+
         <button onclick="loadMosques()" style="background: #10b981;">Refresh List</button>
+
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="Search by name or location..." onkeyup="searchMosques()">
+          <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+        </div>
+
+
         <div id="mosqueList" style="margin-top: 20px;"></div>
       </div>
     </div>
@@ -215,7 +337,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
     const firebaseConfig = {
@@ -239,6 +361,8 @@
     window.getDocs = getDocs;
     window.deleteDoc = deleteDoc;
     window.doc = doc;
+    window.query = query;
+    window.where = where;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
     window.signOut = signOut;
 
@@ -257,23 +381,93 @@
 
   <script>
     let extractedData = null;
+    let allMosques = [];
+    let currentDuplicates = [];
 
     async function login() {
       const email = document.getElementById('adminEmail').value.trim();
       const password = document.getElementById('adminPassword').value;
       const errorEl = document.getElementById('loginError');
 
+      if (!email || !password) {
+        errorEl.textContent = 'Please enter email and password';
+        errorEl.style.display = 'block';
+        return;
+      }
+
       try {
         await window.signInWithEmailAndPassword(window.auth, email, password);
         errorEl.style.display = 'none';
       } catch (error) {
-        errorEl.textContent = 'Invalid email or password';
+        if (error.code === 'auth/network-request-failed') {
+          errorEl.textContent = 'Network error. Check your connection.';
+        } else {
+          errorEl.textContent = 'Invalid email or password';
+        }
         errorEl.style.display = 'block';
       }
     }
 
     async function logout() {
       await window.signOut(window.auth);
+    }
+
+    function clearDuplicateHighlights() {
+      // Remove highlights
+      document.querySelectorAll('.mosque-item').forEach(item => {
+        item.classList.remove('duplicate');
+      });
+
+      // Clear warning message
+      document.getElementById('warningMsg').style.display = 'none';
+
+      // Clear extracted info if input is empty
+      if (document.getElementById('mapsLink').value.trim() === '') {
+        document.getElementById('extractedInfo').style.display = 'none';
+        extractedData = null;
+      }
+
+      // Reset to show all mosques
+      currentDuplicates = [];
+      displayMosques(allMosques);
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth's radius in km
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    async function checkForDuplicates(lat, lng, name) {
+      const duplicates = [];
+
+      for (const mosque of allMosques) {
+        const distance = calculateDistance(lat, lng, mosque.lat, mosque.lng);
+
+        // Check if coordinates are within 50 meters (0.05 km)
+        if (distance < 0.05) {
+          duplicates.push({
+            ...mosque,
+            distance: distance,
+            reason: 'Same location'
+          });
+        }
+        // Check if name is very similar
+        else if (mosque.name.toLowerCase() === name.toLowerCase()) {
+          duplicates.push({
+            ...mosque,
+            distance: distance,
+            reason: 'Same name'
+          });
+        }
+      }
+
+      return duplicates;
     }
 
     function extractCoordinates() {
@@ -286,6 +480,7 @@
 
       document.getElementById('loading').style.display = 'block';
       document.getElementById('extractedInfo').style.display = 'none';
+      document.getElementById('warningMsg').style.display = 'none';
 
       try {
         if (link.includes('goo.gl') || link.includes('maps.app.goo.gl')) {
@@ -320,6 +515,11 @@
           return;
         }
 
+        // Validate if coordinates are in Bangladesh
+        if (lat < 20.5 || lat > 26.6 || lng < 88.0 || lng > 92.7) {
+          showWarning('Warning: These coordinates appear to be outside Bangladesh!');
+        }
+
         const placeMatch = link.match(/place\/([^\/]+)/);
         if (placeMatch) {
           name = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
@@ -327,17 +527,60 @@
 
         extractedData = { name, lat, lng };
 
-        document.getElementById('extractedName').textContent = name;
-        document.getElementById('extractedLat').textContent = lat;
-        document.getElementById('extractedLng').textContent = lng;
-        document.getElementById('editName').value = name;
-        document.getElementById('extractedInfo').style.display = 'block';
-        document.getElementById('loading').style.display = 'none';
+        // Check for duplicates
+        checkForDuplicates(lat, lng, name).then(duplicates => {
+          currentDuplicates = duplicates;
+
+          if (duplicates.length > 0) {
+            let warningMsg = '<strong>⚠️ Potential duplicate(s) found:</strong><br>';
+            duplicates.forEach(dup => {
+              warningMsg += `• ${dup.name} (${dup.reason}, ${(dup.distance * 1000).toFixed(0)}m away)<br>`;
+            });
+            warningMsg += '<br>Please verify before adding!';
+            showWarning(warningMsg);
+
+            // Show only duplicates in the list
+            displayMosques(duplicates);
+
+            // Highlight duplicates
+            setTimeout(() => {
+              highlightDuplicates(duplicates);
+            }, 100);
+          } else {
+            // No duplicates, show all mosques
+            displayMosques(allMosques);
+          }
+
+          document.getElementById('extractedName').textContent = name;
+          document.getElementById('extractedLat').textContent = lat;
+          document.getElementById('extractedLng').textContent = lng;
+          document.getElementById('editName').value = name;
+          document.getElementById('extractedInfo').style.display = 'block';
+          document.getElementById('loading').style.display = 'none';
+        });
 
       } catch (error) {
         showError('Error processing link: ' + error.message);
         document.getElementById('loading').style.display = 'none';
       }
+    }
+
+    function highlightDuplicates(duplicates) {
+      // Remove previous highlights
+      document.querySelectorAll('.mosque-item').forEach(item => {
+        item.classList.remove('duplicate');
+      });
+
+      // Highlight new duplicates
+      duplicates.forEach(dup => {
+        const items = document.querySelectorAll('.mosque-item');
+        items.forEach(item => {
+          if (item.textContent.includes(dup.name)) {
+            item.classList.add('duplicate');
+            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      });
     }
 
     async function addToDatabase() {
@@ -350,6 +593,13 @@
       if (!editedName) {
         showError('Please enter a mosque name');
         return;
+      }
+
+      // Final duplicate check
+      const duplicates = await checkForDuplicates(extractedData.lat, extractedData.lng, editedName);
+      if (duplicates.length > 0) {
+        const confirmed = confirm(`Found ${duplicates.length} potential duplicate(s). Are you sure you want to add this location?`);
+        if (!confirmed) return;
       }
 
       document.getElementById('addBtn').disabled = true;
@@ -366,7 +616,9 @@
         showSuccess('Mosque added successfully!');
         document.getElementById('mapsLink').value = '';
         document.getElementById('extractedInfo').style.display = 'none';
+        document.getElementById('warningMsg').style.display = 'none';
         extractedData = null;
+        currentDuplicates = [];
 
         loadMosques();
 
@@ -381,29 +633,106 @@
     async function loadMosques() {
       try {
         const querySnapshot = await window.getDocs(window.collection(window.db, 'mosques'));
-        const mosqueList = document.getElementById('mosqueList');
-        mosqueList.innerHTML = '';
-
-        document.getElementById('totalCount').textContent = querySnapshot.size;
+        allMosques = [];
 
         querySnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const div = document.createElement('div');
-          div.className = 'mosque-item';
-          div.innerHTML = `
-            <div>
-              <strong>${data.name}</strong><br>
-              <small>Lat: ${data.lat}, Lng: ${data.lng}</small>
-            </div>
-            <button class="delete-btn" onclick="deleteMosque('${docSnap.id}', '${data.name.replace(/'/g, "\\'")}')">
-              Delete
-            </button>
-          `;
-          mosqueList.appendChild(div);
+          allMosques.push({
+            id: docSnap.id,
+            ...docSnap.data()
+          });
         });
+
+        // If duplicates are being shown, keep showing them after refresh
+      if (currentDuplicates.length > 0) {
+        // Re-filter duplicates after reload
+        const updatedDuplicates = allMosques.filter(mosque =>
+          currentDuplicates.some(dup => dup.id === mosque.id)
+        );
+        if (updatedDuplicates.length > 0) {
+          displayMosques(updatedDuplicates);
+          setTimeout(() => highlightDuplicates(updatedDuplicates), 100);
+        } else {
+          displayMosques(allMosques);
+        }
+      } else {
+        displayMosques(allMosques);
+      }
 
       } catch (error) {
         showError('Error loading mosques: ' + error.message);
+      }
+    }
+
+    function displayMosques(mosques) {
+      const mosqueList = document.getElementById('mosqueList');
+      mosqueList.innerHTML = '';
+
+      // Update count based on what's being displayed
+      if (currentDuplicates.length > 0) {
+        document.getElementById('totalCount').textContent = `${mosques.length} potential duplicate(s) - ${allMosques.length} total`;
+      } else {
+        document.getElementById('totalCount').textContent = mosques.length;
+      }
+
+      if (mosques.length === 0) {
+        mosqueList.innerHTML = '<div class="no-results">No mosques found</div>';
+        return;
+      }
+
+      mosques.forEach((mosque) => {
+        const div = document.createElement('div');
+        div.className = 'mosque-item';
+        div.innerHTML = `
+          <div>
+            <strong>${mosque.name}</strong><br>
+            <small>Lat: ${mosque.lat}, Lng: ${mosque.lng}</small>
+          </div>
+          <button class="delete-btn" onclick="deleteMosque('${mosque.id}', '${mosque.name.replace(/'/g, "\\'")}')">
+            Delete
+          </button>
+        `;
+        mosqueList.appendChild(div);
+      });
+    }
+
+    function searchMosques() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      const searchClear = document.getElementById('searchClear');
+
+      if (searchTerm.length > 0) {
+        searchClear.classList.add('active');
+      } else {
+        searchClear.classList.remove('active');
+      }
+
+      if (searchTerm === '') {
+        // If duplicates are being shown, keep showing them
+        if (currentDuplicates.length > 0) {
+          displayMosques(currentDuplicates);
+        } else {
+          displayMosques(allMosques);
+        }
+        return;
+      }
+
+      // Search within current view (either all mosques or duplicates)
+      const searchBase = currentDuplicates.length > 0 ? currentDuplicates : allMosques;
+      const filtered = searchBase.filter(mosque => {
+        return mosque.name.toLowerCase().includes(searchTerm);
+      });
+
+      displayMosques(filtered);
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchClear').classList.remove('active');
+
+      // Return to appropriate view
+      if (currentDuplicates.length > 0) {
+        displayMosques(currentDuplicates);
+      } else {
+        displayMosques(allMosques);
       }
     }
 
@@ -415,6 +744,11 @@
       try {
         await window.deleteDoc(window.doc(window.db, 'mosques', id));
         showSuccess('Mosque deleted successfully');
+
+        // Clear duplicates if we're in duplicate view
+        currentDuplicates = [];
+        document.getElementById('warningMsg').style.display = 'none';
+
         loadMosques();
       } catch (error) {
         showError('Error deleting mosque: ' + error.message);
@@ -433,6 +767,12 @@
       el.textContent = message;
       el.style.display = 'block';
       setTimeout(() => el.style.display = 'none', 5000);
+    }
+
+    function showWarning(message) {
+      const el = document.getElementById('warningMsg');
+      el.innerHTML = message;
+      el.style.display = 'block';
     }
   </script>
 
