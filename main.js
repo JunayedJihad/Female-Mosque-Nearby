@@ -148,25 +148,33 @@ const mosqueCount = document.getElementById('mosqueCount');
 
 function populateMosqueList() {
   mosqueListContainer.innerHTML = '';
+
+  // Reset filter dropdown
+  const divisionFilter = document.getElementById('divisionFilter');
+  if (divisionFilter) {
+    divisionFilter.value = 'all';
+  }
+
   mosqueCount.textContent = `${window.mosqueLocations.length} Places`;
 
   window.mosqueLocations.forEach((mosque, index) => {
     const item = document.createElement('div');
     item.className = 'mosque-list-item';
+
+    // Get division from Firebase data
+    const division = mosque.division || 'Other';
+    item.setAttribute('data-division', division);
+
     item.innerHTML = `
       <div class="mosque-list-number">${index + 1}</div>
       <div class="mosque-list-name">${mosque.name}</div>
     `;
 
     item.addEventListener('click', () => {
-      // Close modal
       mosqueModal.classList.remove('active');
       document.body.style.overflow = 'auto';
-
-      // Zoom to mosque on map
       map.setView([mosque.lat, mosque.lng], 16);
 
-      // Find and open the marker popup
       mosqueMarkers.forEach(marker => {
         const markerLatLng = marker.getLatLng();
         if (markerLatLng.lat === mosque.lat && markerLatLng.lng === mosque.lng) {
@@ -174,7 +182,6 @@ function populateMosqueList() {
         }
       });
 
-      // Scroll to map
       document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
@@ -182,9 +189,36 @@ function populateMosqueList() {
   });
 }
 
+// Filter mosques by division
+function filterByDivision() {
+  const selectedDivision = document.getElementById('divisionFilter').value;
+  const allItems = document.querySelectorAll('.mosque-list-item');
+  let visibleCount = 0;
+
+  allItems.forEach(item => {
+    const itemDivision = item.getAttribute('data-division');
+
+    if (selectedDivision === 'all' || itemDivision === selectedDivision) {
+      item.style.display = 'flex';
+      visibleCount++;
+      item.querySelector('.mosque-list-number').textContent = visibleCount;
+    } else {
+      item.style.display = 'none';
+    }
+  });
+
+  const mosqueCount = document.getElementById('mosqueCount');
+  if (selectedDivision === 'all') {
+    mosqueCount.textContent = `${window.mosqueLocations.length} Places`;
+  } else {
+    mosqueCount.textContent = `${visibleCount} Places in ${selectedDivision}`;
+  }
+}
+
 // Make functions globally accessible for Firebase callback
 window.displayMosques = displayMosques;
 window.populateMosqueList = populateMosqueList;
+window.filterByDivision = filterByDivision;
 
 viewAllMosquesBtn.addEventListener('click', () => {
   populateMosqueList();

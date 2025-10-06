@@ -8,8 +8,10 @@
 
   <!-- Title & Description -->
   <title>HerPrayerPlace – Find places with Female Prayer Facilities</title>
-  <meta name="description" content="HerPrayerPlace helps you discover nearby places with women’s prayer facilities. A simple way to find comfort and accessibility for prayer for muslim sisters." />
-  <meta name="keywords" content="HerPrayerPlace, mosque finder, female mosque finder, women's prayer place, nearby mosques, female prayer facilities, Islamic prayer, masjid finder, herprayerplace, womens prayer place nearby" />
+  <meta name="description"
+    content="HerPrayerPlace helps you discover nearby places with women’s prayer facilities. A simple way to find comfort and accessibility for prayer for muslim sisters." />
+  <meta name="keywords"
+    content="HerPrayerPlace, mosque finder, female mosque finder, women's prayer place, nearby mosques, female prayer facilities, Islamic prayer, masjid finder, herprayerplace, womens prayer place nearby" />
   <meta name="author" content="HerPrayerPlace" />
 
   <!-- Open Graph (Facebook, LinkedIn, etc.) -->
@@ -22,7 +24,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="HerPrayerPlace – Places with Female Prayer Facilities" />
-  <meta name="twitter:description" content="Discover places nearby with women’s prayer facilities. Simple and accessible." />
+  <meta name="twitter:description"
+    content="Discover places nearby with women’s prayer facilities. Simple and accessible." />
   <meta name="twitter:image" content="https://herprayerplace.vercel.app/preview.png" />
 
   <link rel="icon" type="image/png" href="muslimah.png" />
@@ -135,8 +138,7 @@
             <p class="text-sm text-gray-600">Help other sisters by suggesting new locations!</p>
           </div>
         </div>
-        <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6"
-          class="suggest-banner-btn">
+        <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6" class="suggest-banner-btn">
           Suggest Now
         </a>
       </div>
@@ -157,6 +159,23 @@
         </div>
         <button id="closeMosqueModal" class="mosque-modal-close" aria-label="Close modal">✕</button>
       </div>
+
+      <!-- Division Filter -->
+      <div class="division-filter-container">
+        <label for="divisionFilter" class="division-filter-label">Filter by Division:</label>
+        <select id="divisionFilter" class="division-filter-select" onchange="filterByDivision()">
+          <option value="all">All Divisions</option>
+          <option value="Dhaka">Dhaka</option>
+          <option value="Chattogram">Chattogram</option>
+          <option value="Rajshahi">Rajshahi</option>
+          <option value="Khulna">Khulna</option>
+          <option value="Barishal">Barishal</option>
+          <option value="Sylhet">Sylhet</option>
+          <option value="Rangpur">Rangpur</option>
+          <option value="Mymensingh">Mymensingh</option>
+        </select>
+      </div>
+
       <div class="mosque-modal-body" id="mosqueListContainer">
         <!-- Mosque list will be populated here -->
       </div>
@@ -169,7 +188,8 @@
       <button id="closeSuggestionPopup" class="suggestion-popup-close" aria-label="Close">✕</button>
       <div class="suggestion-popup-icon">✨</div>
       <h3 class="suggestion-popup-title">Help Us Grow!</h3>
-      <p class="suggestion-popup-text">Know a place with female prayer facilities that we're missing? Your contribution helps thousands of sisters!</p>
+      <p class="suggestion-popup-text">Know a place with female prayer facilities that we're missing? Your contribution
+        helps thousands of sisters!</p>
       <div class="suggestion-popup-buttons">
         <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6" class="suggestion-popup-btn-primary">
           ➕ Suggest a Place
@@ -208,28 +228,19 @@
           window.mosqueLocations.push({
             name: data.name,
             lat: data.lat,
-            lng: data.lng
+            lng: data.lng,
+            division: data.division || 'Other'
           });
         });
 
         console.log('Loaded mosques:', window.mosqueLocations.length);
 
-        // Call display functions after a brief delay to ensure map is ready
-        // setTimeout(() => {
-        //   if (window.displayMosques) {
-        //     window.displayMosques();
-        //   }
-        //   if (window.populateMosqueList) {
-        //     window.populateMosqueList();
-        //   }
-        // }, 100);
-
         if (window.displayMosques) {
-            window.displayMosques();
-          }
-          if (window.populateMosqueList) {
-            window.populateMosqueList();
-          }
+          window.displayMosques();
+        }
+        if (window.populateMosqueList) {
+          window.populateMosqueList();
+        }
 
       } catch (error) {
         console.error('Error loading mosques:', error);

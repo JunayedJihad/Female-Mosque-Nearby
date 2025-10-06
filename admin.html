@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel - HerPrayerPlace</title>
-  <link rel="icon" type="image/png" href="admin.png" />
+  <link rel="icon" type="image/png" href="muslimah.png" />
   <style>
     * {
       margin: 0;
@@ -44,7 +45,8 @@
       font-size: 24px;
     }
 
-    input, textarea {
+    input,
+    textarea {
       width: 100%;
       padding: 15px;
       margin: 10px 0;
@@ -177,7 +179,7 @@
       position: absolute;
       right: 15px;
       top: 50%;
-      transform: translateY(-40%);
+      transform: translateY(-50%);
       background: #ef4444;
       color: white;
       border: none;
@@ -201,6 +203,10 @@
       color: #6b7280;
     }
 
+    .bulk-update-btn {
+      background: #f59e0b !important;
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
       body {
@@ -219,7 +225,8 @@
         font-size: 20px;
       }
 
-      input, textarea {
+      input,
+      textarea {
         padding: 12px;
         font-size: 14px;
       }
@@ -262,14 +269,20 @@
     }
   </style>
 </head>
+
 <body>
 
-  <div id="loginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 400px; width: 100%;">
+  <div id="loginScreen"
+    style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div
+      style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 400px; width: 100%;">
       <h2 style="margin-bottom: 20px; color: #667eea; text-align: center;">Admin Login</h2>
-      <input type="email" id="adminEmail" placeholder="Email" style="width: 100%; padding: 15px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; margin-bottom: 10px;">
-      <input type="password" id="adminPassword" placeholder="Password" style="width: 100%; padding: 15px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px;">
-      <button onclick="login()" style="width: 100%; padding: 15px; margin-top: 10px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer;">Login</button>
+      <input type="email" id="adminEmail" placeholder="Email"
+        style="width: 100%; padding: 15px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; margin-bottom: 10px;">
+      <input type="password" id="adminPassword" placeholder="Password"
+        style="width: 100%; padding: 15px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px;">
+      <button onclick="login()"
+        style="width: 100%; padding: 15px; margin-top: 10px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer;">Login</button>
       <p id="loginError" style="color: red; margin-top: 10px; display: none; text-align: center;">Login failed</p>
     </div>
   </div>
@@ -293,12 +306,14 @@
             <li>Paste any Google Maps link</li>
             <li>For short links: click it first, then copy the full URL</li>
             <li>Click "Extract Coordinates"</li>
+            <li>Select the division</li>
             <li>System will check for duplicates automatically</li>
             <li>Verify and click "Add to Database"</li>
           </ol>
         </div>
 
-        <input type="text" id="mapsLink" placeholder="Paste Google Maps link here..." oninput="clearDuplicateHighlights()">
+        <input type="text" id="mapsLink" placeholder="Paste Google Maps link here..."
+          oninput="clearDuplicateHighlights()">
         <button onclick="extractCoordinates()" id="extractBtn">Extract Coordinates</button>
 
         <div class="loading" id="loading">Processing...</div>
@@ -309,6 +324,20 @@
           <p><strong>Latitude:</strong> <span id="extractedLat"></span></p>
           <p><strong>Longitude:</strong> <span id="extractedLng"></span></p>
           <input type="text" id="editName" placeholder="Edit name if needed..." style="margin-top: 10px;">
+
+          <select id="divisionSelect"
+            style="width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #667eea; border-radius: 10px; font-size: 16px;">
+            <option value="">Select Division</option>
+            <option value="Dhaka">Dhaka</option>
+            <option value="Chattogram">Chattogram</option>
+            <option value="Rajshahi">Rajshahi</option>
+            <option value="Khulna">Khulna</option>
+            <option value="Barishal">Barishal</option>
+            <option value="Sylhet">Sylhet</option>
+            <option value="Rangpur">Rangpur</option>
+            <option value="Mymensingh">Mymensingh</option>
+          </select>
+
           <button onclick="addToDatabase()" id="addBtn">Add to Database</button>
         </div>
 
@@ -322,12 +351,12 @@
         <h2>All Mosques (Total: <span id="totalCount">0</span>)</h2>
 
         <button onclick="loadMosques()" style="background: #10b981;">Refresh List</button>
+        <!-- <button onclick="bulkUpdateDivisions()" class="bulk-update-btn">Auto-Assign Divisions to Old Data</button> -->
 
         <div class="search-bar">
           <input type="text" id="searchInput" placeholder="Search by name or location..." onkeyup="searchMosques()">
           <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
         </div>
-
 
         <div id="mosqueList" style="margin-top: 20px;"></div>
       </div>
@@ -337,7 +366,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
     const firebaseConfig = {
@@ -363,6 +392,7 @@
     window.doc = doc;
     window.query = query;
     window.where = where;
+    window.updateDoc = updateDoc;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
     window.signOut = signOut;
 
@@ -413,27 +443,23 @@
     }
 
     function clearDuplicateHighlights() {
-      // Remove highlights
       document.querySelectorAll('.mosque-item').forEach(item => {
         item.classList.remove('duplicate');
       });
 
-      // Clear warning message
       document.getElementById('warningMsg').style.display = 'none';
 
-      // Clear extracted info if input is empty
       if (document.getElementById('mapsLink').value.trim() === '') {
         document.getElementById('extractedInfo').style.display = 'none';
         extractedData = null;
       }
 
-      // Reset to show all mosques
       currentDuplicates = [];
       displayMosques(allMosques);
     }
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371; // Earth's radius in km
+      const R = 6371;
       const dLat = ((lat2 - lat1) * Math.PI) / 180;
       const dLon = ((lon2 - lon1) * Math.PI) / 180;
       const a = Math.sin(dLat / 2) ** 2 +
@@ -449,7 +475,6 @@
       for (const mosque of allMosques) {
         const distance = calculateDistance(lat, lng, mosque.lat, mosque.lng);
 
-        // Check if coordinates are within 50 meters (0.05 km)
         if (distance < 0.05) {
           duplicates.push({
             ...mosque,
@@ -457,7 +482,6 @@
             reason: 'Same location'
           });
         }
-        // Check if name is very similar
         else if (mosque.name.toLowerCase() === name.toLowerCase()) {
           duplicates.push({
             ...mosque,
@@ -515,7 +539,6 @@
           return;
         }
 
-        // Validate if coordinates are in Bangladesh
         if (lat < 20.5 || lat > 26.6 || lng < 88.0 || lng > 92.7) {
           showWarning('Warning: These coordinates appear to be outside Bangladesh!');
         }
@@ -527,7 +550,10 @@
 
         extractedData = { name, lat, lng };
 
-        // Check for duplicates
+        // Auto-select division based on coordinates
+        const suggestedDivision = autoDetectDivision(name, lat, lng);
+        document.getElementById('divisionSelect').value = suggestedDivision;
+
         checkForDuplicates(lat, lng, name).then(duplicates => {
           currentDuplicates = duplicates;
 
@@ -539,15 +565,12 @@
             warningMsg += '<br>Please verify before adding!';
             showWarning(warningMsg);
 
-            // Show only duplicates in the list
             displayMosques(duplicates);
 
-            // Highlight duplicates
             setTimeout(() => {
               highlightDuplicates(duplicates);
             }, 100);
           } else {
-            // No duplicates, show all mosques
             displayMosques(allMosques);
           }
 
@@ -565,13 +588,44 @@
       }
     }
 
+    function autoDetectDivision(name, lat, lng) {
+      // Check by coordinates first (most accurate)
+      if (lat >= 23.6 && lat <= 24.0 && lng >= 90.3 && lng <= 90.5) return 'Dhaka';
+      if (lat >= 22.2 && lat <= 22.5 && lng >= 91.7 && lng <= 92.0) return 'Chattogram';
+      if (lat >= 24.3 && lat <= 24.4 && lng >= 88.5 && lng <= 88.7) return 'Rajshahi';
+      if (lat >= 22.8 && lat <= 22.9 && lng >= 89.5 && lng <= 89.6) return 'Khulna';
+      if (lat >= 22.6 && lat <= 22.8 && lng >= 90.3 && lng <= 90.4) return 'Barishal';
+      if (lat >= 24.8 && lat <= 24.9 && lng >= 91.8 && lng <= 91.9) return 'Sylhet';
+      if (lat >= 25.7 && lat <= 25.8 && lng >= 89.2 && lng <= 89.3) return 'Rangpur';
+      if (lat >= 24.7 && lat <= 24.8 && lng >= 90.3 && lng <= 90.5) return 'Mymensingh';
+
+      // Fallback to name matching
+      const lowerName = name.toLowerCase();
+      const keywords = {
+        'Dhaka': ['dhaka', 'dhanmondi', 'mirpur', 'uttara', 'gulshan', 'banani', 'mohammadpur', 'badda', 'rampura', 'khilgaon', 'jatrabari', 'shahbag', 'tejgaon', 'motijheel', 'paltan', 'elephant road', 'panthapath', 'farmgate', 'karwan bazar', 'shantinagar', 'malibagh', 'bailey road', 'kakrail', 'segunbagicha'],
+        'Chattogram': ['chattogram', 'chittagong', 'chattagram'],
+        'Rajshahi': ['rajshahi'],
+        'Khulna': ['khulna'],
+        'Barishal': ['barishal', 'barisal'],
+        'Sylhet': ['sylhet', 'silhet'],
+        'Rangpur': ['rangpur'],
+        'Mymensingh': ['mymensingh', 'mymensing']
+      };
+
+      for (const [division, words] of Object.entries(keywords)) {
+        if (words.some(word => lowerName.includes(word))) {
+          return division;
+        }
+      }
+
+      return '';
+    }
+
     function highlightDuplicates(duplicates) {
-      // Remove previous highlights
       document.querySelectorAll('.mosque-item').forEach(item => {
         item.classList.remove('duplicate');
       });
 
-      // Highlight new duplicates
       duplicates.forEach(dup => {
         const items = document.querySelectorAll('.mosque-item');
         items.forEach(item => {
@@ -595,7 +649,12 @@
         return;
       }
 
-      // Final duplicate check
+      const selectedDivision = document.getElementById('divisionSelect').value;
+      if (!selectedDivision) {
+        showError('Please select a division');
+        return;
+      }
+
       const duplicates = await checkForDuplicates(extractedData.lat, extractedData.lng, editedName);
       if (duplicates.length > 0) {
         const confirmed = confirm(`Found ${duplicates.length} potential duplicate(s). Are you sure you want to add this location?`);
@@ -610,6 +669,7 @@
           name: editedName,
           lat: extractedData.lat,
           lng: extractedData.lng,
+          division: selectedDivision,
           createdAt: new Date().toISOString()
         });
 
@@ -630,6 +690,43 @@
       document.getElementById('addBtn').textContent = 'Add to Database';
     }
 
+    async function bulkUpdateDivisions() {
+      if (!confirm('This will automatically assign divisions to all locations without one. Continue?')) {
+        return;
+      }
+
+      const loadingMsg = document.createElement('div');
+      loadingMsg.className = 'loading';
+      loadingMsg.style.display = 'block';
+      loadingMsg.textContent = 'Updating divisions...';
+      document.getElementById('mosqueList').prepend(loadingMsg);
+
+      try {
+        const querySnapshot = await window.getDocs(window.collection(window.db, 'mosques'));
+        let updated = 0;
+
+        for (const docSnap of querySnapshot.docs) {
+          const data = docSnap.data();
+
+          if (!data.division) {
+            const division = autoDetectDivision(data.name, data.lat, data.lng);
+
+            await window.updateDoc(window.doc(window.db, 'mosques', docSnap.id), {
+              division: division || 'Other'
+            });
+            updated++;
+          }
+        }
+
+        loadingMsg.remove();
+        showSuccess(`Updated ${updated} locations with divisions`);
+        loadMosques();
+      } catch (error) {
+        loadingMsg.remove();
+        showError('Error updating divisions: ' + error.message);
+      }
+    }
+
     async function loadMosques() {
       try {
         const querySnapshot = await window.getDocs(window.collection(window.db, 'mosques'));
@@ -642,21 +739,19 @@
           });
         });
 
-        // If duplicates are being shown, keep showing them after refresh
-      if (currentDuplicates.length > 0) {
-        // Re-filter duplicates after reload
-        const updatedDuplicates = allMosques.filter(mosque =>
-          currentDuplicates.some(dup => dup.id === mosque.id)
-        );
-        if (updatedDuplicates.length > 0) {
-          displayMosques(updatedDuplicates);
-          setTimeout(() => highlightDuplicates(updatedDuplicates), 100);
+        if (currentDuplicates.length > 0) {
+          const updatedDuplicates = allMosques.filter(mosque =>
+            currentDuplicates.some(dup => dup.id === mosque.id)
+          );
+          if (updatedDuplicates.length > 0) {
+            displayMosques(updatedDuplicates);
+            setTimeout(() => highlightDuplicates(updatedDuplicates), 100);
+          } else {
+            displayMosques(allMosques);
+          }
         } else {
           displayMosques(allMosques);
         }
-      } else {
-        displayMosques(allMosques);
-      }
 
       } catch (error) {
         showError('Error loading mosques: ' + error.message);
@@ -667,7 +762,6 @@
       const mosqueList = document.getElementById('mosqueList');
       mosqueList.innerHTML = '';
 
-      // Update count based on what's being displayed
       if (currentDuplicates.length > 0) {
         document.getElementById('totalCount').textContent = `${mosques.length} potential duplicate(s) - ${allMosques.length} total`;
       } else {
@@ -685,7 +779,7 @@
         div.innerHTML = `
           <div>
             <strong>${mosque.name}</strong><br>
-            <small>Lat: ${mosque.lat}, Lng: ${mosque.lng}</small>
+            <small>Division: ${mosque.division || 'Not set'} | Lat: ${mosque.lat}, Lng: ${mosque.lng}</small>
           </div>
           <button class="delete-btn" onclick="deleteMosque('${mosque.id}', '${mosque.name.replace(/'/g, "\\'")}')">
             Delete
@@ -706,7 +800,6 @@
       }
 
       if (searchTerm === '') {
-        // If duplicates are being shown, keep showing them
         if (currentDuplicates.length > 0) {
           displayMosques(currentDuplicates);
         } else {
@@ -715,7 +808,6 @@
         return;
       }
 
-      // Search within current view (either all mosques or duplicates)
       const searchBase = currentDuplicates.length > 0 ? currentDuplicates : allMosques;
       const filtered = searchBase.filter(mosque => {
         return mosque.name.toLowerCase().includes(searchTerm);
@@ -728,7 +820,6 @@
       document.getElementById('searchInput').value = '';
       document.getElementById('searchClear').classList.remove('active');
 
-      // Return to appropriate view
       if (currentDuplicates.length > 0) {
         displayMosques(currentDuplicates);
       } else {
@@ -745,7 +836,6 @@
         await window.deleteDoc(window.doc(window.db, 'mosques', id));
         showSuccess('Mosque deleted successfully');
 
-        // Clear duplicates if we're in duplicate view
         currentDuplicates = [];
         document.getElementById('warningMsg').style.display = 'none';
 
@@ -777,4 +867,5 @@
   </script>
 
 </body>
+
 </html>
