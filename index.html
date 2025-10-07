@@ -9,14 +9,14 @@
   <!-- Title & Description -->
   <title>HerPrayerPlace – Find places with Female Prayer Facilities</title>
   <meta name="description"
-    content="HerPrayerPlace helps you discover nearby places with women’s prayer facilities. A simple way to find comfort and accessibility for prayer for muslim sisters." />
+    content="HerPrayerPlace helps you discover nearby places with women's prayer facilities. A simple way to find comfort and accessibility for prayer for muslim sisters." />
   <meta name="keywords"
     content="HerPrayerPlace, mosque finder, female mosque finder, women's prayer place, nearby mosques, female prayer facilities, Islamic prayer, masjid finder, herprayerplace, womens prayer place nearby" />
   <meta name="author" content="HerPrayerPlace" />
 
   <!-- Open Graph (Facebook, LinkedIn, etc.) -->
-  <meta property="og:title" content="HerPrayerPlace – Placess with Female Prayer Facilities" />
-  <meta property="og:description" content="Find nearby places with women’s prayer facilities using HerPrayerPlace." />
+  <meta property="og:title" content="HerPrayerPlace – Places with Female Prayer Facilities" />
+  <meta property="og:description" content="Find nearby places with women's prayer facilities using HerPrayerPlace." />
   <meta property="og:image" content="https://herprayerplace.vercel.app/preview.png" />
   <meta property="og:url" content="https://herprayerplace.vercel.app/" />
   <meta property="og:type" content="website" />
@@ -25,7 +25,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="HerPrayerPlace – Places with Female Prayer Facilities" />
   <meta name="twitter:description"
-    content="Discover places nearby with women’s prayer facilities. Simple and accessible." />
+    content="Discover places nearby with women's prayer facilities. Simple and accessible." />
   <meta name="twitter:image" content="https://herprayerplace.vercel.app/preview.png" />
 
   <link rel="icon" type="image/png" href="muslimah.png" />
@@ -82,7 +82,6 @@
       </div>
     </div>
 
-
     <!-- Search by Location -->
     <div class="glass-card rounded-3xl shadow-2xl p-8 mb-8 search-section">
       <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
@@ -108,26 +107,6 @@
       </div>
     </div>
 
-    <!-- Legend -->
-    <!-- <div class="glass-card rounded-3xl shadow-2xl p-8">
-      <h3 class="text-3xl font-bold text-gray-800 mb-6 text-center">📌 Legend</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="legend-item flex items-center gap-3">
-          <img src="pin (1).png" class="legend-icon" alt="Your Location" />
-          <span class="text-sm md:text-base font-semibold text-gray-700">Your Location</span>
-        </div>
-        <div class="legend-item flex items-center gap-3">
-          <img src="pin.png" class="legend-icon" alt="Nearby Mosques" />
-          <span class="text-sm md:text-base font-semibold text-gray-700">Within Radius</span>
-        </div>
-        <div class="legend-item flex items-center gap-3">
-          <img src="pin (2).png" class="legend-icon" alt="All Mosques" />
-          <span class="text-sm md:text-base font-semibold text-gray-700">All Mosques</span>
-        </div>
-      </div>
-    </div> -->
-
-
     <!-- Suggest New Places Banner -->
     <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8 suggest-banner">
       <div class="flex items-center justify-between flex-wrap gap-4">
@@ -146,7 +125,6 @@
 
   </div>
 
-
   <!-- Mosque List Modal -->
   <div id="mosqueModal" class="mosque-modal">
     <div class="mosque-modal-content">
@@ -160,19 +138,75 @@
         <button id="closeMosqueModal" class="mosque-modal-close" aria-label="Close modal">✕</button>
       </div>
 
-      <!-- Division Filter -->
-      <div class="division-filter-container">
-        <label for="divisionFilter" class="division-filter-label">Filter by Division:</label>
-        <select id="divisionFilter" class="division-filter-select" onchange="filterByDivision()">
-          <option value="all">All Divisions</option>
-          <option value="Dhaka">Dhaka</option>
-          <option value="Chattogram">Chattogram</option>
-          <option value="Rajshahi">Rajshahi</option>
-          <option value="Khulna">Khulna</option>
+      <!-- District Filter -->
+      <div class="district-filter-container">
+        <label for="districtFilter" class="district-filter-label">Filter by District:</label>
+        <select id="districtFilter" class="district-filter-select" onchange="filterByDistrict()">
+          <option value="all">All Districts</option>
+          <option value="Bagerhat">Bagerhat</option>
+          <option value="Bandarban">Bandarban</option>
+          <option value="Barguna">Barguna</option>
           <option value="Barishal">Barishal</option>
-          <option value="Sylhet">Sylhet</option>
-          <option value="Rangpur">Rangpur</option>
+          <option value="Bhola">Bhola</option>
+          <option value="Bogura">Bogura</option>
+          <option value="Brahmanbaria">Brahmanbaria</option>
+          <option value="Chandpur">Chandpur</option>
+          <option value="Chapainawabganj">Chapainawabganj</option>
+          <option value="Chattogram">Chattogram</option>
+          <option value="Chuadanga">Chuadanga</option>
+          <option value="Cox's Bazar">Cox's Bazar</option>
+          <option value="Cumilla">Cumilla</option>
+          <option value="Dhaka">Dhaka</option>
+          <option value="Dinajpur">Dinajpur</option>
+          <option value="Faridpur">Faridpur</option>
+          <option value="Feni">Feni</option>
+          <option value="Gaibandha">Gaibandha</option>
+          <option value="Gazipur">Gazipur</option>
+          <option value="Gopalganj">Gopalganj</option>
+          <option value="Habiganj">Habiganj</option>
+          <option value="Jamalpur">Jamalpur</option>
+          <option value="Jashore">Jashore</option>
+          <option value="Jhalokathi">Jhalokathi</option>
+          <option value="Jhenaidah">Jhenaidah</option>
+          <option value="Joypurhat">Joypurhat</option>
+          <option value="Khagrachhari">Khagrachhari</option>
+          <option value="Khulna">Khulna</option>
+          <option value="Kishoreganj">Kishoreganj</option>
+          <option value="Kurigram">Kurigram</option>
+          <option value="Kushtia">Kushtia</option>
+          <option value="Lakshmipur">Lakshmipur</option>
+          <option value="Lalmonirhat">Lalmonirhat</option>
+          <option value="Madaripur">Madaripur</option>
+          <option value="Magura">Magura</option>
+          <option value="Manikganj">Manikganj</option>
+          <option value="Meherpur">Meherpur</option>
+          <option value="Moulvibazar">Moulvibazar</option>
+          <option value="Munshiganj">Munshiganj</option>
           <option value="Mymensingh">Mymensingh</option>
+          <option value="Naogaon">Naogaon</option>
+          <option value="Narail">Narail</option>
+          <option value="Narayanganj">Narayanganj</option>
+          <option value="Narsingdi">Narsingdi</option>
+          <option value="Natore">Natore</option>
+          <option value="Netrokona">Netrokona</option>
+          <option value="Nilphamari">Nilphamari</option>
+          <option value="Noakhali">Noakhali</option>
+          <option value="Pabna">Pabna</option>
+          <option value="Panchagarh">Panchagarh</option>
+          <option value="Patuakhali">Patuakhali</option>
+          <option value="Pirojpur">Pirojpur</option>
+          <option value="Rajbari">Rajbari</option>
+          <option value="Rajshahi">Rajshahi</option>
+          <option value="Rangamati">Rangamati</option>
+          <option value="Rangpur">Rangpur</option>
+          <option value="Satkhira">Satkhira</option>
+          <option value="Shariatpur">Shariatpur</option>
+          <option value="Sherpur">Sherpur</option>
+          <option value="Sirajganj">Sirajganj</option>
+          <option value="Sunamganj">Sunamganj</option>
+          <option value="Sylhet">Sylhet</option>
+          <option value="Tangail">Tangail</option>
+          <option value="Thakurgaon">Thakurgaon</option>
         </select>
       </div>
 
@@ -229,7 +263,7 @@
             name: data.name,
             lat: data.lat,
             lng: data.lng,
-            division: data.division || 'Other'
+            district: data.district || 'Other'
           });
         });
 
@@ -249,8 +283,6 @@
 
     loadMosques();
   </script>
-
-
 
 </body>
 

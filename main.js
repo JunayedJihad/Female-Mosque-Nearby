@@ -1,5 +1,3 @@
-// let mosqueLocations = [];
-
 // Dark Mode Toggle
 const darkModeToggle = document.getElementById('darkModeToggle');
 const body = document.body;
@@ -15,11 +13,8 @@ darkModeToggle.addEventListener('click', () => {
   body.classList.toggle('dark-mode');
   const isDark = body.classList.contains('dark-mode');
   darkModeToggle.textContent = isDark ? '☀️' : '🌙';
-
-  // Save preference in cookie (expires in 365 days)
   document.cookie = `darkMode=${isDark}; max-age=${365*24*60*60}; path=/`;
 });
-
 
 let map = L.map("map").setView([23.8103, 90.4125], 12);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -31,7 +26,7 @@ let userMarker = null;
 let mosqueMarkers = [];
 let userLocation = null;
 let radiusCircle = null;
-let currentRadius = 1; // Default 1km
+let currentRadius = 1;
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -44,11 +39,10 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Responsive pin icons
 function createPinIcon(url) {
   let size = [32, 32];
-  if(window.innerWidth<=640) size=[20,20];
-  else if(window.innerWidth<=1024) size=[25,25];
+  if(window.innerWidth<=640) size=[25,25];
+  else if(window.innerWidth<=1024) size=[28,28];
   return L.icon({
     iconUrl: url,
     iconSize: size,
@@ -69,7 +63,6 @@ window.addEventListener("resize", ()=>{
   if(userLocation && userMarker) userMarker.setIcon(bluePin);
 });
 
-// Function to detect user's device and generate appropriate maps URL
 function getDirectionsUrl(lat, lng) {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isAndroid = /Android/.test(navigator.userAgent);
@@ -97,7 +90,6 @@ function displayMosques(userLat=null, userLng=null){
     let popupContent=`<strong>${m.name}</strong>`;
     if(distance!==null) popupContent+=`<br>Distance: ${distance.toFixed(2)} km`;
 
-    // Add Get Directions button
     const directionsUrl = getDirectionsUrl(m.lat, m.lng);
     popupContent += `<br><a href="${directionsUrl}" target="_blank" class="directions-btn">🧭 Get Directions</a>`;
 
@@ -105,8 +97,6 @@ function displayMosques(userLat=null, userLng=null){
     mosqueMarkers.push(marker);
   });
 }
-
-
 
 // Distance Slider Functionality
 const distanceSlider = document.getElementById('distanceSlider');
@@ -117,8 +107,6 @@ distanceSlider.addEventListener('input', function() {
   currentRadius = parseFloat(this.value);
   distanceValue.textContent = currentRadius;
 
-
-  // Update radius circle if user location exists
   if (userLocation) {
     if (radiusCircle) {
       map.removeLayer(radiusCircle);
@@ -133,7 +121,6 @@ distanceSlider.addEventListener('input', function() {
 
     displayMosques(userLocation.lat, userLocation.lng);
 
-    // Update the status message dynamically
     statusMsg.textContent = `Location found! Showing nearby mosques within ${currentRadius} km.`;
     statusMsg.className = "text-sm font-medium mt-3 text-center text-green-600";
   }
@@ -149,10 +136,9 @@ const mosqueCount = document.getElementById('mosqueCount');
 function populateMosqueList() {
   mosqueListContainer.innerHTML = '';
 
-  // Reset filter dropdown
-  const divisionFilter = document.getElementById('divisionFilter');
-  if (divisionFilter) {
-    divisionFilter.value = 'all';
+  const districtFilter = document.getElementById('districtFilter');
+  if (districtFilter) {
+    districtFilter.value = 'all';
   }
 
   mosqueCount.textContent = `${window.mosqueLocations.length} Places`;
@@ -161,9 +147,8 @@ function populateMosqueList() {
     const item = document.createElement('div');
     item.className = 'mosque-list-item';
 
-    // Get division from Firebase data
-    const division = mosque.division || 'Other';
-    item.setAttribute('data-division', division);
+    const district = mosque.district || 'Other';
+    item.setAttribute('data-district', district);
 
     item.innerHTML = `
       <div class="mosque-list-number">${index + 1}</div>
@@ -189,16 +174,15 @@ function populateMosqueList() {
   });
 }
 
-// Filter mosques by division
-function filterByDivision() {
-  const selectedDivision = document.getElementById('divisionFilter').value;
+function filterByDistrict() {
+  const selectedDistrict = document.getElementById('districtFilter').value;
   const allItems = document.querySelectorAll('.mosque-list-item');
   let visibleCount = 0;
 
   allItems.forEach(item => {
-    const itemDivision = item.getAttribute('data-division');
+    const itemDistrict = item.getAttribute('data-district');
 
-    if (selectedDivision === 'all' || itemDivision === selectedDivision) {
+    if (selectedDistrict === 'all' || itemDistrict === selectedDistrict) {
       item.style.display = 'flex';
       visibleCount++;
       item.querySelector('.mosque-list-number').textContent = visibleCount;
@@ -208,30 +192,28 @@ function filterByDivision() {
   });
 
   const mosqueCount = document.getElementById('mosqueCount');
-  if (selectedDivision === 'all') {
+  if (selectedDistrict === 'all') {
     mosqueCount.textContent = `${window.mosqueLocations.length} Places`;
   } else {
-    mosqueCount.textContent = `${visibleCount} Places in ${selectedDivision}`;
+    mosqueCount.textContent = `${visibleCount} Places in ${selectedDistrict}`;
   }
 }
 
-// Make functions globally accessible for Firebase callback
 window.displayMosques = displayMosques;
 window.populateMosqueList = populateMosqueList;
-window.filterByDivision = filterByDivision;
+window.filterByDistrict = filterByDistrict;
 
 viewAllMosquesBtn.addEventListener('click', () => {
   populateMosqueList();
   mosqueModal.classList.add('active');
-  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  document.body.style.overflow = 'hidden';
 });
 
 closeMosqueModal.addEventListener('click', () => {
   mosqueModal.classList.remove('active');
-  document.body.style.overflow = 'auto'; // Restore scrolling
+  document.body.style.overflow = 'auto';
 });
 
-// Close modal when clicking outside
 mosqueModal.addEventListener('click', (e) => {
   if (e.target === mosqueModal) {
     mosqueModal.classList.remove('active');
@@ -239,11 +221,15 @@ mosqueModal.addEventListener('click', (e) => {
   }
 });
 
-// Close modal with Escape key
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && mosqueModal.classList.contains('active')) {
-    mosqueModal.classList.remove('active');
-    document.body.style.overflow = 'auto';
+  if (e.key === 'Escape') {
+    if (suggestionPopup.classList.contains('active')) {
+      suggestionPopup.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    } else if (mosqueModal.classList.contains('active')) {
+      mosqueModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
   }
 });
 
@@ -253,18 +239,15 @@ const suggestionsList = document.getElementById('suggestionsList');
 const clearBtn = document.getElementById('clearBtn');
 let debounceTimer;
 
-// Show/hide clear button
 searchInput.addEventListener('input', function() {
   const query = this.value.trim();
 
-  // Toggle clear button visibility
   if (query.length > 0) {
     clearBtn.classList.add('active');
   } else {
     clearBtn.classList.remove('active');
   }
 
-  // Clear previous timer
   clearTimeout(debounceTimer);
 
   if (query.length < 2) {
@@ -273,13 +256,11 @@ searchInput.addEventListener('input', function() {
     return;
   }
 
-  // Debounce API calls
   debounceTimer = setTimeout(() => {
     fetchSuggestions(query);
   }, 250);
 });
 
-// Clear button functionality
 clearBtn.addEventListener('click', function() {
   searchInput.value = '';
   clearBtn.classList.remove('active');
@@ -287,11 +268,9 @@ clearBtn.addEventListener('click', function() {
   suggestionsList.innerHTML = '';
   searchInput.focus();
 
-  // Clear status message
   statusMsg.textContent = '';
   statusMsg.className = 'text-sm font-medium mt-3 text-center';
 
-  // Remove user marker and radius circle if they exist
   if (userMarker) {
     map.removeLayer(userMarker);
     userMarker = null;
@@ -301,15 +280,11 @@ clearBtn.addEventListener('click', function() {
     radiusCircle = null;
   }
 
-  // Reset user location
   userLocation = null;
-
-  // Redisplay all mosques without distance calculation
   displayMosques();
 });
 
 function fetchSuggestions(query) {
-  // Bangladesh bounding box coordinates: [southwest_lng, southwest_lat, northeast_lng, northeast_lat]
   const bangladeshBounds = '88.0,20.5,92.7,26.6';
 
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
@@ -343,7 +318,6 @@ function displaySuggestions(suggestions) {
       suggestionsList.innerHTML = '';
       clearBtn.classList.add('active');
 
-      // Trigger search with selected suggestion
       performSearch(parseFloat(suggestion.lat), parseFloat(suggestion.lon), suggestion.display_name);
     });
 
@@ -376,14 +350,12 @@ function getLocationIcon(type) {
   return icons[type] || '📍';
 }
 
-// Close suggestions when clicking outside
 document.addEventListener('click', function(e) {
   if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
     suggestionsList.classList.remove('active');
   }
 });
 
-// Perform search function
 function performSearch(lat, lng, displayName) {
   if (userMarker) {
     map.removeLayer(userMarker);
@@ -408,7 +380,6 @@ function performSearch(lat, lng, displayName) {
   userLocation = { lat: lat, lng: lng };
   displayMosques(lat, lng);
 
-  // Update status message
   const statusMsg = document.getElementById('statusMsg');
   statusMsg.textContent = `Location found! Showing nearby mosques within ${currentRadius} km.`;
   statusMsg.className = "text-sm font-medium mt-3 text-center text-green-600";
@@ -487,7 +458,6 @@ document.getElementById("findNearbyBtn").addEventListener("click", function () {
 document.getElementById("searchBtn").addEventListener("click", searchLocation);
 document.getElementById("searchInput").addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
-    // Close suggestions and search
     suggestionsList.classList.remove('active');
     searchLocation();
   }
@@ -500,7 +470,6 @@ function searchLocation() {
     return;
   }
 
-  // Bangladesh bounding box coordinates
   const bangladeshBounds = '88.0,20.5,92.7,26.6';
 
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
@@ -527,43 +496,28 @@ const suggestionPopup = document.getElementById('suggestionPopup');
 const closeSuggestionPopup = document.getElementById('closeSuggestionPopup');
 const maybeLaterBtn = document.getElementById('maybeLaterBtn');
 
-// Check if popup was already shown in this session
 const popupShown = sessionStorage.getItem('suggestionPopupShown');
 
-// Show popup after 4 seconds if not shown before
 if (!popupShown) {
   setTimeout(() => {
     suggestionPopup.classList.add('active');
     document.body.style.overflow = 'hidden';
-
-    // Mark as shown in session
     sessionStorage.setItem('suggestionPopupShown', 'true');
-  }, 4000); // 4000ms = 4 seconds
+  }, 4000);
 }
 
-// Close popup when clicking X button
 closeSuggestionPopup.addEventListener('click', () => {
   suggestionPopup.classList.remove('active');
   document.body.style.overflow = 'auto';
 });
 
-// Close popup when clicking "Maybe Later"
 maybeLaterBtn.addEventListener('click', () => {
   suggestionPopup.classList.remove('active');
   document.body.style.overflow = 'auto';
 });
 
-// Close popup when clicking outside
 suggestionPopup.addEventListener('click', (e) => {
   if (e.target === suggestionPopup) {
-    suggestionPopup.classList.remove('active');
-    document.body.style.overflow = 'auto';
-  }
-});
-
-// Close popup with Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && suggestionPopup.classList.contains('active')) {
     suggestionPopup.classList.remove('active');
     document.body.style.overflow = 'auto';
   }

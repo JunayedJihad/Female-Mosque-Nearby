@@ -46,7 +46,8 @@
     }
 
     input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
       padding: 15px;
       margin: 10px 0;
@@ -207,7 +208,6 @@
       background: #f59e0b !important;
     }
 
-    /* Mobile Responsive */
     @media (max-width: 768px) {
       body {
         padding: 10px;
@@ -226,7 +226,8 @@
       }
 
       input,
-      textarea {
+      textarea,
+      select {
         padding: 12px;
         font-size: 14px;
       }
@@ -306,7 +307,7 @@
             <li>Paste any Google Maps link</li>
             <li>For short links: click it first, then copy the full URL</li>
             <li>Click "Extract Coordinates"</li>
-            <li>Select the division</li>
+            <li>Select the district (auto-detected)</li>
             <li>System will check for duplicates automatically</li>
             <li>Verify and click "Add to Database"</li>
           </ol>
@@ -325,17 +326,72 @@
           <p><strong>Longitude:</strong> <span id="extractedLng"></span></p>
           <input type="text" id="editName" placeholder="Edit name if needed..." style="margin-top: 10px;">
 
-          <select id="divisionSelect"
-            style="width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #667eea; border-radius: 10px; font-size: 16px;">
-            <option value="">Select Division</option>
-            <option value="Dhaka">Dhaka</option>
-            <option value="Chattogram">Chattogram</option>
-            <option value="Rajshahi">Rajshahi</option>
-            <option value="Khulna">Khulna</option>
+          <select id="districtSelect">
+            <option value="">Select District</option>
+            <option value="Bagerhat">Bagerhat</option>
+            <option value="Bandarban">Bandarban</option>
+            <option value="Barguna">Barguna</option>
             <option value="Barishal">Barishal</option>
-            <option value="Sylhet">Sylhet</option>
-            <option value="Rangpur">Rangpur</option>
+            <option value="Bhola">Bhola</option>
+            <option value="Bogura">Bogura</option>
+            <option value="Brahmanbaria">Brahmanbaria</option>
+            <option value="Chandpur">Chandpur</option>
+            <option value="Chapainawabganj">Chapainawabganj</option>
+            <option value="Chattogram">Chattogram</option>
+            <option value="Chuadanga">Chuadanga</option>
+            <option value="Cox's Bazar">Cox's Bazar</option>
+            <option value="Cumilla">Cumilla</option>
+            <option value="Dhaka">Dhaka</option>
+            <option value="Dinajpur">Dinajpur</option>
+            <option value="Faridpur">Faridpur</option>
+            <option value="Feni">Feni</option>
+            <option value="Gaibandha">Gaibandha</option>
+            <option value="Gazipur">Gazipur</option>
+            <option value="Gopalganj">Gopalganj</option>
+            <option value="Habiganj">Habiganj</option>
+            <option value="Jamalpur">Jamalpur</option>
+            <option value="Jashore">Jashore</option>
+            <option value="Jhalokathi">Jhalokathi</option>
+            <option value="Jhenaidah">Jhenaidah</option>
+            <option value="Joypurhat">Joypurhat</option>
+            <option value="Khagrachhari">Khagrachhari</option>
+            <option value="Khulna">Khulna</option>
+            <option value="Kishoreganj">Kishoreganj</option>
+            <option value="Kurigram">Kurigram</option>
+            <option value="Kushtia">Kushtia</option>
+            <option value="Lakshmipur">Lakshmipur</option>
+            <option value="Lalmonirhat">Lalmonirhat</option>
+            <option value="Madaripur">Madaripur</option>
+            <option value="Magura">Magura</option>
+            <option value="Manikganj">Manikganj</option>
+            <option value="Meherpur">Meherpur</option>
+            <option value="Moulvibazar">Moulvibazar</option>
+            <option value="Munshiganj">Munshiganj</option>
             <option value="Mymensingh">Mymensingh</option>
+            <option value="Naogaon">Naogaon</option>
+            <option value="Narail">Narail</option>
+            <option value="Narayanganj">Narayanganj</option>
+            <option value="Narsingdi">Narsingdi</option>
+            <option value="Natore">Natore</option>
+            <option value="Netrokona">Netrokona</option>
+            <option value="Nilphamari">Nilphamari</option>
+            <option value="Noakhali">Noakhali</option>
+            <option value="Pabna">Pabna</option>
+            <option value="Panchagarh">Panchagarh</option>
+            <option value="Patuakhali">Patuakhali</option>
+            <option value="Pirojpur">Pirojpur</option>
+            <option value="Rajbari">Rajbari</option>
+            <option value="Rajshahi">Rajshahi</option>
+            <option value="Rangamati">Rangamati</option>
+            <option value="Rangpur">Rangpur</option>
+            <option value="Satkhira">Satkhira</option>
+            <option value="Shariatpur">Shariatpur</option>
+            <option value="Sherpur">Sherpur</option>
+            <option value="Sirajganj">Sirajganj</option>
+            <option value="Sunamganj">Sunamganj</option>
+            <option value="Sylhet">Sylhet</option>
+            <option value="Tangail">Tangail</option>
+            <option value="Thakurgaon">Thakurgaon</option>
           </select>
 
           <button onclick="addToDatabase()" id="addBtn">Add to Database</button>
@@ -351,7 +407,8 @@
         <h2>All Mosques (Total: <span id="totalCount">0</span>)</h2>
 
         <button onclick="loadMosques()" style="background: #10b981;">Refresh List</button>
-        <!-- <button onclick="bulkUpdateDivisions()" class="bulk-update-btn">Auto-Assign Divisions to Old Data</button> -->
+        <!-- <button onclick="previewMigration()" style="background: #3b82f6 !important;">Preview Migration (Safe)</button> -->
+        <!-- <button onclick="migrateToDistricts()" class="bulk-update-btn">Migrate Division → District</button> -->
 
         <div class="search-bar">
           <input type="text" id="searchInput" placeholder="Search by name or location..." onkeyup="searchMosques()">
@@ -366,7 +423,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, deleteField } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
     const firebaseConfig = {
@@ -382,7 +439,6 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // Make globally available
     window.db = db;
     window.auth = auth;
     window.collection = collection;
@@ -390,13 +446,11 @@
     window.getDocs = getDocs;
     window.deleteDoc = deleteDoc;
     window.doc = doc;
-    window.query = query;
-    window.where = where;
     window.updateDoc = updateDoc;
+    window.deleteField = deleteField;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
     window.signOut = signOut;
 
-    // Check auth state
     onAuthStateChanged(auth, (user) => {
       if (user) {
         document.getElementById('loginScreen').style.display = 'none';
@@ -494,6 +548,85 @@
       return duplicates;
     }
 
+    function autoDetectDistrict(name, lat, lng) {
+      const lowerName = name.toLowerCase();
+
+      const districtKeywords = {
+        'Bagerhat': ['bagerhat'],
+        'Bandarban': ['bandarban'],
+        'Barguna': ['barguna'],
+        'Barishal': ['barishal', 'barisal'],
+        'Bhola': ['bhola'],
+        'Bogura': ['bogura', 'bogra'],
+        'Brahmanbaria': ['brahmanbaria', 'brahman baria'],
+        'Chandpur': ['chandpur'],
+        'Chapainawabganj': ['chapainawabganj', 'chapai nawabganj', 'nawabganj'],
+        'Chattogram': ['chattogram', 'chittagong', 'chattagram'],
+        'Chuadanga': ['chuadanga'],
+        "Cox's Bazar": ["cox's bazar", "cox bazar", "coxs bazar", "coxsbazar"],
+        'Cumilla': ['cumilla', 'comilla'],
+        'Dhaka': ['dhaka', 'dhanmondi', 'mirpur', 'uttara', 'gulshan', 'banani', 'mohammadpur', 'badda', 'rampura', 'khilgaon', 'jatrabari', 'shahbag', 'tejgaon', 'motijheel', 'paltan', 'panthapath', 'farmgate', 'karwan bazar', 'shantinagar', 'malibagh', 'bailey road', 'kakrail', 'segunbagicha'],
+        'Dinajpur': ['dinajpur'],
+        'Faridpur': ['faridpur'],
+        'Feni': ['feni'],
+        'Gaibandha': ['gaibandha'],
+        'Gazipur': ['gazipur'],
+        'Gopalganj': ['gopalganj'],
+        'Habiganj': ['habiganj', 'habigonj'],
+        'Jamalpur': ['jamalpur'],
+        'Jashore': ['jashore', 'jessore'],
+        'Jhalokathi': ['jhalokathi', 'jhalakathi'],
+        'Jhenaidah': ['jhenaidah', 'jhenidah'],
+        'Joypurhat': ['joypurhat'],
+        'Khagrachhari': ['khagrachhari', 'khagrachari'],
+        'Khulna': ['khulna'],
+        'Kishoreganj': ['kishoreganj', 'kishoregonj'],
+        'Kurigram': ['kurigram'],
+        'Kushtia': ['kushtia'],
+        'Lakshmipur': ['lakshmipur', 'laxmipur'],
+        'Lalmonirhat': ['lalmonirhat'],
+        'Madaripur': ['madaripur'],
+        'Magura': ['magura'],
+        'Manikganj': ['manikganj'],
+        'Meherpur': ['meherpur'],
+        'Moulvibazar': ['moulvibazar', 'moulvi bazar'],
+        'Munshiganj': ['munshiganj', 'munshigonj'],
+        'Mymensingh': ['mymensingh', 'mymensing'],
+        'Naogaon': ['naogaon'],
+        'Narail': ['narail'],
+        'Narayanganj': ['narayanganj', 'narayangonj'],
+        'Narsingdi': ['narsingdi'],
+        'Natore': ['natore'],
+        'Netrokona': ['netrokona', 'netrakona'],
+        'Nilphamari': ['nilphamari'],
+        'Noakhali': ['noakhali'],
+        'Pabna': ['pabna'],
+        'Panchagarh': ['panchagarh'],
+        'Patuakhali': ['patuakhali'],
+        'Pirojpur': ['pirojpur'],
+        'Rajbari': ['rajbari'],
+        'Rajshahi': ['rajshahi'],
+        'Rangamati': ['rangamati'],
+        'Rangpur': ['rangpur'],
+        'Satkhira': ['satkhira', 'shatkhira'],
+        'Shariatpur': ['shariatpur'],
+        'Sherpur': ['sherpur'],
+        'Sirajganj': ['sirajganj', 'sirajgonj'],
+        'Sunamganj': ['sunamganj', 'sunamgonj'],
+        'Sylhet': ['sylhet', 'silhet'],
+        'Tangail': ['tangail'],
+        'Thakurgaon': ['thakurgaon']
+      };
+
+      for (const [district, keywords] of Object.entries(districtKeywords)) {
+        if (keywords.some(keyword => lowerName.includes(keyword))) {
+          return district;
+        }
+      }
+
+      return '';
+    }
+
     function extractCoordinates() {
       const link = document.getElementById('mapsLink').value.trim();
 
@@ -550,9 +683,8 @@
 
         extractedData = { name, lat, lng };
 
-        // Auto-select division based on coordinates
-        const suggestedDivision = autoDetectDivision(name, lat, lng);
-        document.getElementById('divisionSelect').value = suggestedDivision;
+        const suggestedDistrict = autoDetectDistrict(name, lat, lng);
+        document.getElementById('districtSelect').value = suggestedDistrict;
 
         checkForDuplicates(lat, lng, name).then(duplicates => {
           currentDuplicates = duplicates;
@@ -588,39 +720,6 @@
       }
     }
 
-    function autoDetectDivision(name, lat, lng) {
-      // Check by coordinates first (most accurate)
-      if (lat >= 23.6 && lat <= 24.0 && lng >= 90.3 && lng <= 90.5) return 'Dhaka';
-      if (lat >= 22.2 && lat <= 22.5 && lng >= 91.7 && lng <= 92.0) return 'Chattogram';
-      if (lat >= 24.3 && lat <= 24.4 && lng >= 88.5 && lng <= 88.7) return 'Rajshahi';
-      if (lat >= 22.8 && lat <= 22.9 && lng >= 89.5 && lng <= 89.6) return 'Khulna';
-      if (lat >= 22.6 && lat <= 22.8 && lng >= 90.3 && lng <= 90.4) return 'Barishal';
-      if (lat >= 24.8 && lat <= 24.9 && lng >= 91.8 && lng <= 91.9) return 'Sylhet';
-      if (lat >= 25.7 && lat <= 25.8 && lng >= 89.2 && lng <= 89.3) return 'Rangpur';
-      if (lat >= 24.7 && lat <= 24.8 && lng >= 90.3 && lng <= 90.5) return 'Mymensingh';
-
-      // Fallback to name matching
-      const lowerName = name.toLowerCase();
-      const keywords = {
-        'Dhaka': ['dhaka', 'dhanmondi', 'mirpur', 'uttara', 'gulshan', 'banani', 'mohammadpur', 'badda', 'rampura', 'khilgaon', 'jatrabari', 'shahbag', 'tejgaon', 'motijheel', 'paltan', 'elephant road', 'panthapath', 'farmgate', 'karwan bazar', 'shantinagar', 'malibagh', 'bailey road', 'kakrail', 'segunbagicha'],
-        'Chattogram': ['chattogram', 'chittagong', 'chattagram'],
-        'Rajshahi': ['rajshahi'],
-        'Khulna': ['khulna'],
-        'Barishal': ['barishal', 'barisal'],
-        'Sylhet': ['sylhet', 'silhet'],
-        'Rangpur': ['rangpur'],
-        'Mymensingh': ['mymensingh', 'mymensing']
-      };
-
-      for (const [division, words] of Object.entries(keywords)) {
-        if (words.some(word => lowerName.includes(word))) {
-          return division;
-        }
-      }
-
-      return '';
-    }
-
     function highlightDuplicates(duplicates) {
       document.querySelectorAll('.mosque-item').forEach(item => {
         item.classList.remove('duplicate');
@@ -649,9 +748,9 @@
         return;
       }
 
-      const selectedDivision = document.getElementById('divisionSelect').value;
-      if (!selectedDivision) {
-        showError('Please select a division');
+      const selectedDistrict = document.getElementById('districtSelect').value;
+      if (!selectedDistrict) {
+        showError('Please select a district');
         return;
       }
 
@@ -669,7 +768,7 @@
           name: editedName,
           lat: extractedData.lat,
           lng: extractedData.lng,
-          division: selectedDivision,
+          district: selectedDistrict,
           createdAt: new Date().toISOString()
         });
 
@@ -690,42 +789,191 @@
       document.getElementById('addBtn').textContent = 'Add to Database';
     }
 
-    async function bulkUpdateDivisions() {
-      if (!confirm('This will automatically assign divisions to all locations without one. Continue?')) {
-        return;
-      }
+    // async function previewMigration() {
+    //   console.clear();
+    //   console.log('%c=== MIGRATION PREVIEW (NO CHANGES WILL BE MADE) ===', 'color: #3b82f6; font-size: 16px; font-weight: bold;');
+    //   console.log('');
 
-      const loadingMsg = document.createElement('div');
-      loadingMsg.className = 'loading';
-      loadingMsg.style.display = 'block';
-      loadingMsg.textContent = 'Updating divisions...';
-      document.getElementById('mosqueList').prepend(loadingMsg);
+    //   const loadingMsg = document.createElement('div');
+    //   loadingMsg.className = 'loading';
+    //   loadingMsg.style.display = 'block';
+    //   loadingMsg.textContent = 'Analyzing data... (Check browser console)';
+    //   document.getElementById('mosqueList').prepend(loadingMsg);
 
-      try {
-        const querySnapshot = await window.getDocs(window.collection(window.db, 'mosques'));
-        let updated = 0;
+    //   try {
+    //     const querySnapshot = await window.getDocs(window.collection(window.db, 'mosques'));
+    //     let willUpdate = 0;
+    //     let alreadyMigrated = 0;
+    //     let noChange = 0;
 
-        for (const docSnap of querySnapshot.docs) {
-          const data = docSnap.data();
+    //     const changes = [];
 
-          if (!data.division) {
-            const division = autoDetectDivision(data.name, data.lat, data.lng);
+    //     querySnapshot.forEach((docSnap) => {
+    //       const data = docSnap.data();
+    //       const currentDivision = data.division;
+    //       const currentDistrict = data.district;
 
-            await window.updateDoc(window.doc(window.db, 'mosques', docSnap.id), {
-              division: division || 'Other'
-            });
-            updated++;
-          }
-        }
+    //       if (currentDivision && !currentDistrict) {
+    //         // This record will be updated
+    //         let newDistrict = currentDivision;
 
-        loadingMsg.remove();
-        showSuccess(`Updated ${updated} locations with divisions`);
-        loadMosques();
-      } catch (error) {
-        loadingMsg.remove();
-        showError('Error updating divisions: ' + error.message);
-      }
-    }
+    //         // If division is one of the 8 major divisions, try to detect actual district
+    //         if (['Dhaka', 'Chattogram', 'Rajshahi', 'Khulna', 'Barishal', 'Sylhet', 'Rangpur', 'Mymensingh'].includes(currentDivision)) {
+    //           const detected = autoDetectDistrict(data.name, data.lat, data.lng);
+    //           newDistrict = detected || currentDivision;
+    //         }
+
+    //         changes.push({
+    //           id: docSnap.id,
+    //           name: data.name,
+    //           oldValue: currentDivision,
+    //           newValue: newDistrict,
+    //           action: 'UPDATE',
+    //           changed: currentDivision !== newDistrict
+    //         });
+
+    //         willUpdate++;
+    //       } else if (currentDistrict && !currentDivision) {
+    //         // Already migrated
+    //         changes.push({
+    //           id: docSnap.id,
+    //           name: data.name,
+    //           district: currentDistrict,
+    //           action: 'SKIP',
+    //           reason: 'Already has district field'
+    //         });
+    //         alreadyMigrated++;
+    //       } else if (currentDistrict && currentDivision) {
+    //         // Has both fields
+    //         changes.push({
+    //           id: docSnap.id,
+    //           name: data.name,
+    //           oldValue: currentDivision,
+    //           currentDistrict: currentDistrict,
+    //           action: 'CLEANUP',
+    //           reason: 'Has both fields, will remove division'
+    //         });
+    //         willUpdate++;
+    //       } else {
+    //         // No division or district
+    //         changes.push({
+    //           id: docSnap.id,
+    //           name: data.name,
+    //           action: 'ERROR',
+    //           reason: 'No division or district field'
+    //         });
+    //         noChange++;
+    //       }
+    //     });
+
+    //     loadingMsg.remove();
+
+    //     // Console output
+    //     console.log('%c📊 SUMMARY:', 'color: #10b981; font-size: 14px; font-weight: bold;');
+    //     console.log(`Total records: ${querySnapshot.size}`);
+    //     console.log(`Will be updated: ${willUpdate}`);
+    //     console.log(`Already migrated: ${alreadyMigrated}`);
+    //     console.log(`No changes needed: ${noChange}`);
+    //     console.log('');
+
+    //     // Show records that will be updated
+    //     console.log('%c🔄 RECORDS THAT WILL BE UPDATED:', 'color: #f59e0b; font-size: 14px; font-weight: bold;');
+    //     changes.filter(c => c.action === 'UPDATE' || c.action === 'CLEANUP').forEach((change, index) => {
+    //       console.group(`${index + 1}. ${change.name}`);
+    //       console.log(`ID: ${change.id}`);
+    //       if (change.action === 'UPDATE') {
+    //         console.log(`Division (old): %c${change.oldValue}`, 'color: #ef4444;');
+    //         console.log(`District (new): %c${change.newValue}`, 'color: #10b981;');
+    //         if (change.changed) {
+    //           console.log('%c⚠️ District detected from name/location', 'color: #f59e0b;');
+    //         }
+    //       } else if (change.action === 'CLEANUP') {
+    //         console.log(`Division (will remove): %c${change.oldValue}`, 'color: #ef4444;');
+    //         console.log(`District (keeping): %c${change.currentDistrict}`, 'color: #10b981;');
+    //       }
+    //       console.groupEnd();
+    //     });
+    //     console.log('');
+
+    //     // Show already migrated
+    //     if (alreadyMigrated > 0) {
+    //       console.log('%c✅ ALREADY MIGRATED (will skip):', 'color: #10b981; font-size: 14px; font-weight: bold;');
+    //       changes.filter(c => c.action === 'SKIP').forEach((change, index) => {
+    //         console.log(`${index + 1}. ${change.name} - District: ${change.district}`);
+    //       });
+    //       console.log('');
+    //     }
+
+    //     // Show errors
+    //     if (noChange > 0) {
+    //       console.log('%c❌ RECORDS WITH ISSUES:', 'color: #ef4444; font-size: 14px; font-weight: bold;');
+    //       changes.filter(c => c.action === 'ERROR').forEach((change, index) => {
+    //         console.log(`${index + 1}. ${change.name} - ${change.reason}`);
+    //       });
+    //       console.log('');
+    //     }
+
+    //     console.log('%c=== END OF PREVIEW ===', 'color: #3b82f6; font-size: 16px; font-weight: bold;');
+    //     console.log('');
+    //     console.log('%cℹ️  No changes were made to the database. Review the changes above.', 'color: #6b7280; font-style: italic;');
+    //     console.log('%cℹ️  If everything looks good, click "Migrate Division → District" button.', 'color: #6b7280; font-style: italic;');
+
+    //     showSuccess(`Preview complete! ${willUpdate} records will be updated, ${alreadyMigrated} already migrated. Check browser console (F12) for details.`);
+
+    //   } catch (error) {
+    //     loadingMsg.remove();
+    //     showError('Error previewing migration: ' + error.message);
+    //     console.error('Preview error:', error);
+    //   }
+    // }
+
+    // async function migrateToDistricts() {
+    //   if (!confirm('This will migrate all "division" fields to "district" fields. This is a ONE-TIME operation. Continue?')) {
+    //     return;
+    //   }
+
+    //   const loadingMsg = document.createElement('div');
+    //   loadingMsg.className = 'loading';
+    //   loadingMsg.style.display = 'block';
+    //   loadingMsg.textContent = 'Migrating division → district...';
+    //   document.getElementById('mosqueList').prepend(loadingMsg);
+
+    //   try {
+    //     const querySnapshot = await window.getDocs(window.collection(window.db, 'mosques'));
+    //     let updated = 0;
+    //     let skipped = 0;
+
+    //     for (const docSnap of querySnapshot.docs) {
+    //       const data = docSnap.data();
+
+    //       if (data.division && !data.district) {
+    //         let districtValue = data.division;
+
+    //         if (data.division === 'Dhaka' || data.division === 'Chattogram' ||
+    //             data.division === 'Rajshahi' || data.division === 'Khulna' ||
+    //             data.division === 'Barishal' || data.division === 'Sylhet' ||
+    //             data.division === 'Rangpur' || data.division === 'Mymensingh') {
+    //           districtValue = autoDetectDistrict(data.name, data.lat, data.lng) || data.division;
+    //         }
+
+    //         await window.updateDoc(window.doc(window.db, 'mosques', docSnap.id), {
+    //           district: districtValue,
+    //           division: window.deleteField()
+    //         });
+    //         updated++;
+    //       } else if (data.district) {
+    //         skipped++;
+    //       }
+    //     }
+
+    //     loadingMsg.remove();
+    //     showSuccess(`Migration complete! Updated: ${updated}, Already migrated: ${skipped}`);
+    //     loadMosques();
+    //   } catch (error) {
+    //     loadingMsg.remove();
+    //     showError('Error migrating data: ' + error.message);
+    //   }
+    // }
 
     async function loadMosques() {
       try {
@@ -779,7 +1027,7 @@
         div.innerHTML = `
           <div>
             <strong>${mosque.name}</strong><br>
-            <small>Division: ${mosque.division || 'Not set'} | Lat: ${mosque.lat}, Lng: ${mosque.lng}</small>
+            <small>District: ${mosque.district || mosque.division || 'Not set'} | Lat: ${mosque.lat}, Lng: ${mosque.lng}</small>
           </div>
           <button class="delete-btn" onclick="deleteMosque('${mosque.id}', '${mosque.name.replace(/'/g, "\\'")}')">
             Delete

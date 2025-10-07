@@ -1040,14 +1040,14 @@ body.dark-mode .mosque-list-name {
   }
 }
 
-/* division Filter */
-.division-filter-container {
+/* district Filter */
+.district-filter-container {
   padding: 15px 30px;  /* Reduced from 20px to 15px */
   background: rgba(102, 126, 234, 0.05);
   border-bottom: 1px solid rgba(102, 126, 234, 0.1);
 }
 
-.division-filter-label {
+.district-filter-label {
   display: block;
   font-weight: 600;
   color: #667eea;
@@ -1055,7 +1055,7 @@ body.dark-mode .mosque-list-name {
   font-size: 14px;
 }
 
-.division-filter-select {
+.district-filter-select {
   width: 100%;
   padding: 10px 15px;
   border: 2px solid #667eea;
@@ -1068,46 +1068,46 @@ body.dark-mode .mosque-list-name {
   transition: all 0.3s;
 }
 
-.division-filter-select:hover {
+.district-filter-select:hover {
   border-color: #764ba2;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
-.division-filter-select:focus {
+.district-filter-select:focus {
   outline: none;
   border-color: #764ba2;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-body.dark-mode .division-filter-container {
+body.dark-mode .district-filter-container {
   background: rgba(167, 139, 250, 0.1);
   border-bottom-color: rgba(167, 139, 250, 0.2);
 }
 
-body.dark-mode .division-filter-label {
+body.dark-mode .district-filter-label {
   color: #a78bfa;
 }
 
-body.dark-mode .division-filter-select {
+body.dark-mode .district-filter-select {
   background: rgba(26, 32, 44, 0.8);
   color: #e2e8f0;
   border-color: rgba(167, 139, 250, 0.5);
 }
 
-body.dark-mode .division-filter-select:hover {
+body.dark-mode .district-filter-select:hover {
   border-color: #a78bfa;
 }
 
 @media (max-width: 768px) {
-  .division-filter-container {
+  .district-filter-container {
     padding: 15px 20px;
   }
 
-  .division-filter-label {
+  .district-filter-label {
     font-size: 14px;
   }
 
-  .division-filter-select {
+  .district-filter-select {
     padding: 10px 12px;
     font-size: 14px;
   }
