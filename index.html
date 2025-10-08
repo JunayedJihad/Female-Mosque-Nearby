@@ -39,90 +39,70 @@
 </head>
 
 <body>
-  <!-- Dark Mode Toggle Button -->
-  <button id="darkModeToggle" class="dark-mode-toggle float-animation" aria-label="Toggle Dark Mode">
-    🌙
-  </button>
-
-  <!-- Admin Login Button -->
-  <a href="admin.html" class="admin-login-btn" aria-label="Admin Login">
-    🔐
-  </a>
-
-  <div class="container mx-auto px-4 py-8 max-w-5xl">
-    <!-- Header -->
-    <div class="glass-card rounded-3xl shadow-2xl p-8 mb-8 transform hover:scale-105 transition-all duration-300">
-      <div class="text-center">
-        <h1 class="text-5xl md:text-6xl font-extrabold gradient-text mb-3">
-          HerPrayerPlace
-        </h1>
-        <p class="text-gray-600 text-lg md:text-xl font-medium">
-          ✨ Discover nearby places with female prayer facilities ✨
-        </p>
-      </div>
-    </div>
-
-    <!-- Find Nearby Button -->
-    <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8">
-      <button id="findNearbyBtn"
-        class="w-full gradient-btn pulse-btn text-white font-bold py-4 px-8 rounded-full text-xl shadow-2xl transition duration-300">
-        📍 Find Nearby Places
+  <!-- Mobile Header -->
+    <div class="mobile-header">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
       </button>
-      <p id="statusMsg" class="text-sm font-medium mt-3 text-center"></p>
+      <div class="mobile-logo"><img src="preview.png" alt="" srcset="">HerPrayerPlace</div>
+      <button class="dark-mode-toggle-mobile" id="darkModeToggleMobile" aria-label="Toggle Dark Mode">🌙</button>
     </div>
 
-    <!-- Map with Slider -->
-    <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8">
-      <div id="map"></div>
-      <!-- Distance Slider Inside Map Section -->
-      <div class="distance-slider-compact">
-        <span class="distance-label-text">Search Radius:</span>
-        <input type="range" id="distanceSlider" min="0.5" max="5" step="0.5" value="1" class="distance-slider" />
-        <span class="distance-value-compact"><span id="distanceValue">1</span> km</span>
+    <!-- Sidebar Menu -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="mobile-sidebar" id="mobileSidebar">
+      <div class="sidebar-header">
+        <img src="preview.png" class="sidebar-img" alt="" srcset="">
+        <div class="sidebar-title">HerPrayerPlace</div>
       </div>
-    </div>
-
-    <!-- Search by Location -->
-    <div class="glass-card rounded-3xl shadow-2xl p-8 mb-8 search-section">
-      <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
-        🔍 Find by Location
-      </h2>
-      <div class="flex flex-col gap-3">
-        <div class="suggestions-container">
-          <div class="search-input-wrapper">
-            <input type="text" id="searchInput" placeholder="Enter location name..." autocomplete="off"
-              class="w-full px-6 py-4 pr-14 border-2 border-purple-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400 text-lg font-medium shadow-lg" />
-            <button id="clearBtn" class="clear-btn" aria-label="Clear search">✕</button>
-          </div>
-          <div id="suggestionsList" class="suggestions-list"></div>
+      <div class="sidebar-menu">
+        <div class="sidebar-item" id="sidebarViewAll">
+          <span class="sidebar-item-icon">🕌</span>
+          <span class="sidebar-item-text">View All Places</span>
         </div>
-        <button id="searchBtn"
-          class="search-btn text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg w-full sm:w-auto">
-          Search Now
-        </button>
-        <button id="viewAllMosquesBtn"
-          class="gradient-btn text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg w-full sm:w-auto">
-          View all the places
-        </button>
-      </div>
-    </div>
-
-    <!-- Suggest New Places Banner -->
-    <div class="glass-card rounded-3xl shadow-2xl p-6 mb-8 suggest-banner">
-      <div class="flex items-center justify-between flex-wrap gap-4">
-        <div class="flex items-center gap-4">
-          <div class="suggest-icon">✨</div>
-          <div>
-            <h3 class="text-xl font-bold text-gray-800 mb-1">Know a Place We're Missing?</h3>
-            <p class="text-sm text-gray-600">Help other sisters by suggesting new locations!</p>
-          </div>
+        <div class="sidebar-item" id="sidebarSuggest">
+          <span class="sidebar-item-icon">✨</span>
+          <span class="sidebar-item-text">Suggest a Place</span>
         </div>
-        <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6" class="suggest-banner-btn">
-          Suggest Now
+        <a href="admin.html" class="sidebar-item" id="sidebarAdmin">
+          <span class="sidebar-item-icon">🔐</span>
+          <span class="sidebar-item-text">Admin Login</span>
         </a>
       </div>
     </div>
 
+  <!-- Map Container -->
+  <div class="mobile-map-container">
+    <div id="mapMobile"></div>
+  </div>
+
+  <!-- Floating Action Buttons -->
+  <div class="fab-container">
+    <button class="fab" id="fabSearch" aria-label="Search">
+      🔍
+    </button>
+    <button class="fab fab-primary" id="fabLocate" aria-label="Find Nearby">
+      🗺️
+    </button>
+  </div>
+
+  <!-- Bottom Search Panel -->
+  <div class="bottom-search-panel" id="bottomSearchPanel">
+    <div class="search-panel-handle" id="searchPanelHandle"></div>
+    <div class="search-panel-content">
+      <h3 class="search-panel-title">🔍 Search Location</h3>
+      <input type="text" id="searchInputMobile" placeholder="Enter location..." class="mobile-search-input"
+        autocomplete="off" />
+      <button id="searchBtnMobile" class="mobile-search-btn">Search</button>
+      <button id="viewAllMosquesBtnMobile" class="mobile-view-all-btn">View All Places</button>
+
+      <div class="distance-slider-mobile">
+        <label class="distance-label-mobile">Search Radius: <span id="distanceValueMobile">1</span> km</label>
+        <input type="range" id="distanceSliderMobile" min="0.5" max="5" step="0.5" value="1" class="distance-slider" />
+      </div>
+    </div>
   </div>
 
   <!-- Mosque List Modal -->

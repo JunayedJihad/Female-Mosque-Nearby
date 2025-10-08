@@ -1,48 +1,67 @@
-// Dark Mode Toggle
-const darkModeToggle = document.getElementById('darkModeToggle');
+// Global variables
+let map, userMarker, mosqueMarkers = [], userLocation = null, radiusCircle = null, currentRadius = 1;
+
+// Dark Mode
 const body = document.body;
+const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
 
 // Check for saved dark mode preference
 const isDarkMode = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
 if (isDarkMode && isDarkMode.split('=')[1] === 'true') {
   body.classList.add('dark-mode');
-  darkModeToggle.textContent = '☀️';
+  if (darkModeToggleMobile) darkModeToggleMobile.textContent = '☀️';
 }
 
-darkModeToggle.addEventListener('click', () => {
-  body.classList.toggle('dark-mode');
-  const isDark = body.classList.contains('dark-mode');
-  darkModeToggle.textContent = isDark ? '☀️' : '🌙';
-  document.cookie = `darkMode=${isDark}; max-age=${365*24*60*60}; path=/`;
-});
+if (darkModeToggleMobile) {
+  darkModeToggleMobile.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    darkModeToggleMobile.textContent = isDark ? '☀️' : '🌙';
+    document.cookie = `darkMode=${isDark}; max-age=${365*24*60*60}; path=/`;
+  });
+}
 
-let map = L.map("map").setView([23.8103, 90.4125], 12);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "&copy; OpenStreetMap contributors",
-  maxZoom: 19,
-}).addTo(map);
+// Initialize map
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeMap);
+} else {
+  initializeMap();
+}
 
-let userMarker = null;
-let mosqueMarkers = [];
-let userLocation = null;
-let radiusCircle = null;
-let currentRadius = 1;
+function initializeMap() {
+  const mapElement = document.getElementById('mapMobile');
 
+  if (!mapElement) {
+    console.error('Map element not found!');
+    return;
+  }
+
+  map = L.map(mapElement).setView([23.8103, 90.4125], 12);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+    maxZoom: 19,
+  }).addTo(map);
+
+  setTimeout(() => {
+    map.invalidateSize();
+    if (window.mosqueLocations && window.mosqueLocations.length > 0) {
+      displayMosques();
+    }
+  }, 100);
+}
+
+// Helper functions
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a = Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLon / 2) ** 2;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function createPinIcon(url) {
-  let size = [32, 32];
-  if(window.innerWidth<=640) size=[25,25];
-  else if(window.innerWidth<=1024) size=[28,28];
+  let size = [25, 25];
   return L.icon({
     iconUrl: url,
     iconSize: size,
@@ -54,14 +73,6 @@ function createPinIcon(url) {
 let bluePin = createPinIcon("pin (1).png");
 let redPin = createPinIcon("pin.png");
 let grayPin = createPinIcon("pin (2).png");
-
-window.addEventListener("resize", ()=>{
-  bluePin=createPinIcon("pin (1).png");
-  redPin=createPinIcon("pin.png");
-  grayPin=createPinIcon("pin (2).png");
-  displayMosques(userLocation?.lat, userLocation?.lng);
-  if(userLocation && userMarker) userMarker.setIcon(bluePin);
-});
 
 function getDirectionsUrl(lat, lng) {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -76,19 +87,21 @@ function getDirectionsUrl(lat, lng) {
   }
 }
 
-function displayMosques(userLat=null, userLng=null){
-  mosqueMarkers.forEach(m=>map.removeLayer(m));
-  mosqueMarkers=[];
-  window.mosqueLocations.forEach(m=>{
-    let icon=grayPin;
-    let distance=null;
-    if(userLat!==null && userLng!==null){
-      distance=calculateDistance(userLat,userLng,m.lat,m.lng);
-      if(distance<=currentRadius) icon=redPin;
+function displayMosques(userLat = null, userLng = null) {
+  if (!map) return;
+  mosqueMarkers.forEach(m => map.removeLayer(m));
+  mosqueMarkers = [];
+
+  window.mosqueLocations.forEach(m => {
+    let icon = grayPin;
+    let distance = null;
+    if (userLat !== null && userLng !== null) {
+      distance = calculateDistance(userLat, userLng, m.lat, m.lng);
+      if (distance <= currentRadius) icon = redPin;
     }
-    const marker=L.marker([m.lat,m.lng],{icon}).addTo(map);
-    let popupContent=`<strong>${m.name}</strong>`;
-    if(distance!==null) popupContent+=`<br>Distance: ${distance.toFixed(2)} km`;
+    const marker = L.marker([m.lat, m.lng], {icon}).addTo(map);
+    let popupContent = `<strong>${m.name}</strong>`;
+    if (distance !== null) popupContent += `<br>Distance: ${distance.toFixed(2)} km`;
 
     const directionsUrl = getDirectionsUrl(m.lat, m.lng);
     popupContent += `<br><a href="${directionsUrl}" target="_blank" class="directions-btn">🧭 Get Directions</a>`;
@@ -98,37 +111,64 @@ function displayMosques(userLat=null, userLng=null){
   });
 }
 
-// Distance Slider Functionality
-const distanceSlider = document.getElementById('distanceSlider');
-const distanceValue = document.getElementById('distanceValue');
-const statusMsg = document.getElementById('statusMsg');
+function getLocationIcon(type) {
+  const icons = {
+    'city': '🏙️', 'town': '🏘️', 'village': '🏡', 'suburb': '🏘️',
+    'neighbourhood': '🏠', 'road': '🛣️', 'building': '🏢', 'hospital': '🏥',
+    'school': '🏫', 'university': '🎓', 'mosque': '🕌', 'restaurant': '🍽️',
+    'cafe': '☕', 'shop': '🛍️', 'market': '🏪', 'park': '🌳', 'stadium': '🏟️'
+  };
+  return icons[type] || '📍';
+}
 
-distanceSlider.addEventListener('input', function() {
-  currentRadius = parseFloat(this.value);
-  distanceValue.textContent = currentRadius;
+function performSearch(lat, lng, displayName) {
+  if (!map) return;
 
-  if (userLocation) {
-    if (radiusCircle) {
-      map.removeLayer(radiusCircle);
+  if (userMarker) map.removeLayer(userMarker);
+  if (radiusCircle) map.removeLayer(radiusCircle);
+
+  radiusCircle = L.circle([lat, lng], {
+    color: "#667eea",
+    fillColor: "#a78bfa",
+    fillOpacity: 0.2,
+    radius: currentRadius * 1000,
+  }).addTo(map);
+
+  userMarker = L.marker([lat, lng], {icon: bluePin}).addTo(map);
+  userMarker.bindPopup(`<strong>Searched Location</strong><br>${displayName}`).openPopup();
+
+  map.setView([lat, lng], 14);
+  userLocation = { lat, lng };
+  displayMosques(lat, lng);
+}
+
+window.displayMosques = displayMosques;
+
+// Distance Slider
+const distanceSliderMobile = document.getElementById('distanceSliderMobile');
+const distanceValueMobile = document.getElementById('distanceValueMobile');
+
+if (distanceSliderMobile) {
+  distanceSliderMobile.addEventListener('input', function() {
+    currentRadius = parseFloat(this.value);
+    if (distanceValueMobile) distanceValueMobile.textContent = currentRadius;
+
+    if (userLocation && map) {
+      if (radiusCircle) map.removeLayer(radiusCircle);
+      radiusCircle = L.circle([userLocation.lat, userLocation.lng], {
+        color: "#667eea",
+        fillColor: "#a78bfa",
+        fillOpacity: 0.2,
+        radius: currentRadius * 1000,
+      }).addTo(map);
+      displayMosques(userLocation.lat, userLocation.lng);
     }
+  });
+}
 
-    radiusCircle = L.circle([userLocation.lat, userLocation.lng], {
-      color: "#667eea",
-      fillColor: "#a78bfa",
-      fillOpacity: 0.2,
-      radius: currentRadius * 1000,
-    }).addTo(map);
-
-    displayMosques(userLocation.lat, userLocation.lng);
-
-    statusMsg.textContent = `Location found! Showing nearby mosques within ${currentRadius} km.`;
-    statusMsg.className = "text-sm font-medium mt-3 text-center text-green-600";
-  }
-});
-
-// Mosque List Modal Functionality
+// Mosque List Modal
 const mosqueModal = document.getElementById('mosqueModal');
-const viewAllMosquesBtn = document.getElementById('viewAllMosquesBtn');
+const viewAllMosquesBtnMobile = document.getElementById('viewAllMosquesBtnMobile');
 const closeMosqueModal = document.getElementById('closeMosqueModal');
 const mosqueListContainer = document.getElementById('mosqueListContainer');
 const mosqueCount = document.getElementById('mosqueCount');
@@ -137,18 +177,14 @@ function populateMosqueList() {
   mosqueListContainer.innerHTML = '';
 
   const districtFilter = document.getElementById('districtFilter');
-  if (districtFilter) {
-    districtFilter.value = 'all';
-  }
+  if (districtFilter) districtFilter.value = 'all';
 
   mosqueCount.textContent = `${window.mosqueLocations.length} Places`;
 
   window.mosqueLocations.forEach((mosque, index) => {
     const item = document.createElement('div');
     item.className = 'mosque-list-item';
-
-    const district = mosque.district || 'Other';
-    item.setAttribute('data-district', district);
+    item.setAttribute('data-district', mosque.district || 'Other');
 
     item.innerHTML = `
       <div class="mosque-list-number">${index + 1}</div>
@@ -167,7 +203,7 @@ function populateMosqueList() {
         }
       });
 
-      document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     mosqueListContainer.appendChild(item);
@@ -181,7 +217,6 @@ function filterByDistrict() {
 
   allItems.forEach(item => {
     const itemDistrict = item.getAttribute('data-district');
-
     if (selectedDistrict === 'all' || itemDistrict === selectedDistrict) {
       item.style.display = 'flex';
       visibleCount++;
@@ -199,306 +234,150 @@ function filterByDistrict() {
   }
 }
 
-window.displayMosques = displayMosques;
 window.populateMosqueList = populateMosqueList;
 window.filterByDistrict = filterByDistrict;
 
-viewAllMosquesBtn.addEventListener('click', () => {
-  populateMosqueList();
-  mosqueModal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-});
+if (viewAllMosquesBtnMobile) {
+  viewAllMosquesBtnMobile.addEventListener('click', () => {
+    populateMosqueList();
+    mosqueModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+}
 
-closeMosqueModal.addEventListener('click', () => {
-  mosqueModal.classList.remove('active');
-  document.body.style.overflow = 'auto';
-});
-
-mosqueModal.addEventListener('click', (e) => {
-  if (e.target === mosqueModal) {
+if (closeMosqueModal) {
+  closeMosqueModal.addEventListener('click', () => {
     mosqueModal.classList.remove('active');
     document.body.style.overflow = 'auto';
-  }
-});
+  });
+}
 
+if (mosqueModal) {
+  mosqueModal.addEventListener('click', (e) => {
+    if (e.target === mosqueModal) {
+      mosqueModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+}
+
+// Escape key handler
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (suggestionPopup.classList.contains('active')) {
+    const suggestionPopup = document.getElementById('suggestionPopup');
+    if (suggestionPopup && suggestionPopup.classList.contains('active')) {
       suggestionPopup.classList.remove('active');
       document.body.style.overflow = 'auto';
-    } else if (mosqueModal.classList.contains('active')) {
+    } else if (mosqueModal && mosqueModal.classList.contains('active')) {
       mosqueModal.classList.remove('active');
       document.body.style.overflow = 'auto';
     }
   }
 });
 
-// Autocomplete functionality
-const searchInput = document.getElementById('searchInput');
-const suggestionsList = document.getElementById('suggestionsList');
-const clearBtn = document.getElementById('clearBtn');
-let debounceTimer;
+// Hamburger Menu
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const mobileSidebar = document.getElementById('mobileSidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-searchInput.addEventListener('input', function() {
-  const query = this.value.trim();
-
-  if (query.length > 0) {
-    clearBtn.classList.add('active');
-  } else {
-    clearBtn.classList.remove('active');
-  }
-
-  clearTimeout(debounceTimer);
-
-  if (query.length < 2) {
-    suggestionsList.classList.remove('active');
-    suggestionsList.innerHTML = '';
-    return;
-  }
-
-  debounceTimer = setTimeout(() => {
-    fetchSuggestions(query);
-  }, 250);
-});
-
-clearBtn.addEventListener('click', function() {
-  searchInput.value = '';
-  clearBtn.classList.remove('active');
-  suggestionsList.classList.remove('active');
-  suggestionsList.innerHTML = '';
-  searchInput.focus();
-
-  statusMsg.textContent = '';
-  statusMsg.className = 'text-sm font-medium mt-3 text-center';
-
-  if (userMarker) {
-    map.removeLayer(userMarker);
-    userMarker = null;
-  }
-  if (radiusCircle) {
-    map.removeLayer(radiusCircle);
-    radiusCircle = null;
-  }
-
-  userLocation = null;
-  displayMosques();
-});
-
-function fetchSuggestions(query) {
-  const bangladeshBounds = '88.0,20.5,92.7,26.6';
-
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
-    .then(response => response.json())
-    .then(data => {
-      displaySuggestions(data);
-    })
-    .catch(error => {
-      console.error('Suggestion fetch error:', error);
-    });
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener('click', () => {
+    hamburgerBtn.classList.toggle('active');
+    mobileSidebar.classList.toggle('active');
+    sidebarOverlay.classList.toggle('active');
+  });
 }
 
-function displaySuggestions(suggestions) {
-  suggestionsList.innerHTML = '';
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener('click', () => {
+    hamburgerBtn.classList.remove('active');
+    mobileSidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+}
 
-  if (suggestions.length === 0) {
-    suggestionsList.classList.remove('active');
-    return;
+// Sidebar Menu Items
+const sidebarViewAll = document.getElementById('sidebarViewAll');
+const sidebarSuggest = document.getElementById('sidebarSuggest');
+
+if (sidebarViewAll) {
+  sidebarViewAll.addEventListener('click', () => {
+    populateMosqueList();
+    mosqueModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    hamburgerBtn.classList.remove('active');
+    mobileSidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+}
+
+if (sidebarSuggest) {
+  sidebarSuggest.addEventListener('click', () => {
+    window.open('https://forms.gle/jp5V7YSX4GH7Gwpt6', '_blank');
+    hamburgerBtn.classList.remove('active');
+    mobileSidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+  });
+}
+
+// FAB Buttons
+const fabSearch = document.getElementById('fabSearch');
+const bottomSearchPanel = document.getElementById('bottomSearchPanel');
+
+if (fabSearch) {
+  fabSearch.addEventListener('click', () => {
+    bottomSearchPanel.classList.toggle('active');
+  });
+}
+
+// Close bottom panel when clicking outside
+document.addEventListener('click', (e) => {
+  if (bottomSearchPanel &&
+      bottomSearchPanel.classList.contains('active') &&
+      !bottomSearchPanel.contains(e.target) &&
+      fabSearch &&
+      !fabSearch.contains(e.target)) {
+    bottomSearchPanel.classList.remove('active');
   }
+});
 
-  suggestions.forEach(suggestion => {
-    const item = document.createElement('div');
-    item.className = 'suggestion-item';
+// Swipe down to close bottom panel
+let touchStartY = 0;
+let touchEndY = 0;
 
-    const icon = getLocationIcon(suggestion.type);
-    item.innerHTML = `<span class="suggestion-icon">${icon}</span>${suggestion.display_name}`;
+const searchPanelHandle = document.getElementById('searchPanelHandle');
 
-    item.addEventListener('click', () => {
-      searchInput.value = suggestion.display_name;
-      suggestionsList.classList.remove('active');
-      suggestionsList.innerHTML = '';
-      clearBtn.classList.add('active');
+if (bottomSearchPanel && searchPanelHandle) {
+  searchPanelHandle.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
 
-      performSearch(parseFloat(suggestion.lat), parseFloat(suggestion.lon), suggestion.display_name);
-    });
+  searchPanelHandle.addEventListener('touchmove', (e) => {
+    touchEndY = e.touches[0].clientY;
+  }, { passive: true });
 
-    suggestionsList.appendChild(item);
+  searchPanelHandle.addEventListener('touchend', () => {
+    const swipeDistance = touchEndY - touchStartY;
+    if (swipeDistance > 50) {
+      bottomSearchPanel.classList.remove('active');
+    }
   });
 
-  suggestionsList.classList.add('active');
+  bottomSearchPanel.addEventListener('click', (e) => {
+    if (e.target === bottomSearchPanel) {
+      bottomSearchPanel.classList.remove('active');
+    }
+  });
 }
 
-function getLocationIcon(type) {
-  const icons = {
-    'city': '🏙️',
-    'town': '🏘️',
-    'village': '🏡',
-    'suburb': '🏘️',
-    'neighbourhood': '🏠',
-    'road': '🛣️',
-    'building': '🏢',
-    'hospital': '🏥',
-    'school': '🏫',
-    'university': '🎓',
-    'mosque': '🕌',
-    'restaurant': '🍽️',
-    'cafe': '☕',
-    'shop': '🛍️',
-    'market': '🏪',
-    'park': '🌳',
-    'stadium': '🏟️'
-  };
-  return icons[type] || '📍';
-}
-
-document.addEventListener('click', function(e) {
-  if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
-    suggestionsList.classList.remove('active');
-  }
-});
-
-function performSearch(lat, lng, displayName) {
-  if (userMarker) {
-    map.removeLayer(userMarker);
-  }
-  if (radiusCircle) {
-    map.removeLayer(radiusCircle);
-  }
-
-  radiusCircle = L.circle([lat, lng], {
-    color: "#667eea",
-    fillColor: "#a78bfa",
-    fillOpacity: 0.2,
-    radius: currentRadius * 1000,
-  }).addTo(map);
-
-  userMarker = L.marker([lat, lng], {
-    icon: bluePin,
-  }).addTo(map);
-  userMarker.bindPopup(`<strong>Searched Location</strong><br>${displayName}`).openPopup();
-
-  map.setView([lat, lng], 14);
-  userLocation = { lat: lat, lng: lng };
-  displayMosques(lat, lng);
-
-  const statusMsg = document.getElementById('statusMsg');
-  statusMsg.textContent = `Location found! Showing nearby mosques within ${currentRadius} km.`;
-  statusMsg.className = "text-sm font-medium mt-3 text-center text-green-600";
-}
-
-// Find nearby mosques
-document.getElementById("findNearbyBtn").addEventListener("click", function () {
-  const statusMsg = document.getElementById("statusMsg");
-  statusMsg.textContent = "Requesting location access...";
-  statusMsg.className = "text-sm font-medium mt-3 text-center text-blue-600";
-
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        userLocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-
-        if (userMarker) {
-          map.removeLayer(userMarker);
-        }
-        if (radiusCircle) {
-          map.removeLayer(radiusCircle);
-        }
-
-        radiusCircle = L.circle([userLocation.lat, userLocation.lng], {
-          color: "#667eea",
-          fillColor: "#a78bfa",
-          fillOpacity: 0.2,
-          radius: currentRadius * 1000,
-        }).addTo(map);
-
-        userMarker = L.marker([userLocation.lat, userLocation.lng], {
-          icon: bluePin,
-        }).addTo(map);
-        userMarker.bindPopup("<strong>Your Location</strong>").openPopup();
-
-        map.setView([userLocation.lat, userLocation.lng], 14);
-        displayMosques(userLocation.lat, userLocation.lng);
-
-        statusMsg.textContent = `Location found! Showing nearby mosques within ${currentRadius} km.`;
-        statusMsg.className = "text-sm font-medium mt-3 text-center text-green-600";
-      },
-      function (error) {
-        let errorMsg = "Unable to get location. ";
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMsg += "Permission denied. Please allow location access.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMsg += "Position unavailable.";
-            break;
-          case error.TIMEOUT:
-            errorMsg += "Request timeout.";
-            break;
-          default:
-            errorMsg += "Unknown error.";
-        }
-        statusMsg.textContent = errorMsg;
-        statusMsg.className = "text-sm font-medium mt-3 text-center text-red-600";
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
-    );
-  } else {
-    statusMsg.textContent = "Geolocation is not supported by your browser.";
-    statusMsg.className = "text-sm font-medium mt-3 text-center text-red-600";
-  }
-});
-
-// Search by location
-document.getElementById("searchBtn").addEventListener("click", searchLocation);
-document.getElementById("searchInput").addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    suggestionsList.classList.remove('active');
-    searchLocation();
-  }
-});
-
-function searchLocation() {
-  const searchQuery = document.getElementById("searchInput").value.trim();
-  if (!searchQuery) {
-    alert("Please enter a location to search");
-    return;
-  }
-
-  const bangladeshBounds = '88.0,20.5,92.7,26.6';
-
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data && data.length > 0) {
-        const result = data[0];
-        const searchLat = parseFloat(result.lat);
-        const searchLng = parseFloat(result.lon);
-
-        performSearch(searchLat, searchLng, result.display_name);
-      } else {
-        alert("Location not found. Please try a different search term.");
-      }
-    })
-    .catch((error) => {
-      console.error("Search error:", error);
-      alert("Error searching location. Please try again.");
-    });
-}
-
-// Suggestion Popup Functionality
+// Suggestion Popup
 const suggestionPopup = document.getElementById('suggestionPopup');
 const closeSuggestionPopup = document.getElementById('closeSuggestionPopup');
 const maybeLaterBtn = document.getElementById('maybeLaterBtn');
 
 const popupShown = sessionStorage.getItem('suggestionPopupShown');
 
-if (!popupShown) {
+if (!popupShown && suggestionPopup) {
   setTimeout(() => {
     suggestionPopup.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -506,19 +385,375 @@ if (!popupShown) {
   }, 4000);
 }
 
-closeSuggestionPopup.addEventListener('click', () => {
-  suggestionPopup.classList.remove('active');
-  document.body.style.overflow = 'auto';
-});
-
-maybeLaterBtn.addEventListener('click', () => {
-  suggestionPopup.classList.remove('active');
-  document.body.style.overflow = 'auto';
-});
-
-suggestionPopup.addEventListener('click', (e) => {
-  if (e.target === suggestionPopup) {
+if (closeSuggestionPopup) {
+  closeSuggestionPopup.addEventListener('click', () => {
     suggestionPopup.classList.remove('active');
     document.body.style.overflow = 'auto';
+  });
+}
+
+if (maybeLaterBtn) {
+  maybeLaterBtn.addEventListener('click', () => {
+    suggestionPopup.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+}
+
+if (suggestionPopup) {
+  suggestionPopup.addEventListener('click', (e) => {
+    if (e.target === suggestionPopup) {
+      suggestionPopup.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+}
+// Mobile Search Functionality
+const searchInputMobile = document.getElementById('searchInputMobile');
+const searchBtnMobile = document.getElementById('searchBtnMobile');
+
+// Create clear button and suggestions list
+let clearBtnMobile = document.getElementById('clearBtnMobile');
+if (!clearBtnMobile && searchInputMobile) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'mobile-search-input-wrapper';
+  wrapper.style.position = 'relative';
+  searchInputMobile.parentNode.insertBefore(wrapper, searchInputMobile);
+  wrapper.appendChild(searchInputMobile);
+
+  clearBtnMobile = document.createElement('button');
+  clearBtnMobile.id = 'clearBtnMobile';
+  clearBtnMobile.className = 'clear-btn-mobile';
+  clearBtnMobile.innerHTML = '✕';
+  clearBtnMobile.setAttribute('aria-label', 'Clear search');
+  wrapper.appendChild(clearBtnMobile);
+
+  const suggestionsListMobile = document.createElement('div');
+  suggestionsListMobile.id = 'suggestionsListMobile';
+  suggestionsListMobile.className = 'suggestions-list-mobile';
+  suggestionsListMobile.style.display = 'none';
+  wrapper.appendChild(suggestionsListMobile);
+}
+
+let suggestionsListMobile = document.getElementById('suggestionsListMobile');
+
+if (searchInputMobile && suggestionsListMobile) {
+  let debounceTimerMobile;
+
+  searchInputMobile.addEventListener('input', function() {
+    const query = this.value.trim();
+
+    if (clearBtnMobile) {
+      clearBtnMobile.style.display = query.length > 0 ? 'flex' : 'none';
+    }
+
+    clearTimeout(debounceTimerMobile);
+
+    if (query.length < 2) {
+      suggestionsListMobile.style.display = 'none';
+      suggestionsListMobile.innerHTML = '';
+      return;
+    }
+
+    debounceTimerMobile = setTimeout(() => {
+      fetchSuggestionsMobile(query);
+    }, 250);
+  });
+}
+
+if (clearBtnMobile) {
+  clearBtnMobile.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (searchInputMobile) {
+      searchInputMobile.value = '';
+      searchInputMobile.focus();
+    }
+    clearBtnMobile.style.display = 'none';
+    if (suggestionsListMobile) {
+      suggestionsListMobile.style.display = 'none';
+      suggestionsListMobile.innerHTML = '';
+    }
+  });
+}
+
+function fetchSuggestionsMobile(query) {
+  const bangladeshBounds = '88.0,20.5,92.7,26.6';
+
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
+    .then(response => response.json())
+    .then(data => {
+      displaySuggestionsMobile(data);
+    })
+    .catch(error => {
+      console.error('Mobile suggestion fetch error:', error);
+    });
+}
+
+function displaySuggestionsMobile(suggestions) {
+  const suggestionsListMobile = document.getElementById('suggestionsListMobile');
+  if (!suggestionsListMobile) return;
+
+  suggestionsListMobile.innerHTML = '';
+
+  if (suggestions.length === 0) {
+    suggestionsListMobile.style.display = 'none';
+    return;
+  }
+
+  suggestions.forEach(suggestion => {
+    const item = document.createElement('div');
+    item.className = 'suggestion-item-mobile';
+
+    const icon = getLocationIcon(suggestion.type);
+    item.innerHTML = `<span style="margin-right: 8px;">${icon}</span>${suggestion.display_name}`;
+
+    item.addEventListener('click', () => {
+      const searchInputMobile = document.getElementById('searchInputMobile');
+      if (searchInputMobile) searchInputMobile.value = suggestion.display_name;
+      suggestionsListMobile.style.display = 'none';
+      suggestionsListMobile.innerHTML = '';
+
+      const clearBtnMobile = document.getElementById('clearBtnMobile');
+      if (clearBtnMobile) clearBtnMobile.style.display = 'none';
+
+      performSearch(parseFloat(suggestion.lat), parseFloat(suggestion.lon), suggestion.display_name);
+
+      const bottomSearchPanel = document.getElementById('bottomSearchPanel');
+      if (bottomSearchPanel) bottomSearchPanel.classList.remove('active');
+    });
+
+    suggestionsListMobile.appendChild(item);
+  });
+
+  suggestionsListMobile.style.display = 'block';
+}
+
+// Close mobile suggestions when clicking outside
+document.addEventListener('click', function(e) {
+  const suggestionsListMobile = document.getElementById('suggestionsListMobile');
+  const searchInputMobile = document.getElementById('searchInputMobile');
+  const clearBtnMobile = document.getElementById('clearBtnMobile');
+  const mobileSearchWrapper = document.querySelector('.mobile-search-input-wrapper');
+
+  if (mobileSearchWrapper && !mobileSearchWrapper.contains(e.target)) {
+    if (suggestionsListMobile) {
+      suggestionsListMobile.style.display = 'none';
+    }
+
+    if (searchInputMobile) {
+      searchInputMobile.value = '';
+    }
+    if (clearBtnMobile) {
+      clearBtnMobile.style.display = 'none';
+    }
   }
 });
+
+// Clear search when bottom panel closes
+if (bottomSearchPanel) {
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.attributeName === 'class') {
+        if (!bottomSearchPanel.classList.contains('active')) {
+          if (searchInputMobile) searchInputMobile.value = '';
+          if (clearBtnMobile) clearBtnMobile.style.display = 'none';
+          if (suggestionsListMobile) {
+            suggestionsListMobile.style.display = 'none';
+            suggestionsListMobile.innerHTML = '';
+          }
+        }
+      }
+    });
+  });
+
+  observer.observe(bottomSearchPanel, { attributes: true });
+}
+
+// Search Button
+if (searchBtnMobile) {
+  searchBtnMobile.addEventListener("click", () => {
+    const query = searchInputMobile ? searchInputMobile.value.trim() : '';
+    if (!query) {
+      alert("Please enter a location to search");
+      return;
+    }
+
+    const bangladeshBounds = '88.0,20.5,92.7,26.6';
+
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.length > 0) {
+          const result = data[0];
+          const searchLat = parseFloat(result.lat);
+          const searchLng = parseFloat(result.lon);
+
+          performSearch(searchLat, searchLng, result.display_name);
+          if (bottomSearchPanel) bottomSearchPanel.classList.remove('active');
+        } else {
+          alert("Location not found. Please try a different search term.");
+        }
+      })
+      .catch((error) => {
+        console.error("Search error:", error);
+        alert("Error searching location. Please try again.");
+      });
+  });
+}
+
+// Find Nearby Location (FAB Button)
+const fabLocate = document.getElementById('fabLocate');
+
+if (fabLocate) {
+  fabLocate.addEventListener('click', () => {
+    const originalContent = fabLocate.innerHTML;
+    fabLocate.innerHTML = '⏳';
+    fabLocate.disabled = true;
+    fabLocate.style.opacity = '0.7';
+
+    if (!map) {
+      fabLocate.innerHTML = originalContent;
+      fabLocate.disabled = false;
+      fabLocate.style.opacity = '1';
+      alert('Map is still loading, please try again in a moment');
+      return;
+    }
+
+    if ("geolocation" in navigator) {
+      showToast('📍 Requesting location access...');
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+
+          if (userMarker) map.removeLayer(userMarker);
+          if (radiusCircle) map.removeLayer(radiusCircle);
+
+          radiusCircle = L.circle([userLocation.lat, userLocation.lng], {
+            color: "#667eea",
+            fillColor: "#a78bfa",
+            fillOpacity: 0.2,
+            radius: currentRadius * 1000,
+          }).addTo(map);
+
+          userMarker = L.marker([userLocation.lat, userLocation.lng], {
+            icon: bluePin,
+          }).addTo(map);
+          userMarker.bindPopup("<strong>Your Location</strong>").openPopup();
+
+          map.setView([userLocation.lat, userLocation.lng], 14);
+          displayMosques(userLocation.lat, userLocation.lng);
+
+          fabLocate.innerHTML = originalContent;
+          fabLocate.disabled = false;
+          fabLocate.style.opacity = '1';
+
+          showToast('✅ Location found!');
+        },
+        function (error) {
+          fabLocate.innerHTML = originalContent;
+          fabLocate.disabled = false;
+          fabLocate.style.opacity = '1';
+
+          let errorMsg = "";
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMsg = "❌ Location access denied. Please enable location permissions in your browser settings.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMsg = "❌ Location unavailable. Please check your device settings.";
+              break;
+            case error.TIMEOUT:
+              errorMsg = "❌ Location request timed out. Please try again.";
+              break;
+            default:
+              errorMsg = "❌ Unable to get your location. Please try again.";
+          }
+
+          showToast(errorMsg, 4000);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      fabLocate.innerHTML = originalContent;
+      fabLocate.disabled = false;
+      fabLocate.style.opacity = '1';
+
+      showToast("❌ Location is not supported by your browser.", 3000);
+    }
+  });
+}
+
+// Toast notification function
+function showToast(message, duration = 2500) {
+  const existingToast = document.getElementById('locationToast');
+  if (existingToast) {
+    existingToast.remove();
+  }
+
+  const toast = document.createElement('div');
+  toast.id = 'locationToast';
+  toast.textContent = message;
+  toast.style.cssText = `
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(45, 55, 72, 0.95);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+  `;
+
+  if (!document.getElementById('toastStyles')) {
+    const style = document.createElement('style');
+    style.id = 'toastStyles';
+    style.textContent = `
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-20px);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = 'slideUp 0.3s ease';
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.remove();
+      }
+    }, 300);
+  }, duration);
+}
