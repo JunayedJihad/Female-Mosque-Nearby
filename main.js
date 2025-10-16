@@ -407,7 +407,8 @@ if (suggestionPopup) {
     }
   });
 }
-// Mobile Search Functionality
+
+// Mobile Search Functionality - UPDATED: Search on button click only
 const searchInputMobile = document.getElementById('searchInputMobile');
 const searchBtnMobile = document.getElementById('searchBtnMobile');
 
@@ -436,9 +437,8 @@ if (!clearBtnMobile && searchInputMobile) {
 
 let suggestionsListMobile = document.getElementById('suggestionsListMobile');
 
-if (searchInputMobile && suggestionsListMobile) {
-  let debounceTimerMobile;
-
+// REMOVED: Auto-suggest on input - Now only shows/hides clear button
+if (searchInputMobile) {
   searchInputMobile.addEventListener('input', function() {
     const query = this.value.trim();
 
@@ -446,17 +446,21 @@ if (searchInputMobile && suggestionsListMobile) {
       clearBtnMobile.style.display = query.length > 0 ? 'flex' : 'none';
     }
 
-    clearTimeout(debounceTimerMobile);
-
-    if (query.length < 2) {
+    // Hide suggestions when typing (only show after search button click)
+    if (suggestionsListMobile) {
       suggestionsListMobile.style.display = 'none';
       suggestionsListMobile.innerHTML = '';
-      return;
     }
+  });
 
-    debounceTimerMobile = setTimeout(() => {
-      fetchSuggestionsMobile(query);
-    }, 250);
+  // Allow Enter key to trigger search
+  searchInputMobile.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (searchBtnMobile) {
+        searchBtnMobile.click();
+      }
+    }
   });
 }
 
@@ -475,27 +479,44 @@ if (clearBtnMobile) {
   });
 }
 
+// UPDATED: Fetch suggestions only when search button is clicked
 function fetchSuggestionsMobile(query) {
   const bangladeshBounds = '88.0,20.5,92.7,26.6';
+
+  // Show loading state
+  if (suggestionsListMobile) {
+    suggestionsListMobile.innerHTML = '<div class="suggestion-item-mobile" style="color: #667eea;">🔍 Searching...</div>';
+    suggestionsListMobile.style.display = 'block';
+  }
 
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
     .then(response => response.json())
     .then(data => {
-      displaySuggestionsMobile(data);
+      displaySuggestionsMobile(data, query);
     })
     .catch(error => {
       console.error('Mobile suggestion fetch error:', error);
+      if (suggestionsListMobile) {
+        suggestionsListMobile.innerHTML = '<div class="suggestion-item-mobile" style="color: #ef4444;">❌ Error searching. Please try again.</div>';
+      }
     });
 }
 
-function displaySuggestionsMobile(suggestions) {
+function displaySuggestionsMobile(suggestions, searchQuery) {
   const suggestionsListMobile = document.getElementById('suggestionsListMobile');
   if (!suggestionsListMobile) return;
 
   suggestionsListMobile.innerHTML = '';
 
   if (suggestions.length === 0) {
-    suggestionsListMobile.style.display = 'none';
+    // Show "not found" message
+    const noResultItem = document.createElement('div');
+    noResultItem.className = 'suggestion-item-mobile';
+    noResultItem.style.color = '#ef4444';
+    noResultItem.style.cursor = 'default';
+    noResultItem.innerHTML = `❌ No results found for "<strong>${searchQuery}</strong>"<br><span style="font-size: 12px; color: #6b7280;">Try a different search term</span>`;
+    suggestionsListMobile.appendChild(noResultItem);
+    suggestionsListMobile.style.display = 'block';
     return;
   }
 
@@ -532,18 +553,17 @@ document.addEventListener('click', function(e) {
   const suggestionsListMobile = document.getElementById('suggestionsListMobile');
   const searchInputMobile = document.getElementById('searchInputMobile');
   const clearBtnMobile = document.getElementById('clearBtnMobile');
+  const searchBtnMobile = document.getElementById('searchBtnMobile');
   const mobileSearchWrapper = document.querySelector('.mobile-search-input-wrapper');
+
+  // Don't close if clicking search button
+  if (searchBtnMobile && searchBtnMobile.contains(e.target)) {
+    return;
+  }
 
   if (mobileSearchWrapper && !mobileSearchWrapper.contains(e.target)) {
     if (suggestionsListMobile) {
       suggestionsListMobile.style.display = 'none';
-    }
-
-    if (searchInputMobile) {
-      searchInputMobile.value = '';
-    }
-    if (clearBtnMobile) {
-      clearBtnMobile.style.display = 'none';
     }
   }
 });
@@ -568,7 +588,7 @@ if (bottomSearchPanel) {
   observer.observe(bottomSearchPanel, { attributes: true });
 }
 
-// Search Button
+// UPDATED: Search Button - Now shows suggestions instead of direct search
 if (searchBtnMobile) {
   searchBtnMobile.addEventListener("click", () => {
     const query = searchInputMobile ? searchInputMobile.value.trim() : '';
@@ -577,26 +597,8 @@ if (searchBtnMobile) {
       return;
     }
 
-    const bangladeshBounds = '88.0,20.5,92.7,26.6';
-
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=bd&viewbox=${bangladeshBounds}&bounded=0`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.length > 0) {
-          const result = data[0];
-          const searchLat = parseFloat(result.lat);
-          const searchLng = parseFloat(result.lon);
-
-          performSearch(searchLat, searchLng, result.display_name);
-          if (bottomSearchPanel) bottomSearchPanel.classList.remove('active');
-        } else {
-          alert("Location not found. Please try a different search term.");
-        }
-      })
-      .catch((error) => {
-        console.error("Search error:", error);
-        alert("Error searching location. Please try again.");
-      });
+    // Fetch and display suggestions
+    fetchSuggestionsMobile(query);
   });
 }
 
