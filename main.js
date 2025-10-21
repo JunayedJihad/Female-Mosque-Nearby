@@ -370,21 +370,63 @@ if (bottomSearchPanel && searchPanelHandle) {
   });
 }
 
-// Suggestion Popup
+// Dua Popup
 const suggestionPopup = document.getElementById('suggestionPopup');
 const closeSuggestionPopup = document.getElementById('closeSuggestionPopup');
-const maybeLaterBtn = document.getElementById('maybeLaterBtn');
+const closeBtn = document.getElementById('closeBtn');
+const showMoreDuaBtn = document.getElementById('showMoreDuaBtn');
 
-const popupShown = sessionStorage.getItem('suggestionPopupShown');
+const popupShown = sessionStorage.getItem('duaPopupShown');
 
+// Function to update dua with animation
+function updateDuaContent() {
+  const dua = getRandomDua();
+  const duaTextElement = document.getElementById('duaText');
+  const duaReferenceElement = document.getElementById('duaReference');
+
+  if (duaTextElement && duaReferenceElement) {
+    // Fade out
+    duaTextElement.classList.add('fade-out');
+    duaReferenceElement.classList.add('fade-out');
+
+    setTimeout(() => {
+      // Update content
+      duaTextElement.textContent = dua.text;
+      duaReferenceElement.textContent = dua.reference;
+
+      // Fade in
+      duaTextElement.classList.remove('fade-out');
+      duaTextElement.classList.add('fade-in');
+      duaReferenceElement.classList.remove('fade-out');
+      duaReferenceElement.classList.add('fade-in');
+
+      // Remove animation classes after animation completes
+      setTimeout(() => {
+        duaTextElement.classList.remove('fade-in');
+        duaReferenceElement.classList.remove('fade-in');
+      }, 300);
+    }, 300);
+  }
+}
+
+// Show popup on page load
 if (!popupShown && suggestionPopup) {
   setTimeout(() => {
+    updateDuaContent();
     suggestionPopup.classList.add('active');
     document.body.style.overflow = 'hidden';
-    sessionStorage.setItem('suggestionPopupShown', 'true');
+    sessionStorage.setItem('duaPopupShown', 'true');
   }, 4000);
 }
 
+// Show More button - loads another dua
+if (showMoreDuaBtn) {
+  showMoreDuaBtn.addEventListener('click', () => {
+    updateDuaContent();
+  });
+}
+
+// Close button handlers
 if (closeSuggestionPopup) {
   closeSuggestionPopup.addEventListener('click', () => {
     suggestionPopup.classList.remove('active');
@@ -392,13 +434,14 @@ if (closeSuggestionPopup) {
   });
 }
 
-if (maybeLaterBtn) {
-  maybeLaterBtn.addEventListener('click', () => {
+if (closeBtn) {
+  closeBtn.addEventListener('click', () => {
     suggestionPopup.classList.remove('active');
     document.body.style.overflow = 'auto';
   });
 }
 
+// Click outside to close
 if (suggestionPopup) {
   suggestionPopup.addEventListener('click', (e) => {
     if (e.target === suggestionPopup) {

@@ -20,6 +20,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
         }
 
         .container {
@@ -30,12 +35,18 @@
             max-width: 500px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             animation: slideUp 0.4s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .container {
+            background: #2d3748;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
         }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(50px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -56,6 +67,11 @@
             color: #1a202c;
             margin-bottom: 5px;
             line-height: 1.2;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .header-text h1 {
+            color: #e2e8f0;
         }
 
         .header-text p {
@@ -63,6 +79,11 @@
             color: #718096;
             font-weight: 500;
             line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .header-text p {
+            color: #a0aec0;
         }
 
         .close-btn {
@@ -82,9 +103,18 @@
             flex-shrink: 0;
         }
 
+        body.dark-mode .close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e0;
+        }
+
         .close-btn:active {
             background: rgba(0, 0, 0, 0.15);
             transform: scale(0.95);
+        }
+
+        body.dark-mode .close-btn:active {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .form-group {
@@ -97,6 +127,11 @@
             font-weight: 700;
             color: #1a202c;
             margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode label {
+            color: #e2e8f0;
         }
 
         .required {
@@ -121,14 +156,31 @@
             transition: all 0.2s;
         }
 
+        body.dark-mode input,
+        body.dark-mode select {
+            background: #1a202c;
+            border-color: #4a5568;
+            color: #e2e8f0;
+        }
+
         input:focus, select:focus {
             outline: none;
             border-color: #667eea;
             background: white;
         }
 
+        body.dark-mode input:focus,
+        body.dark-mode select:focus {
+            background: #2d3748;
+            border-color: #a78bfa;
+        }
+
         input::placeholder {
             color: #a0aec0;
+        }
+
+        body.dark-mode input::placeholder {
+            color: #718096;
         }
 
         select {
@@ -140,12 +192,22 @@
             padding-right: 40px;
         }
 
+        body.dark-mode select option {
+            background: #2d3748;
+            color: #e2e8f0;
+        }
+
         .hint {
             font-size: 13px;
             color: #718096;
             margin-top: 8px;
             font-style: italic;
             line-height: 1.4;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .hint {
+            color: #a0aec0;
         }
 
         .submit-btn {
@@ -188,9 +250,18 @@
             touch-action: manipulation;
         }
 
+        body.dark-mode .cancel-btn {
+            color: #cbd5e0;
+            border-color: #4a5568;
+        }
+
         .cancel-btn:active {
             background: #f7fafc;
             transform: scale(0.98);
+        }
+
+        body.dark-mode .cancel-btn:active {
+            background: #1a202c;
         }
 
         .success-container {
@@ -233,6 +304,11 @@
             color: #1a202c;
             margin-bottom: 20px;
             line-height: 1.2;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .success-title {
+            color: #e2e8f0;
         }
 
         .success-message {
@@ -241,6 +317,11 @@
             line-height: 1.6;
             font-weight: 500;
             padding: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .success-message {
+            color: #a0aec0;
         }
 
         .heart-container {
@@ -452,6 +533,12 @@
     </div>
 
     <script>
+        // Check for dark mode from index page
+        const isDarkMode = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
+        if (isDarkMode && isDarkMode.split('=')[1] === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
         function handleClose() {
             window.location.href = 'index.html';
         }

@@ -29,6 +29,7 @@
   <meta name="twitter:image" content="https://herprayerplace.vercel.app/preview.png" />
 
   <link rel="icon" type="image/png" href="muslimah.png" />
+  <script src="duas.js"></script>
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
@@ -40,47 +41,52 @@
 
 <body>
   <!-- Mobile Header -->
-    <div class="mobile-header">
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-      <div class="mobile-logo"><img src="preview.png" alt="" srcset="">HerPrayerPlace</div>
-      <button class="dark-mode-toggle-mobile" id="darkModeToggleMobile" aria-label="Toggle Dark Mode">🌙</button>
+  <div class="mobile-header">
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    <div class="mobile-logo"><img src="preview.png" alt="" srcset="">HerPrayerPlace</div>
+    <button class="dark-mode-toggle-mobile" id="darkModeToggleMobile" aria-label="Toggle Dark Mode">🌙</button>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="mobile-sidebar" id="mobileSidebar">
+    <div class="sidebar-header">
+      <img src="preview.png" class="sidebar-img" alt="" srcset="">
+      <div class="sidebar-title">HerPrayerPlace</div>
     </div>
+    <div class="sidebar-menu">
 
-    <!-- Sidebar Menu -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="mobile-sidebar" id="mobileSidebar">
-      <div class="sidebar-header">
-        <img src="preview.png" class="sidebar-img" alt="" srcset="">
-        <div class="sidebar-title">HerPrayerPlace</div>
+      <div class="sidebar-item" id="sidebarViewAll">
+        <span class="sidebar-item-icon">🕌</span>
+        <span class="sidebar-item-text">View All Places</span>
       </div>
-      <div class="sidebar-menu">
 
-        <div class="sidebar-item" id="sidebarViewAll">
-          <span class="sidebar-item-icon">🕌</span>
-          <span class="sidebar-item-text">View All Places</span>
-        </div>
+      <a href="suggestion.html" class="sidebar-item">
+        <span class="sidebar-item-icon">✨</span>
+        <span class="sidebar-item-text">Suggest a Place</span>
+      </a>
 
-        <a href="suggestion.html" class="sidebar-item">
-          <span class="sidebar-item-icon">✨</span>
-          <span class="sidebar-item-text">Suggest a Place</span>
-        </a>
+      <a href="https://herprayerplace.vercel.app/download" class="sidebar-item" target="_blank">
+        <span class="sidebar-item-icon">📱</span>
+        <span class="sidebar-item-text">Download App</span>
+      </a>
 
-        <a href="https://herprayerplace.vercel.app/download" class="sidebar-item" target="_blank">
-          <span class="sidebar-item-icon">📱</span>
-          <span class="sidebar-item-text">Download App</span>
-        </a>
+      <a href="admin.html" class="sidebar-item" id="sidebarAdmin">
+        <span class="sidebar-item-icon">🔐</span>
+        <span class="sidebar-item-text">Admin Login</span>
+      </a>
 
-        <a href="admin.html" class="sidebar-item" id="sidebarAdmin">
-          <span class="sidebar-item-icon">🔐</span>
-          <span class="sidebar-item-text">Admin Login</span>
-        </a>
-
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-made-with">
+        Made with <span class="heart">❤️</span> by Junayed Jihad
       </div>
     </div>
+  </div>
 
   <!-- Map Container -->
   <div class="mobile-map-container">
@@ -205,20 +211,21 @@
     </div>
   </div>
 
-  <!-- Suggestion Popup Modal -->
+  <!-- Dua Popup Modal -->
   <div id="suggestionPopup" class="suggestion-popup">
     <div class="suggestion-popup-content">
       <button id="closeSuggestionPopup" class="suggestion-popup-close" aria-label="Close">✕</button>
-      <div class="suggestion-popup-icon">✨</div>
-      <h3 class="suggestion-popup-title">Help Us Grow!</h3>
-      <p class="suggestion-popup-text">Know a place with female prayer facilities that we're missing? Your contribution
-        helps thousands of sisters!</p>
+      <div class="suggestion-popup-icon">🤲</div>
+      <p class="dua-text" id="duaText">
+        Our Lord, grant us good in this world and good in the Hereafter and protect us from the punishment of the Fire.
+      </p>
+      <span class="dua-reference" id="duaReference">Quran 2:201</span>
       <div class="suggestion-popup-buttons">
-        <a href="https://forms.gle/jp5V7YSX4GH7Gwpt6" class="suggestion-popup-btn-primary">
-          ➕ Suggest a Place
-        </a>
-        <button id="maybeLaterBtn" class="suggestion-popup-btn-secondary">
-          Maybe Later
+        <button id="showMoreDuaBtn" class="show-more-dua-btn">
+          Show Next
+        </button>
+        <button id="closeBtn" class="suggestion-popup-btn-secondary">
+          Close
         </button>
       </div>
     </div>

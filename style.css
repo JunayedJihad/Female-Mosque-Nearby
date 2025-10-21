@@ -261,6 +261,8 @@ body.dark-mode .dark-mode-toggle-mobile {
   z-index: 2000;
   transition: left 0.3s ease;
   overflow-y: auto;
+  /* position: relative;
+  padding-bottom: 70px; */
 }
 
 body.dark-mode .mobile-sidebar {
@@ -346,13 +348,55 @@ body.dark-mode .sidebar-item:hover {
   font-weight: 600;
 }
 
+/* Sidebar Footer with Name */
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px 15px;
+  text-align: center;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.05), transparent);
+}
+
+.sidebar-made-with {
+  font-size: 10px;
+  color: #718096;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 12px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+body.dark-mode .sidebar-made-with {
+  color: #cbd5e0;
+  background: rgba(167, 139, 250, 0.15);
+  border-color: rgba(167, 139, 250, 0.3);
+}
+
+.sidebar-made-with .heart {
+  color: #ef4444;
+  animation: heartbeat 1.5s ease infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  10%, 30% { transform: scale(1.2); }
+  20%, 40% { transform: scale(1); }
+}
+
 /* Map Container */
 .mobile-map-container {
   position: fixed;
-  top: 80px;
-  left: 8px;
-  right: 8px;
-  bottom: 8px;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1;
 
 }
@@ -360,7 +404,7 @@ body.dark-mode .sidebar-item:hover {
 #mapMobile {
   width: 100%;
   height: 100%;
-  border-radius: 10px;
+  /* border-radius: 10px; */
   position: absolute;
   top: 0;
   left: 0;
@@ -893,7 +937,7 @@ body.dark-mode .mosque-list-name {
   }
 }
 
-/* Suggestion Popup */
+/* Dua Popup */
 .suggestion-popup {
   display: none;
   position: fixed;
@@ -942,6 +986,16 @@ body.dark-mode .suggestion-popup-content {
   cursor: pointer;
   font-size: 17px;
   color: #666;
+  transition: all 0.2s;
+}
+
+body.dark-mode .suggestion-popup-close {
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e0;
+}
+
+.suggestion-popup-close:active {
+  transform: scale(0.9);
 }
 
 .suggestion-popup-icon {
@@ -957,46 +1011,81 @@ body.dark-mode .suggestion-popup-content {
   box-shadow: 0 10px 30px rgba(52, 211, 153, 0.4);
 }
 
-.suggestion-popup-title {
-  font-size: 25px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.dua-text {
+  font-size: 16px;
+  color: #2d3748;
+  line-height: 1.8;
   margin-bottom: 15px;
+  font-weight: 500;
+  font-style: italic;
+  padding: 0 10px;
 }
 
-.suggestion-popup-text {
-  font-size: 15px;
-  color: #4a5568;
-  line-height: 1.5;
-  margin-bottom: 30px;
+body.dark-mode .dua-text {
+  color: #e2e8f0;
 }
 
-body.dark-mode .suggestion-popup-text {
-  color: #cbd5e0;
+.dua-reference {
+  font-size: 13px;
+  color: #667eea;
+  font-weight: 700;
+  margin-bottom: 25px;
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 20px;
+}
+
+body.dark-mode .dua-reference {
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.15);
 }
 
 .suggestion-popup-buttons {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 20px;
+}
+.show-more-dua-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  padding: 15px 30px;
+  border-radius: 30px;
+  transition: all 0.3s;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.suggestion-popup-btn-primary {
-  background: linear-gradient(135deg, #34d399 0%, #3b82f6 100%);
+.show-more-dua-btn:active {
+  transform: scale(0.98);
+}
+
+/* .suggestion-popup-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-weight: 700;
   padding: 15px 30px;
   border-radius: 30px;
   text-decoration: none;
   transition: all 0.3s;
-  box-shadow: 0 6px 20px rgba(52, 211, 153, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
   font-size: 16px;
   border: none;
   cursor: pointer;
+  display: inline-block;
 }
+
+.suggestion-popup-btn-primary:active {
+  transform: scale(0.98);
+} */
 
 .suggestion-popup-btn-secondary {
   background: transparent;
@@ -1010,6 +1099,52 @@ body.dark-mode .suggestion-popup-text {
   cursor: pointer;
 }
 
+body.dark-mode .suggestion-popup-btn-secondary {
+  color: #cbd5e0;
+  border-color: #4a5568;
+}
+
+.suggestion-popup-btn-secondary:active {
+  transform: scale(0.98);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .suggestion-popup-btn-secondary:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Animation for dua text change */
+.dua-text.fade-out {
+  animation: fadeOutDua 0.3s ease;
+}
+
+.dua-text.fade-in {
+  animation: fadeInDua 0.3s ease;
+}
+
+@keyframes fadeOutDua {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeInDua {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Directions styles */
 .directions-btn {
   display: inline-block;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
