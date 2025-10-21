@@ -1014,10 +1014,9 @@ body.dark-mode .suggestion-popup-close {
 .dua-text {
   font-size: 16px;
   color: #2d3748;
-  line-height: 1.8;
+  line-height: 1.4;
   margin-bottom: 15px;
   font-weight: 500;
-  font-style: italic;
   padding: 0 10px;
 }
 
