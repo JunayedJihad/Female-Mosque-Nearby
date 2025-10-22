@@ -381,14 +381,14 @@ body.dark-mode .sidebar-made-with {
 
 .sidebar-made-with .heart {
   color: #ef4444;
-  animation: heartbeat 1.5s ease infinite;
+  /* animation: heartbeat 1.5s ease infinite; */
 }
 
-@keyframes heartbeat {
+/* @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
   10%, 30% { transform: scale(1.2); }
   20%, 40% { transform: scale(1); }
-}
+} */
 
 /* Map Container */
 .mobile-map-container {
