@@ -1164,6 +1164,446 @@ body.dark-mode .suggestion-popup-btn-secondary:active {
   height: 28px !important;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   PRAYER TIMES STYLES (Location-Triggered Version)
+   Add this to your style.css or create prayer-times.css
+   ═══════════════════════════════════════════════════════════ */
+
+/* Prayer Times Modal */
+.prayer-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 2500;
+  animation: fadeIn 0.3s ease;
+}
+
+.prayer-modal.active {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.prayer-modal-content {
+  background: white;
+  width: 100%;
+  max-height: 85vh;
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+body.dark-mode .prayer-modal-content {
+  background: #2d3748;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.prayer-modal-handle {
+  width: 40px;
+  height: 5px;
+  background: #d1d5db;
+  border-radius: 3px;
+  margin: 12px auto 20px;
+}
+
+body.dark-mode .prayer-modal-handle {
+  background: #4a5568;
+}
+
+.prayer-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px 20px;
+}
+
+.prayer-modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+body.dark-mode .prayer-modal-title {
+  color: #e2e8f0;
+}
+
+.prayer-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: #f3f4f6;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #6b7280;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+body.dark-mode .prayer-modal-close {
+  background: #1a202c;
+  color: #cbd5e0;
+}
+
+.prayer-modal-close:active {
+  transform: scale(0.9);
+}
+
+.prayer-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 40px;
+}
+
+/* Main Content Container */
+.prayer-main-content {
+  display: flex;
+  gap: 20px;
+  padding: 0 24px 24px;
+}
+
+.prayer-timings-column {
+  flex: 0.55;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.prayer-timing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  background: #f9fafb;
+}
+
+body.dark-mode .prayer-timing-row {
+  /* background: #1a202c; */
+  background: #484e5d;
+}
+
+.prayer-timing-row.current {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+body.dark-mode .prayer-timing-row.current {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+
+
+.prayer-timing-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+body.dark-mode .prayer-timing-name {
+  color: #e2e8f0;
+}
+
+.prayer-timing-row.current .prayer-timing-name {
+  color: white;
+  font-weight: 700;
+}
+
+.prayer-timing-time {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+body.dark-mode .prayer-timing-time {
+  color: #9ca3af;
+}
+
+.prayer-timing-row.current .prayer-timing-time {
+  color: white;
+  font-weight: 700;
+}
+
+/* Circular Timer Container */
+.prayer-circular-timer {
+  flex: 0.45;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.prayer-circle-container {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin-bottom: 5px;
+}
+
+.prayer-circle-svg {
+  transform: rotate(-90deg);
+}
+
+.prayer-circle-bg {
+  fill: none;
+  stroke: #e5e7eb;
+  stroke-width: 15;
+}
+
+body.dark-mode .prayer-circle-bg {
+  stroke: #374151;
+}
+
+.prayer-circle-progress {
+  fill: none;
+  stroke: url(#prayerGradient);
+  stroke-width: 15;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.prayer-circle-inner {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 106px;
+  height: 106px;
+  border-radius: 53px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.dark-mode .prayer-circle-inner {
+ background: #474b55;
+}
+
+.prayer-countdown-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+body.dark-mode .prayer-countdown-text {
+  color: #e2e8f0;
+}
+
+.prayer-current-info {
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.prayer-current-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+body.dark-mode .prayer-current-label {
+  color: #e2e8f0;
+}
+
+.prayer-date-container {
+  text-align: center;
+}
+
+.prayer-english-date {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 3px;
+  white-space: pre-line;
+}
+
+body.dark-mode .prayer-english-date {
+  color: #cbd5e0;
+}
+
+.prayer-hijri-date {
+  font-size: 10px;
+  color: #6b7280;
+}
+
+body.dark-mode .prayer-hijri-date {
+  color: #9ca3af;
+}
+
+/* Forbidden Times Section */
+.prayer-forbidden-section {
+  padding: 16px 24px;
+  margin-bottom: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+body.dark-mode .prayer-forbidden-section {
+  border-top-color: #374151;
+}
+
+.prayer-forbidden-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #dc2626;
+  margin-bottom: 12px;
+}
+
+.prayer-forbidden-list {
+  background: #fef2f2;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid #fecaca;
+}
+
+body.dark-mode .prayer-forbidden-list {
+  background: rgba(209, 92, 92, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.prayer-forbidden-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+}
+
+.prayer-forbidden-label {
+  font-size: 13px;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+body.dark-mode .prayer-forbidden-label {
+  color: #fca5a5;
+}
+
+.prayer-forbidden-time {
+  font-size: 11px;
+  color: #991b1b;
+  font-weight: 700;
+}
+
+body.dark-mode .prayer-forbidden-time {
+  color: #fca5a5;
+}
+
+/* Footer Section */
+.prayer-footer {
+  padding: 16px 24px 20px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+body.dark-mode .prayer-footer {
+  border-top-color: #374151;
+}
+
+.prayer-sun-times {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prayer-sun-text {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+body.dark-mode .prayer-sun-text {
+  color: #9ca3af;
+}
+
+.prayer-hanafi-badge {
+  background: #f0fdf4;
+  padding: 6px 12px;
+  border-radius: 12px;
+}
+
+body.dark-mode .prayer-hanafi-badge {
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.prayer-hanafi-text {
+  font-size: 11px;
+  color: #15803d;
+  font-weight: 700;
+}
+
+body.dark-mode .prayer-hanafi-text {
+  color: #4ade80;
+}
+
+/* Loading Spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  border: 3px solid rgba(102, 126, 234, 0.2);
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
+
+body.dark-mode .spinner {
+  border: 3px solid rgba(167, 139, 250, 0.2);
+  border-top: 3px solid #a78bfa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 380px) {
+  .prayer-main-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .prayer-timings-column,
+  .prayer-circular-timer {
+    flex: 1;
+    width: 100%;
+  }
+
+  .prayer-circular-timer {
+    align-items: center;
+  }
+
+  .prayer-modal-title {
+    font-size: 20px;
+  }
+}
+
 @media (min-width: 1024px) {
   .dark-mode-toggle-mobile {
     width: 50px;
