@@ -91,11 +91,11 @@
           <div class="stat-label">Districts Covered</div>
           <div class="stat-value" id="districtCount">0</div>
         </div>
-        <div class="stat-card">
+        <!-- <div class="stat-card">
           <div class="stat-icon">✅</div>
           <div class="stat-label">Verified Today</div>
           <div class="stat-value">0</div>
-        </div>
+        </div> -->
       </div>
 
       <!-- Alerts -->
@@ -799,7 +799,7 @@
           <td><strong>${mosque.name}</strong></td>
           <td>${mosque.district || mosque.division || 'Not set'}</td>
           <td class="coord-display">${mosque.lat.toFixed(6)}, ${mosque.lng.toFixed(6)}</td>
-          <td><span class="badge badge-success">Active</span></td>
+          <td><span class="badge badge-success">Verified</span></td>
           <td>
             <div class="table-actions">
               <button class="action-btn edit" onclick='openEditModal(${JSON.stringify(mosque).replace(/'/g, "\\'")})'  title="Edit">
