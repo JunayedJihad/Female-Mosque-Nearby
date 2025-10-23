@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - HerPrayerPlace</title>
+  <link rel="icon" type="image/png" href="muslimah.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./admin.css">
+  <link rel="shortcut icon" href="./admin.png" type="image/x-icon">
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div id="loginScreen" class="login-container">
+    <div class="login-box">
+      <h1 class="login-title">Admin Login</h1>
+      <p class="login-subtitle">HerPrayerPlace Admin Dashboard</p>
+
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label>Email Address</label>
+        <input type="email" id="adminEmail" placeholder="admin@herprayerplace.com" autocomplete="email">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 24px;">
+        <label>Password</label>
+        <input type="password" id="adminPassword" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%; display: flex; justify-content: center;" onclick="login()">
+        Sign In
+      </button>
+
+      <div id="loginError" class="alert alert-error" style="margin-top: 16px;"></div>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" style="display: none;">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo-section">
+        <div class="logo-title">
+          HerPrayerPlace
+        </div>
+        <div class="logo-subtitle">Admin Dashboard</div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Navigation</div>
+        <div class="nav-item active">
+          <span class="nav-icon">📊</span>
+          Database Management
+        </div>
+        <a href="https://herprayerplace.vercel.app" target="_blank" class="nav-item">
+          <span class="nav-icon">🌐</span>
+          View Website
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-email" id="userEmail">Loading...</div>
+          <div class="user-role">Administrator</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">
+           Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <div>
+          <h1 class="page-title">Database Management</h1>
+          <p class="page-subtitle">Manage prayer place locations across Bangladesh</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🕌</div>
+          <div class="stat-label">Total Locations</div>
+          <div class="stat-value" id="totalCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📍</div>
+          <div class="stat-label">Districts Covered</div>
+          <div class="stat-value" id="districtCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-label">Verified Today</div>
+          <div class="stat-value">0</div>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div id="successAlert" class="alert alert-success">
+        <span>✓</span>
+        <span id="successMessage"></span>
+      </div>
+      <div id="errorAlert" class="alert alert-error">
+        <span>✗</span>
+        <span id="errorMessage"></span>
+      </div>
+      <div id="warningAlert" class="alert alert-warning">
+        <span>⚠</span>
+        <span id="warningMessage"></span>
+      </div>
+
+      <!-- Add New Location Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Add New Location</h2>
+          <button class="btn btn-secondary" onclick="resetForm()">
+            Clear Form
+          </button>
+        </div>
+        <div class="card-body">
+          <!-- <div class="alert alert-info show" style="margin-bottom: 24px;">
+            <span>ℹ️</span>
+            <span>Paste any Google Maps link → Click Extract → Verify → Add to database. System automatically checks for duplicates.</span>
+          </div> -->
+
+          <div class="form-group full-width" style="margin-bottom: 16px;">
+            <label style="color: rgb(2, 109, 250);">Google Maps Link <span class="required">*</span></label>
+            <input type="text" id="mapsLink" placeholder="https://maps.google.com/..." oninput="clearDuplicateHighlights()">
+            <p class="hint">💡 For short links: click it first, then copy the full URL</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="extractCoordinates()" id="extractBtn">
+            🔍 Extract Coordinates
+          </button>
+
+          <div id="extractedInfo" style="display: none; margin-top: 24px; padding: 24px; background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px;">
+            <h3 style="color: #10b981; margin-bottom: 16px; font-size: 16px; font-weight: 700;">✓ Extracted Information</h3>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Location Name <span class="required">*</span></label>
+                <input type="text" id="editName" placeholder="Enter location name">
+              </div>
+
+              <div class="form-group">
+                <label>District <span class="required">*</span></label>
+                <select id="districtSelect">
+                  <option value="">Select District</option>
+                  <option value="Bagerhat">Bagerhat</option>
+                  <option value="Bandarban">Bandarban</option>
+                  <option value="Barguna">Barguna</option>
+                  <option value="Barishal">Barishal</option>
+                  <option value="Bhola">Bhola</option>
+                  <option value="Bogura">Bogura</option>
+                  <option value="Brahmanbaria">Brahmanbaria</option>
+                  <option value="Chandpur">Chandpur</option>
+                  <option value="Chapainawabganj">Chapainawabganj</option>
+                  <option value="Chattogram">Chattogram</option>
+                  <option value="Chuadanga">Chuadanga</option>
+                  <option value="Cox's Bazar">Cox's Bazar</option>
+                  <option value="Cumilla">Cumilla</option>
+                  <option value="Dhaka">Dhaka</option>
+                  <option value="Dinajpur">Dinajpur</option>
+                  <option value="Faridpur">Faridpur</option>
+                  <option value="Feni">Feni</option>
+                  <option value="Gaibandha">Gaibandha</option>
+                  <option value="Gazipur">Gazipur</option>
+                  <option value="Gopalganj">Gopalganj</option>
+                  <option value="Habiganj">Habiganj</option>
+                  <option value="Jamalpur">Jamalpur</option>
+                  <option value="Jashore">Jashore</option>
+                  <option value="Jhalokathi">Jhalokathi</option>
+                  <option value="Jhenaidah">Jhenaidah</option>
+                  <option value="Joypurhat">Joypurhat</option>
+                  <option value="Khagrachhari">Khagrachhari</option>
+                  <option value="Khulna">Khulna</option>
+                  <option value="Kishoreganj">Kishoreganj</option>
+                  <option value="Kurigram">Kurigram</option>
+                  <option value="Kushtia">Kushtia</option>
+                  <option value="Lakshmipur">Lakshmipur</option>
+                  <option value="Lalmonirhat">Lalmonirhat</option>
+                  <option value="Madaripur">Madaripur</option>
+                  <option value="Magura">Magura</option>
+                  <option value="Manikganj">Manikganj</option>
+                  <option value="Meherpur">Meherpur</option>
+                  <option value="Moulvibazar">Moulvibazar</option>
+                  <option value="Munshiganj">Munshiganj</option>
+                  <option value="Mymensingh">Mymensingh</option>
+                  <option value="Naogaon">Naogaon</option>
+                  <option value="Narail">Narail</option>
+                  <option value="Narayanganj">Narayanganj</option>
+                  <option value="Narsingdi">Narsingdi</option>
+                  <option value="Natore">Natore</option>
+                  <option value="Netrokona">Netrokona</option>
+                  <option value="Nilphamari">Nilphamari</option>
+                  <option value="Noakhali">Noakhali</option>
+                  <option value="Pabna">Pabna</option>
+                  <option value="Panchagarh">Panchagarh</option>
+                  <option value="Patuakhali">Patuakhali</option>
+                  <option value="Pirojpur">Pirojpur</option>
+                  <option value="Rajbari">Rajbari</option>
+                  <option value="Rajshahi">Rajshahi</option>
+                  <option value="Rangamati">Rangamati</option>
+                  <option value="Rangpur">Rangpur</option>
+                  <option value="Satkhira">Satkhira</option>
+                  <option value="Shariatpur">Shariatpur</option>
+                  <option value="Sherpur">Sherpur</option>
+                  <option value="Sirajganj">Sirajganj</option>
+                  <option value="Sunamganj">Sunamganj</option>
+                  <option value="Sylhet">Sylhet</option>
+                  <option value="Tangail">Tangail</option>
+                  <option value="Thakurgaon">Thakurgaon</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Latitude</label>
+                <input type="text" id="extractedLat" readonly class="coord-display">
+              </div>
+
+              <div class="form-group">
+                <label>Longitude</label>
+                <input type="text" id="extractedLng" readonly class="coord-display">
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="addToDatabase()" id="addBtn">
+                ➕ Add to Database
+              </button>
+              <button class="btn btn-secondary" onclick="resetForm()">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📋 All Locations</h2>
+          <button class="btn btn-success" onclick="loadMosques()">
+            🔄 Refresh Data
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search by name or district..." onkeyup="searchMosques()">
+            <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="data-table" id="mosqueTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Location Name</th>
+                  <th>District</th>
+                  <th>Coordinates</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="mosqueList">
+                <tr>
+                  <td colspan="6" class="no-data">
+                    <div class="no-data-icon">📍</div>
+                    <div>No locations found</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ Edit Location</h3>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Location Name <span class="required">*</span></label>
+            <input type="text" id="editModalName" placeholder="Enter location name">
+          </div>
+
+          <div class="form-group">
+            <label>District <span class="required">*</span></label>
+            <select id="editModalDistrict">
+              <option value="">Select District</option>
+              <option value="Bagerhat">Bagerhat</option>
+              <option value="Bandarban">Bandarban</option>
+              <option value="Barguna">Barguna</option>
+              <option value="Barishal">Barishal</option>
+              <option value="Bhola">Bhola</option>
+              <option value="Bogura">Bogura</option>
+              <option value="Brahmanbaria">Brahmanbaria</option>
+              <option value="Chandpur">Chandpur</option>
+              <option value="Chapainawabganj">Chapainawabganj</option>
+              <option value="Chattogram">Chattogram</option>
+              <option value="Chuadanga">Chuadanga</option>
+              <option value="Cox's Bazar">Cox's Bazar</option>
+              <option value="Cumilla">Cumilla</option>
+              <option value="Dhaka">Dhaka</option>
+              <option value="Dinajpur">Dinajpur</option>
+              <option value="Faridpur">Faridpur</option>
+              <option value="Feni">Feni</option>
+              <option value="Gaibandha">Gaibandha</option>
+              <option value="Gazipur">Gazipur</option>
+              <option value="Gopalganj">Gopalganj</option>
+              <option value="Habiganj">Habiganj</option>
+              <option value="Jamalpur">Jamalpur</option>
+              <option value="Jashore">Jashore</option>
+              <option value="Jhalokathi">Jhalokathi</option>
+              <option value="Jhenaidah">Jhenaidah</option>
+              <option value="Joypurhat">Joypurhat</option>
+              <option value="Khagrachhari">Khagrachhari</option>
+              <option value="Khulna">Khulna</option>
+              <option value="Kishoreganj">Kishoreganj</option>
+              <option value="Kurigram">Kurigram</option>
+              <option value="Kushtia">Kushtia</option>
+              <option value="Lakshmipur">Lakshmipur</option>
+              <option value="Lalmonirhat">Lalmonirhat</option>
+              <option value="Madaripur">Madaripur</option>
+              <option value="Magura">Magura</option>
+              <option value="Manikganj">Manikganj</option>
+              <option value="Meherpur">Meherpur</option>
+              <option value="Moulvibazar">Moulvibazar</option>
+              <option value="Munshiganj">Munshiganj</option>
+              <option value="Mymensingh">Mymensingh</option>
+              <option value="Naogaon">Naogaon</option>
+              <option value="Narail">Narail</option>
+              <option value="Narayanganj">Narayanganj</option>
+              <option value="Narsingdi">Narsingdi</option>
+              <option value="Natore">Natore</option>
+              <option value="Netrokona">Netrokona</option>
+              <option value="Nilphamari">Nilphamari</option>
+              <option value="Noakhali">Noakhali</option>
+              <option value="Pabna">Pabna</option>
+              <option value="Panchagarh">Panchagarh</option>
+              <option value="Patuakhali">Patuakhali</option>
+              <option value="Pirojpur">Pirojpur</option>
+              <option value="Rajbari">Rajbari</option>
+              <option value="Rajshahi">Rajshahi</option>
+              <option value="Rangamati">Rangamati</option>
+              <option value="Rangpur">Rangpur</option>
+              <option value="Satkhira">Satkhira</option>
+              <option value="Shariatpur">Shariatpur</option>
+              <option value="Sherpur">Sherpur</option>
+              <option value="Sirajganj">Sirajganj</option>
+              <option value="Sunamganj">Sunamganj</option>
+              <option value="Sylhet">Sylhet</option>
+              <option value="Tangail">Tangail</option>
+              <option value="Thakurgaon">Thakurgaon</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Latitude <span class="required">*</span></label>
+            <input type="number" step="any" id="editModalLat" placeholder="23.8103">
+          </div>
+
+          <div class="form-group">
+            <label>Longitude <span class="required">*</span></label>
+            <input type="number" step="any" id="editModalLng" placeholder="90.4125">
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="updateMosque()" id="updateBtn">
+            💾 Save Changes
+          </button>
+          <button class="btn btn-secondary" onclick="closeEditModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyALo1YQ2M1GeoH9mORVV7dYSOl2FSCTc84",
+      authDomain: "herprayerplace.firebaseapp.com",
+      projectId: "herprayerplace",
+      storageBucket: "herprayerplace.firebasestorage.app",
+      messagingSenderId: "956020903317",
+      appId: "1:956020903317:web:030c848fbaa10d3e86ba9c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    window.db = db;
+    window.auth = auth;
+    window.collection = collection;
+    window.addDoc = addDoc;
+    window.getDocs = getDocs;
+    window.deleteDoc = deleteDoc;
+    window.doc = doc;
+    window.updateDoc = updateDoc;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.signOut = signOut;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('userEmail').textContent = user.email;
+        loadMosques();
+      } else {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('adminPanel').style.display = 'none';
+      }
+    });
+  </script>
+
+  <script>
+    let extractedData = null;
+    let allMosques = [];
+    let currentDuplicates = [];
+    let editingMosqueId = null;
+
+    // Login Function
+    async function login() {
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value;
+      const errorEl = document.getElementById('loginError');
+
+      if (!email || !password) {
+        errorEl.textContent = 'Please enter email and password';
+        errorEl.classList.add('show');
+        return;
+      }
+
+      showLoading();
+
+      try {
+        await window.signInWithEmailAndPassword(window.auth, email, password);
+        hideLoading();
+      } catch (error) {
+        hideLoading();
+        if (error.code === 'auth/network-request-failed') {
+          errorEl.textContent = 'Network error. Check your connection.';
+        } else {
+          errorEl.textContent = 'Invalid email or password';
+        }
+        errorEl.classList.add('show');
+      }
+    }
+
+    // Logout Function
+    async function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        await window.signOut(window.auth);
+      }
+    }
+
+    // Show/Hide Loading
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('show');
+    }
+
+    // Alert Functions
+    function showSuccess(message) {
+      const alert = document.getElementById('successAlert');
+      document.getElementById('successMessage').textContent = message;
+      alert.classList.add('show');
+      setTimeout(() => alert.classList.remove('show'), 4000);
+    }
+
+    function showError(message) {
+      const alert = document.getElementById('errorAlert');
+      document.getElementById('errorMessage').textContent = message;
+      alert.classList.add('show');
+      setTimeout(() => alert.classList.remove('show'), 5000);
+    }
+
+    function showWarning(message) {
+      const alert = document.getElementById('warningAlert');
+      document.getElementById('warningMessage').innerHTML = message;
+      alert.classList.add('show');
+    }
+
+    function hideWarning() {
+      document.getElementById('warningAlert').classList.remove('show');
+    }
+
+    // Reset Form
+    function resetForm() {
+      document.getElementById('mapsLink').value = '';
+      document.getElementById('extractedInfo').style.display = 'none';
+      document.getElementById('editName').value = '';
+      document.getElementById('districtSelect').value = '';
+      document.getElementById('extractedLat').value = '';
+      document.getElementById('extractedLng').value = '';
+      extractedData = null;
+      clearDuplicateHighlights();
+    }
+
+    // Clear Duplicate Highlights
+    function clearDuplicateHighlights() {
+      document.querySelectorAll('.data-table tbody tr').forEach(row => {
+        row.classList.remove('duplicate');
+      });
+      hideWarning();
+      currentDuplicates = [];
+
+      if (document.getElementById('mapsLink').value.trim() === '') {
+        resetForm();
+      }
+    }
+
+    // Calculate Distance
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    // Check for Duplicates
+    async function checkForDuplicates(lat, lng, name) {
+      const duplicates = [];
+
+      for (const mosque of allMosques) {
+        const distance = calculateDistance(lat, lng, mosque.lat, mosque.lng);
+
+        if (distance < 0.05) {
+          duplicates.push({
+            ...mosque,
+            distance: distance,
+            reason: 'Same location'
+          });
+        } else if (mosque.name.toLowerCase() === name.toLowerCase()) {
+          duplicates.push({
+            ...mosque,
+            distance: distance,
+            reason: 'Same name'
+          });
+        }
+      }
+
+      return duplicates;
+    }
+
+    // Auto Detect District
+    function autoDetectDistrict(name) {
+      const lowerName = name.toLowerCase();
+      const districtKeywords = {
+        'Dhaka': ['dhaka', 'dhanmondi', 'mirpur', 'uttara', 'gulshan', 'banani', 'mohammadpur'],
+        'Chattogram': ['chattogram', 'chittagong'],
+        'Sylhet': ['sylhet'],
+        'Rajshahi': ['rajshahi'],
+        'Khulna': ['khulna'],
+        'Barishal': ['barishal'],
+        'Rangpur': ['rangpur'],
+        'Mymensingh': ['mymensingh'],
+        'Gazipur': ['gazipur'],
+        'Narayanganj': ['narayanganj'],
+        'Cumilla': ['cumilla', 'comilla'],
+        "Cox's Bazar": ["cox's bazar", "cox bazar"],
+      };
+
+      for (const [district, keywords] of Object.entries(districtKeywords)) {
+        if (keywords.some(keyword => lowerName.includes(keyword))) {
+          return district;
+        }
+      }
+      return '';
+    }
+
+    // Extract Coordinates
+    function extractCoordinates() {
+      const link = document.getElementById('mapsLink').value.trim();
+
+      if (!link) {
+        showError('Please paste a Google Maps link');
+        return;
+      }
+
+      showLoading();
+      document.getElementById('extractedInfo').style.display = 'none';
+      hideWarning();
+
+      try {
+        if (link.includes('goo.gl') || link.includes('maps.app.goo.gl')) {
+          hideLoading();
+          showError('Short link detected! Open it in browser first, then copy the full URL');
+          return;
+        }
+
+        let lat, lng, name = "Unknown Location";
+
+        const patterns = [
+          /@(-?\d+\.\d+),(-?\d+\.\d+)/,
+          /\?q=(-?\d+\.\d+),(-?\d+\.\d+)/,
+          /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/,
+          /ll=(-?\d+\.\d+),(-?\d+\.\d+)/,
+          /center=(-?\d+\.\d+),(-?\d+\.\d+)/
+        ];
+
+        let match = null;
+        for (const pattern of patterns) {
+          match = link.match(pattern);
+          if (match) {
+            lat = parseFloat(match[1]);
+            lng = parseFloat(match[2]);
+            break;
+          }
+        }
+
+        if (!match) {
+          hideLoading();
+          showError('Could not extract coordinates. Make sure you copied the full URL');
+          return;
+        }
+
+        if (lat < 20.5 || lat > 26.6 || lng < 88.0 || lng > 92.7) {
+          showWarning('⚠️ Warning: These coordinates appear to be outside Bangladesh!');
+        }
+
+        const placeMatch = link.match(/place\/([^\/]+)/);
+        if (placeMatch) {
+          name = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+        }
+
+        extractedData = { name, lat, lng };
+
+        const suggestedDistrict = autoDetectDistrict(name);
+        document.getElementById('districtSelect').value = suggestedDistrict;
+
+        checkForDuplicates(lat, lng, name).then(duplicates => {
+          currentDuplicates = duplicates;
+
+          if (duplicates.length > 0) {
+            let warningMsg = '<strong>⚠️ Found ' + duplicates.length + ' potential duplicate(s):</strong><br><br>';
+            duplicates.forEach(dup => {
+              warningMsg += `📍 <strong>${dup.name}</strong> - ${dup.reason} (${(dup.distance * 1000).toFixed(0)}m away)<br>`;
+            });
+            warningMsg += '<br>Please verify before adding!';
+            showWarning(warningMsg);
+
+            highlightDuplicates(duplicates);
+          }
+
+          document.getElementById('extractedLat').value = lat.toFixed(6);
+          document.getElementById('extractedLng').value = lng.toFixed(6);
+          document.getElementById('editName').value = name;
+          document.getElementById('extractedInfo').style.display = 'block';
+          hideLoading();
+        });
+
+      } catch (error) {
+        hideLoading();
+        showError('Error processing link: ' + error.message);
+      }
+    }
+
+    // Highlight Duplicates in Table
+    function highlightDuplicates(duplicates) {
+      document.querySelectorAll('.data-table tbody tr').forEach(row => {
+        row.classList.remove('duplicate');
+      });
+
+      duplicates.forEach(dup => {
+        const row = document.querySelector(`tr[data-id="${dup.id}"]`);
+        if (row) {
+          row.classList.add('duplicate');
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    }
+
+    // Add to Database
+    async function addToDatabase() {
+      if (!extractedData) {
+        showError('Please extract coordinates first');
+        return;
+      }
+
+      const editedName = document.getElementById('editName').value.trim();
+      if (!editedName) {
+        showError('Please enter a location name');
+        return;
+      }
+
+      const selectedDistrict = document.getElementById('districtSelect').value;
+      if (!selectedDistrict) {
+        showError('Please select a district');
+        return;
+      }
+
+      const duplicates = await checkForDuplicates(extractedData.lat, extractedData.lng, editedName);
+      if (duplicates.length > 0) {
+        const confirmed = confirm(`Found ${duplicates.length} potential duplicate(s). Are you sure you want to add this location?`);
+        if (!confirmed) return;
+      }
+
+      showLoading();
+
+      try {
+        await window.addDoc(window.collection(window.db, 'mosques'), {
+          name: editedName,
+          lat: extractedData.lat,
+          lng: extractedData.lng,
+          district: selectedDistrict,
+          createdAt: new Date().toISOString()
+        });
+
+        hideLoading();
+        showSuccess('✓ Location added successfully!');
+        resetForm();
+        loadMosques();
+
+      } catch (error) {
+        hideLoading();
+        showError('Error adding location: ' + error.message);
+      }
+    }
+
+    // Load Mosques
+    async function loadMosques() {
+      showLoading();
+
+      try {
+        const querySnapshot = await window.getDocs(window.collection(window.db, 'mosques'));
+        allMosques = [];
+
+        querySnapshot.forEach((docSnap) => {
+          allMosques.push({
+            id: docSnap.id,
+            ...docSnap.data()
+          });
+        });
+
+        displayMosques(allMosques);
+        updateStats();
+        hideLoading();
+
+      } catch (error) {
+        hideLoading();
+        showError('Error loading data: ' + error.message);
+      }
+    }
+
+    // Display Mosques in Table
+    function displayMosques(mosques) {
+      const tbody = document.getElementById('mosqueList');
+      tbody.innerHTML = '';
+
+      if (mosques.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="no-data">
+              <div class="no-data-icon">📍</div>
+              <div>No locations found</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      mosques.forEach((mosque, index) => {
+        const row = document.createElement('tr');
+        row.setAttribute('data-id', mosque.id);
+        row.innerHTML = `
+          <td><strong>${index + 1}</strong></td>
+          <td><strong>${mosque.name}</strong></td>
+          <td>${mosque.district || mosque.division || 'Not set'}</td>
+          <td class="coord-display">${mosque.lat.toFixed(6)}, ${mosque.lng.toFixed(6)}</td>
+          <td><span class="badge badge-success">Active</span></td>
+          <td>
+            <div class="table-actions">
+              <button class="action-btn edit" onclick='openEditModal(${JSON.stringify(mosque).replace(/'/g, "\\'")})'  title="Edit">
+                 Edit
+              </button>
+              <button class="action-btn delete" onclick="deleteMosque('${mosque.id}', '${mosque.name.replace(/'/g, "\\'")}')" title="Delete">
+                 Delete
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Update Stats
+    function updateStats() {
+      document.getElementById('totalCount').textContent = allMosques.length;
+
+      const uniqueDistricts = [...new Set(allMosques.map(m => m.district || m.division).filter(d => d))];
+      document.getElementById('districtCount').textContent = uniqueDistricts.length;
+    }
+
+    // Search Mosques
+    function searchMosques() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      const searchClear = document.getElementById('searchClear');
+
+      if (searchTerm.length > 0) {
+        searchClear.classList.add('active');
+      } else {
+        searchClear.classList.remove('active');
+      }
+
+      if (searchTerm === '') {
+        displayMosques(allMosques);
+        return;
+      }
+
+      const filtered = allMosques.filter(mosque => {
+        return mosque.name.toLowerCase().includes(searchTerm) ||
+               (mosque.district && mosque.district.toLowerCase().includes(searchTerm));
+      });
+
+      displayMosques(filtered);
+    }
+
+    // Clear Search
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchClear').classList.remove('active');
+      displayMosques(allMosques);
+    }
+
+    // Open Edit Modal
+    function openEditModal(mosque) {
+      editingMosqueId = mosque.id;
+      document.getElementById('editModalName').value = mosque.name;
+      document.getElementById('editModalDistrict').value = mosque.district || mosque.division || '';
+      document.getElementById('editModalLat').value = mosque.lat;
+      document.getElementById('editModalLng').value = mosque.lng;
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    // Close Edit Modal
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('show');
+      editingMosqueId = null;
+    }
+
+    // Update Mosque
+    async function updateMosque() {
+      if (!editingMosqueId) return;
+
+      const name = document.getElementById('editModalName').value.trim();
+      const district = document.getElementById('editModalDistrict').value;
+      const lat = parseFloat(document.getElementById('editModalLat').value);
+      const lng = parseFloat(document.getElementById('editModalLng').value);
+
+      if (!name || !district || isNaN(lat) || isNaN(lng)) {
+        showError('Please fill all required fields with valid data');
+        return;
+      }
+
+      showLoading();
+
+      try {
+        await window.updateDoc(window.doc(window.db, 'mosques', editingMosqueId), {
+          name: name,
+          district: district,
+          lat: lat,
+          lng: lng,
+          updatedAt: new Date().toISOString()
+        });
+
+        hideLoading();
+        closeEditModal();
+        showSuccess('✓ Location updated successfully!');
+        loadMosques();
+
+      } catch (error) {
+        hideLoading();
+        showError('Error updating location: ' + error.message);
+      }
+    }
+
+    // Delete Mosque
+    async function deleteMosque(id, name) {
+      if (!confirm(`Are you sure you want to delete "${name}"?\n\nThis action cannot be undone.`)) {
+        return;
+      }
+
+      showLoading();
+
+      try {
+        await window.deleteDoc(window.doc(window.db, 'mosques', id));
+        hideLoading();
+        showSuccess('✓ Location deleted successfully');
+        currentDuplicates = [];
+        hideWarning();
+        loadMosques();
+      } catch (error) {
+        hideLoading();
+        showError('Error deleting location: ' + error.message);
+      }
+    }
+
+    // Enter key handler for login
+    document.addEventListener('DOMContentLoaded', () => {
+      const passwordInput = document.getElementById('adminPassword');
+      if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            login();
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
