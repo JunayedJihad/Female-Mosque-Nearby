@@ -1,4 +1,4 @@
-// prayerTimesUI.js - Prayer Times UI Controller (User-triggered version)
+// prayerTimesUI.js - Prayer Times UI Controller (User-triggered version - FIXED)
 (function() {
   let prayerData = null;
   let updateInterval = null;
@@ -6,10 +6,14 @@
 
   // Initialize Prayer Times UI
   function initPrayerTimes() {
+    console.log('Prayer Times UI Initializing...');
     createPrayerUI();
     setupEventListeners();
-    hookIntoLocationButtons();
-    // NO automatic location fetch - only on user action
+
+    // Delay hooking to ensure main.js is fully loaded
+    setTimeout(() => {
+      hookIntoLocationButtons();
+    }, 1000);
   }
 
   // Create Prayer Times UI Elements
@@ -25,6 +29,7 @@
       </button>
     `;
     document.body.appendChild(fabContainer);
+    console.log('Prayer FAB created (hidden)');
 
     // Create Modal
     const modal = document.createElement('div');
@@ -43,6 +48,7 @@
       </div>
     `;
     document.body.appendChild(modal);
+    console.log('Prayer Modal created');
   }
 
   // Setup Event Listeners
@@ -53,9 +59,11 @@
 
     if (prayerFab) {
       prayerFab.addEventListener('click', () => {
+        console.log('Prayer FAB clicked');
         // Don't open if dua popup is active
         const duaPopup = document.getElementById('suggestionPopup');
         if (duaPopup && duaPopup.classList.contains('active')) {
+          console.log('Dua popup is active, not opening prayer modal');
           return;
         }
 
@@ -91,36 +99,138 @@
 
   // Hook into existing location buttons
   function hookIntoLocationButtons() {
+    console.log('Hooking into location buttons...');
+
     // Hook into the FAB locate button
     const fabLocate = document.getElementById('fabLocate');
     if (fabLocate) {
-      fabLocate.addEventListener('click', function() {
-        // Wait for location to be set by main.js, then show prayer times
-        setTimeout(() => {
-          if (window.userLocation) {
-            showPrayerTimesForLocation(window.userLocation.lat, window.userLocation.lng);
-          }
-        }, 2000); // Wait 2 seconds for location to be fetched and set
+      console.log('Found fabLocate button, adding listener');
+
+      // Clone the button to remove all existing event listeners
+      const newFabLocate = fabLocate.cloneNode(true);
+      fabLocate.parentNode.replaceChild(newFabLocate, fabLocate);
+
+      // Add the original functionality back by calling the main.js function
+      newFabLocate.addEventListener('click', function() {
+        console.log('Location button clicked - triggering geolocation');
+
+        const originalContent = newFabLocate.innerHTML;
+        newFabLocate.innerHTML = '⏳';
+        newFabLocate.disabled = true;
+        newFabLocate.style.opacity = '0.7';
+
+        if (!map) {
+          newFabLocate.innerHTML = originalContent;
+          newFabLocate.disabled = false;
+          newFabLocate.style.opacity = '1';
+          alert('Map is still loading, please try again in a moment');
+          return;
+        }
+
+        if ("geolocation" in navigator) {
+          showToast('📍 Requesting location access...');
+
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              window.userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              };
+
+              if (userMarker) map.removeLayer(userMarker);
+              if (radiusCircle) map.removeLayer(radiusCircle);
+
+              radiusCircle = L.circle([window.userLocation.lat, window.userLocation.lng], {
+                color: "#667eea",
+                fillColor: "#a78bfa",
+                fillOpacity: 0.2,
+                radius: currentRadius * 1000,
+              }).addTo(map);
+
+              userMarker = L.marker([window.userLocation.lat, window.userLocation.lng], {
+                icon: bluePin,
+              }).addTo(map);
+              userMarker.bindPopup("<strong>Your Location</strong>").openPopup();
+
+              map.setView([window.userLocation.lat, window.userLocation.lng], 14);
+              displayMosques(window.userLocation.lat, window.userLocation.lng);
+
+              newFabLocate.innerHTML = originalContent;
+              newFabLocate.disabled = false;
+              newFabLocate.style.opacity = '1';
+
+              showToast('✅ Location found!');
+
+              // NOW SHOW PRAYER TIMES
+              console.log('Showing prayer times for location:', window.userLocation);
+              setTimeout(() => {
+                showPrayerTimesForLocation(window.userLocation.lat, window.userLocation.lng);
+              }, 300);
+            },
+            function (error) {
+              newFabLocate.innerHTML = originalContent;
+              newFabLocate.disabled = false;
+              newFabLocate.style.opacity = '1';
+
+              let errorMsg = "";
+              switch (error.code) {
+                case error.PERMISSION_DENIED:
+                  errorMsg = "❌ Location access denied. Please enable location permissions in your browser settings.";
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  errorMsg = "❌ Location unavailable. Please check your device settings.";
+                  break;
+                case error.TIMEOUT:
+                  errorMsg = "❌ Location request timed out. Please try again.";
+                  break;
+                default:
+                  errorMsg = "❌ Unable to get your location. Please try again.";
+              }
+
+              showToast(errorMsg, 4000);
+            },
+            {
+              enableHighAccuracy: false,
+              timeout: 6000,
+              maximumAge: 120000,
+            }
+          );
+        } else {
+          newFabLocate.innerHTML = originalContent;
+          newFabLocate.disabled = false;
+          newFabLocate.style.opacity = '1';
+          showToast("❌ Location is not supported by your browser.", 3000);
+        }
       });
+    } else {
+      console.error('fabLocate button not found!');
     }
 
-    // Hook into search functionality by overriding performSearch
-    const originalPerformSearch = window.performSearch;
-    if (typeof originalPerformSearch === 'function') {
+    // Hook into search functionality
+    console.log('Checking for performSearch function...');
+    if (typeof window.performSearch === 'function') {
+      console.log('Found performSearch, overriding it');
+      const originalPerformSearch = window.performSearch;
+
       window.performSearch = function(lat, lng, displayName) {
+        console.log('performSearch called with:', lat, lng, displayName);
         // Call original function
         originalPerformSearch(lat, lng, displayName);
 
         // Show prayer times after search
         setTimeout(() => {
+          console.log('Showing prayer times for searched location');
           showPrayerTimesForLocation(lat, lng);
-        }, 500);
+        }, 300);
       };
+    } else {
+      console.error('performSearch function not found!');
     }
   }
 
   // Show Prayer Times for a specific location
   async function showPrayerTimesForLocation(latitude, longitude) {
+    console.log('showPrayerTimesForLocation called:', latitude, longitude);
     userPrayerLocation = { latitude, longitude };
 
     // Show FAB with loading state
@@ -129,6 +239,7 @@
 
     if (fabContainer) {
       fabContainer.style.display = 'flex';
+      console.log('Prayer FAB container shown');
     }
 
     if (prayerFab) {
@@ -138,7 +249,9 @@
 
     // Fetch prayer times
     try {
+      console.log('Fetching prayer times...');
       const data = await getPrayerTimes(latitude, longitude);
+      console.log('Prayer times data:', data);
 
       if (data.success) {
         prayerData = data;
@@ -152,7 +265,9 @@
 
         // Schedule next day's fetch at midnight
         scheduleNextDayFetch();
+        console.log('Prayer times loaded successfully');
       } else {
+        console.error('Failed to load prayer times:', data.error);
         // Hide FAB on error
         if (fabContainer) {
           fabContainer.style.display = 'none';
@@ -359,4 +474,6 @@
   } else {
     initPrayerTimes();
   }
+
+  console.log('Prayer Times UI script loaded');
 })();

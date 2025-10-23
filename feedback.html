@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Suggest a Location - HerPrayerPlace</title>
+    <title>Feedback - HerPrayerPlace</title>
     <style>
         * {
             margin: 0;
@@ -144,7 +144,7 @@
             font-weight: 600;
         }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 15px;
             border: 1.5px solid #e2e8f0;
@@ -154,32 +154,36 @@
             color: #1a202c;
             background: #f7fafc;
             transition: all 0.2s;
+            font-family: inherit;
         }
 
         body.dark-mode input,
-        body.dark-mode select {
+        body.dark-mode select,
+        body.dark-mode textarea {
             background: #1a202c;
             border-color: #4a5568;
             color: #e2e8f0;
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
             background: white;
         }
 
         body.dark-mode input:focus,
-        body.dark-mode select:focus {
+        body.dark-mode select:focus,
+        body.dark-mode textarea:focus {
             background: #2d3748;
             border-color: #a78bfa;
         }
 
-        input::placeholder {
+        input::placeholder, textarea::placeholder {
             color: #a0aec0;
         }
 
-        body.dark-mode input::placeholder {
+        body.dark-mode input::placeholder,
+        body.dark-mode textarea::placeholder {
             color: #718096;
         }
 
@@ -195,6 +199,12 @@
         body.dark-mode select option {
             background: #2d3748;
             color: #e2e8f0;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
         }
 
         .hint {
@@ -404,8 +414,8 @@
     <div class="container">
         <div class="header">
             <div class="header-text">
-                <h1>Suggest a Location</h1>
-                <p>Help others discover prayer-friendly places</p>
+                <h1>Send Feedback</h1>
+                <p>Help us improve HerPrayerPlace</p>
             </div>
             <button class="close-btn" onclick="handleClose()" aria-label="Close">✕</button>
         </div>
@@ -414,116 +424,53 @@
             <div class="success-icon">🎉</div>
             <h2 class="success-title">Thank You!</h2>
             <p class="success-message">
-                Your contribution is helping thousands of sisters to find safe prayer spaces.
-                May Allah reward you abundantly! ✨✨
+                Your feedback means the world to us! We're constantly working to improve HerPrayerPlace.
+                May Allah bless you! ✨
             </p>
-            <div class="heart-container">💚💚</div>
+            <div class="heart-container">💚</div>
         </div>
 
-        <form class="form-content" id="suggestionForm" onsubmit="handleSubmit(event)">
+        <form class="form-content" id="feedbackForm" onsubmit="handleSubmit(event)">
             <div class="form-group">
-                <label for="locationName">
-                    Location Name <span class="required">*</span>
+                <label for="name">
+                    Name <span class="optional">(Optional)</span>
                 </label>
                 <input
                     type="text"
-                    id="locationName"
-                    name="locationName"
-                    placeholder="e.g., Baitul Mukarram Mosque"
+                    id="name"
+                    name="name"
+                    placeholder="Your name (optional)"
                     autocomplete="off"
-                    required
                 >
             </div>
 
             <div class="form-group">
-                <label for="district">
-                    District <span class="required">*</span>
+                <label for="feedbackType">
+                    Feedback Type <span class="required">*</span>
                 </label>
-                <select id="district" name="district" required>
-                    <option value="">Select District</option>
-                    <option value="Bagerhat">Bagerhat</option>
-                    <option value="Bandarban">Bandarban</option>
-                    <option value="Barguna">Barguna</option>
-                    <option value="Barishal">Barishal</option>
-                    <option value="Bhola">Bhola</option>
-                    <option value="Bogura">Bogura</option>
-                    <option value="Brahmanbaria">Brahmanbaria</option>
-                    <option value="Chandpur">Chandpur</option>
-                    <option value="Chapainawabganj">Chapainawabganj</option>
-                    <option value="Chattogram">Chattogram</option>
-                    <option value="Chuadanga">Chuadanga</option>
-                    <option value="Cox's Bazar">Cox's Bazar</option>
-                    <option value="Cumilla">Cumilla</option>
-                    <option value="Dhaka">Dhaka</option>
-                    <option value="Dinajpur">Dinajpur</option>
-                    <option value="Faridpur">Faridpur</option>
-                    <option value="Feni">Feni</option>
-                    <option value="Gaibandha">Gaibandha</option>
-                    <option value="Gazipur">Gazipur</option>
-                    <option value="Gopalganj">Gopalganj</option>
-                    <option value="Habiganj">Habiganj</option>
-                    <option value="Jamalpur">Jamalpur</option>
-                    <option value="Jashore">Jashore</option>
-                    <option value="Jhalokathi">Jhalokathi</option>
-                    <option value="Jhenaidah">Jhenaidah</option>
-                    <option value="Joypurhat">Joypurhat</option>
-                    <option value="Khagrachhari">Khagrachhari</option>
-                    <option value="Khulna">Khulna</option>
-                    <option value="Kishoreganj">Kishoreganj</option>
-                    <option value="Kurigram">Kurigram</option>
-                    <option value="Kushtia">Kushtia</option>
-                    <option value="Lakshmipur">Lakshmipur</option>
-                    <option value="Lalmonirhat">Lalmonirhat</option>
-                    <option value="Madaripur">Madaripur</option>
-                    <option value="Magura">Magura</option>
-                    <option value="Manikganj">Manikganj</option>
-                    <option value="Meherpur">Meherpur</option>
-                    <option value="Moulvibazar">Moulvibazar</option>
-                    <option value="Munshiganj">Munshiganj</option>
-                    <option value="Mymensingh">Mymensingh</option>
-                    <option value="Naogaon">Naogaon</option>
-                    <option value="Narail">Narail</option>
-                    <option value="Narayanganj">Narayanganj</option>
-                    <option value="Narsingdi">Narsingdi</option>
-                    <option value="Natore">Natore</option>
-                    <option value="Netrokona">Netrokona</option>
-                    <option value="Nilphamari">Nilphamari</option>
-                    <option value="Noakhali">Noakhali</option>
-                    <option value="Pabna">Pabna</option>
-                    <option value="Panchagarh">Panchagarh</option>
-                    <option value="Patuakhali">Patuakhali</option>
-                    <option value="Pirojpur">Pirojpur</option>
-                    <option value="Rajbari">Rajbari</option>
-                    <option value="Rajshahi">Rajshahi</option>
-                    <option value="Rangamati">Rangamati</option>
-                    <option value="Rangpur">Rangpur</option>
-                    <option value="Satkhira">Satkhira</option>
-                    <option value="Shariatpur">Shariatpur</option>
-                    <option value="Sherpur">Sherpur</option>
-                    <option value="Sirajganj">Sirajganj</option>
-                    <option value="Sunamganj">Sunamganj</option>
-                    <option value="Sylhet">Sylhet</option>
-                    <option value="Tangail">Tangail</option>
-                    <option value="Thakurgaon">Thakurgaon</option>
+                <select id="feedbackType" name="feedbackType" required>
+                    <option value="">Select feedback type</option>
+                    <option value="Suggestion">Suggestion</option>
+                    <option value="Report an issue">Report an issue</option>
+                    <option value="Others">Others</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="googleMapsLink">
-                    Google Maps Link <span class="optional">(Recommended)</span>
+                <label for="feedback">
+                    Your Feedback <span class="required">*</span>
                 </label>
-                <input
-                    type="url"
-                    id="googleMapsLink"
-                    name="googleMapsLink"
-                    placeholder="Paste Google Maps link here"
-                    autocomplete="off"
-                >
-                <p class="hint">💡 Helps us to add accurate location coordinates</p>
+                <textarea
+                    id="feedback"
+                    name="feedback"
+                    placeholder="Share your thoughts, suggestions, or report any issues..."
+                    required
+                ></textarea>
+                <p class="hint">💡 Be as detailed as possible to help us understand better</p>
             </div>
 
             <button type="submit" class="submit-btn" id="submitBtn">
-                Submit Suggestion
+                Submit Feedback
             </button>
 
             <button type="button" class="cancel-btn" onclick="handleClose()">
@@ -547,18 +494,18 @@
             event.preventDefault();
 
             const submitBtn = document.getElementById('submitBtn');
-            const locationName = document.getElementById('locationName').value.trim();
-            const district = document.getElementById('district').value;
-            const googleMapsLink = document.getElementById('googleMapsLink').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const feedbackType = document.getElementById('feedbackType').value;
+            const feedback = document.getElementById('feedback').value.trim();
 
             // Validation
-            if (!locationName) {
-                alert('Please enter the location name');
+            if (!feedbackType) {
+                alert('Please select a feedback type');
                 return;
             }
 
-            if (!district) {
-                alert('Please select a district');
+            if (!feedback) {
+                alert('Please enter your feedback');
                 return;
             }
 
@@ -569,11 +516,12 @@
             try {
                 // Submit to Google Form
                 const formData = new FormData();
-                formData.append('entry.377255584', locationName);
-                formData.append('entry.1820806225', district);
-                formData.append('entry.1059052321', googleMapsLink);
 
-                const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfyahBkAsOqsd0_mVuk1bzUU3kGISL6N0_93MAfkVeJEBrlw/formResponse';
+                formData.append('entry.1215483991', name);
+                formData.append('entry.1966217648', feedbackType);
+                formData.append('entry.1940526994', feedback);
+
+                const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdvoYtoET1V3LygefJCH2Y2DWTpUVYq4YzWMKYHGucLiGqqDA/formResponse';
 
                 await fetch(formUrl, {
                     method: 'POST',
@@ -582,7 +530,7 @@
                 });
 
                 // Show success message
-                document.getElementById('suggestionForm').classList.add('hide');
+                document.getElementById('feedbackForm').classList.add('hide');
                 document.getElementById('successContainer').classList.add('show');
 
                 // Redirect after 3 seconds
@@ -594,7 +542,7 @@
                 console.error('Error submitting form:', error);
                 alert('Failed to submit. Please try again.');
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Suggestion';
+                submitBtn.textContent = 'Submit Feedback';
             }
         }
 

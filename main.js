@@ -416,7 +416,7 @@ if (!popupShown && suggestionPopup) {
     suggestionPopup.classList.add('active');
     document.body.style.overflow = 'hidden';
     sessionStorage.setItem('duaPopupShown', 'true');
-  }, 4000);
+  }, 1000);
 }
 
 // Show More button - loads another dua
