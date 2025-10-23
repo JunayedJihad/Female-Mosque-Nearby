@@ -1,4 +1,4 @@
-// prayerTimesUI.js - Prayer Times UI Controller (Location-triggered version)
+// prayerTimesUI.js - Prayer Times UI Controller (User-triggered version)
 (function() {
   let prayerData = null;
   let updateInterval = null;
@@ -6,13 +6,27 @@
 
   // Initialize Prayer Times UI
   function initPrayerTimes() {
-    createPrayerModal();
+    createPrayerUI();
     setupEventListeners();
     hookIntoLocationButtons();
+    // NO automatic location fetch - only on user action
   }
 
-  // Create Prayer Modal (NO FAB button)
-  function createPrayerModal() {
+  // Create Prayer Times UI Elements
+  function createPrayerUI() {
+    // Create FAB Container (hidden initially)
+    const fabContainer = document.createElement('div');
+    fabContainer.className = 'prayer-fab-container';
+    fabContainer.id = 'prayerFabContainer';
+    fabContainer.style.display = 'none'; // Hidden until prayer times are loaded
+    fabContainer.innerHTML = `
+      <button class="prayer-fab-loading" id="prayerFab">
+        <div class="spinner"></div>
+      </button>
+    `;
+    document.body.appendChild(fabContainer);
+
+    // Create Modal
     const modal = document.createElement('div');
     modal.className = 'prayer-modal';
     modal.id = 'prayerModal';
@@ -24,9 +38,7 @@
           <button class="prayer-modal-close" id="closePrayerModal" aria-label="Close">✕</button>
         </div>
         <div class="prayer-modal-body" id="prayerModalBody">
-          <div style="display: flex; align-items: center; justify-content: center; padding: 40px;">
-            <div class="spinner"></div>
-          </div>
+          <!-- Content will be populated here -->
         </div>
       </div>
     `;
@@ -35,8 +47,23 @@
 
   // Setup Event Listeners
   function setupEventListeners() {
+    const prayerFab = document.getElementById('prayerFab');
     const prayerModal = document.getElementById('prayerModal');
     const closePrayerModal = document.getElementById('closePrayerModal');
+
+    if (prayerFab) {
+      prayerFab.addEventListener('click', () => {
+        // Don't open if dua popup is active
+        const duaPopup = document.getElementById('suggestionPopup');
+        if (duaPopup && duaPopup.classList.contains('active')) {
+          return;
+        }
+
+        if (prayerData) {
+          openPrayerModal();
+        }
+      });
+    }
 
     if (closePrayerModal) {
       closePrayerModal.addEventListener('click', closePrayerModalHandler);
@@ -64,74 +91,49 @@
 
   // Hook into existing location buttons
   function hookIntoLocationButtons() {
-     const fabLocate = document.getElementById('fabLocate');
-     fabLocate.addEventListener('click', function (e) {
-         // Show loading spinner or disable button if needed
-         navigator.geolocation.getCurrentPosition(
-             (position) => {
-                 const lat = position.coords.latitude;
-                 const lng = position.coords.longitude;
+    // Hook into the FAB locate button
+    const fabLocate = document.getElementById('fabLocate');
+    if (fabLocate) {
+      fabLocate.addEventListener('click', function() {
+        // Wait for location to be set by main.js, then show prayer times
+        setTimeout(() => {
+          if (window.userLocation) {
+            showPrayerTimesForLocation(window.userLocation.lat, window.userLocation.lng);
+          }
+        }, 2000); // Wait 2 seconds for location to be fetched and set
+      });
+    }
 
-                 // Calling your prayer time function
-                 showPrayerTimesForLocation(lat, lng);
-             },
-             (error) => {
-                 console.error("Location error:", error);
-                 alert("Could not fetch location. Please enable GPS or location permissions.");
-             },
-             {
-               enableHighAccuracy: false,
-               timeout: 6000,
-               maximumAge: 0
-             }
-         );
-     });
+    // Hook into search functionality by overriding performSearch
+    const originalPerformSearch = window.performSearch;
+    if (typeof originalPerformSearch === 'function') {
+      window.performSearch = function(lat, lng, displayName) {
+        // Call original function
+        originalPerformSearch(lat, lng, displayName);
 
-    // Hook into search functionality
-    const searchBtnMobile = document.getElementById('searchBtnMobile');
-    if (searchBtnMobile) {
-      // We'll override the performSearch function to trigger prayer times
-      const originalPerformSearch = window.performSearch;
-      if (typeof originalPerformSearch === 'function') {
-        window.performSearch = function(lat, lng, displayName) {
-          // Call original function
-          originalPerformSearch(lat, lng, displayName);
-
-          // Show prayer times after search
-          setTimeout(() => {
-            showPrayerTimesForLocation(lat, lng);
-          }, 500);
-        };
-      }
+        // Show prayer times after search
+        setTimeout(() => {
+          showPrayerTimesForLocation(lat, lng);
+        }, 500);
+      };
     }
   }
 
   // Show Prayer Times for a specific location
   async function showPrayerTimesForLocation(latitude, longitude) {
-    // Don't show if dua popup is active
-    const duaPopup = document.getElementById('suggestionPopup');
-    if (duaPopup && duaPopup.classList.contains('active')) {
-      return;
-    }
-
     userPrayerLocation = { latitude, longitude };
 
-    // Open modal immediately with loading state
-    const prayerModal = document.getElementById('prayerModal');
-    if (prayerModal) {
-      prayerModal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+    // Show FAB with loading state
+    const fabContainer = document.getElementById('prayerFabContainer');
+    const prayerFab = document.getElementById('prayerFab');
+
+    if (fabContainer) {
+      fabContainer.style.display = 'flex';
     }
 
-    // Show loading
-    const modalBody = document.getElementById('prayerModalBody');
-    if (modalBody) {
-      modalBody.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px;">
-          <div class="spinner" style="margin-bottom: 20px;"></div>
-          <p style="color: #667eea; font-weight: 600; font-size: 14px;">Loading prayer times...</p>
-        </div>
-      `;
+    if (prayerFab) {
+      prayerFab.className = 'prayer-fab-loading';
+      prayerFab.innerHTML = '<div class="spinner"></div>';
     }
 
     // Fetch prayer times
@@ -140,36 +142,28 @@
 
       if (data.success) {
         prayerData = data;
-        populateModalContent();
+        updateFAB();
 
-        // Start real-time updates
+        // Start update interval (every second)
         if (updateInterval) clearInterval(updateInterval);
         updateInterval = setInterval(() => {
-          updateModalContent();
+          updateFAB();
         }, 1000);
 
         // Schedule next day's fetch at midnight
         scheduleNextDayFetch();
       } else {
-        showError('Unable to load prayer times. Please try again.');
+        // Hide FAB on error
+        if (fabContainer) {
+          fabContainer.style.display = 'none';
+        }
       }
     } catch (error) {
       console.error('Error fetching prayer times:', error);
-      showError('Failed to fetch prayer times. Please check your connection.');
-    }
-  }
-
-  // Show error in modal
-  function showError(message) {
-    const modalBody = document.getElementById('prayerModalBody');
-    if (modalBody) {
-      modalBody.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center;">
-          <div style="font-size: 48px; margin-bottom: 16px;">❌</div>
-          <p style="color: #dc2626; font-weight: 600; font-size: 16px; margin-bottom: 8px;">Error</p>
-          <p style="color: #6b7280; font-size: 14px;">${message}</p>
-        </div>
-      `;
+      // Hide FAB on error
+      if (fabContainer) {
+        fabContainer.style.display = 'none';
+      }
     }
   }
 
@@ -188,6 +182,47 @@
     }, timeUntilMidnight);
   }
 
+  // Update FAB
+  function updateFAB() {
+    if (!prayerData) return;
+
+    const prayerFab = document.getElementById('prayerFab');
+    if (!prayerFab) return;
+
+    const prayerStatus = getPrayerStatus(prayerData.timings);
+
+    if (prayerStatus) {
+      prayerFab.className = 'prayer-fab';
+      prayerFab.innerHTML = `
+        <span class="prayer-fab-prayer">${prayerStatus.type === 'prayer' ? 'ONGOING' : 'UPCOMING'}</span>
+        <span class="prayer-fab-time">${prayerStatus.name}: ${formatTime12Hour(prayerStatus.startTime)} - ${formatTime12Hour(prayerStatus.endTime)}</span>
+        <div class="prayer-fab-badge">
+          <span class="prayer-fab-badge-text">⏱ ${prayerStatus.formatted}</span>
+        </div>
+      `;
+    }
+  }
+
+  // Open Prayer Modal
+  function openPrayerModal() {
+    const prayerModal = document.getElementById('prayerModal');
+    if (!prayerModal || !prayerData) return;
+
+    // Populate modal content
+    populateModalContent();
+
+    // Show modal
+    prayerModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Start real-time updates in modal
+    if (updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      updateModalContent();
+      updateFAB();
+    }, 1000);
+  }
+
   // Close Prayer Modal
   function closePrayerModalHandler() {
     const prayerModal = document.getElementById('prayerModal');
@@ -196,11 +231,11 @@
     prayerModal.classList.remove('active');
     document.body.style.overflow = 'auto';
 
-    // Stop updates
-    if (updateInterval) {
-      clearInterval(updateInterval);
-      updateInterval = null;
-    }
+    // Reset to FAB-only updates
+    if (updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      updateFAB();
+    }, 1000);
   }
 
   // Populate Modal Content
@@ -315,7 +350,7 @@
     }
   }
 
-  // Expose function globally so it can be called from anywhere
+  // Expose function globally for manual triggering
   window.showPrayerTimesPopup = showPrayerTimesForLocation;
 
   // Initialize when DOM is ready
