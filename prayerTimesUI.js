@@ -165,7 +165,7 @@
               console.log('Showing prayer times for location:', window.userLocation);
               setTimeout(() => {
                 showPrayerTimesForLocation(window.userLocation.lat, window.userLocation.lng);
-              }, 300);
+              }, 300); // Reduced from 1500ms to 300ms
             },
             function (error) {
               newFabLocate.innerHTML = originalContent;
@@ -190,9 +190,9 @@
               showToast(errorMsg, 4000);
             },
             {
-              enableHighAccuracy: false,
-              timeout: 6000,
-              maximumAge: 120000,
+              enableHighAccuracy: false,  // Faster location (WiFi/network instead of GPS)
+              timeout: 5000,              // 5 second timeout
+              maximumAge: 300000,         // Accept location cached within last 5 minutes
             }
           );
         } else {
@@ -221,7 +221,7 @@
         setTimeout(() => {
           console.log('Showing prayer times for searched location');
           showPrayerTimesForLocation(lat, lng);
-        }, 300);
+        }, 300); // Reduced from 800ms to 300ms
       };
     } else {
       console.error('performSearch function not found!');
@@ -416,7 +416,7 @@
 
           <div class="prayer-date-container">
             <div class="prayer-english-date">${getEnglishDate()}</div>
-            <div class="prayer-hijri-date">${getHijriDate()}</div>
+            <div class="prayer-hijri-date">${getHijriDate(prayerData.hijriDate)}</div>
           </div>
         </div>
       </div>

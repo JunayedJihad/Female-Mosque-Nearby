@@ -23,6 +23,7 @@ async function getPrayerTimes(latitude, longitude, date = new Date()) {
       return {
         success: true,
         date: date,
+        hijriDate: data.data.date.hijri, // Add Hijri date from API
         timings: {
           fajr: timings.Fajr,
           sunrise: timings.Sunrise,
@@ -301,47 +302,30 @@ function getPrayerStatus(timings) {
 }
 
 /**
- * Get Hijri date
+ * Get Hijri date from API data (more reliable than browser Intl)
  */
-function getHijriDate() {
-  const now = new Date();
-
-  try {
-    const formatter = new Intl.DateTimeFormat('en-u-ca-islamic', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-    const parts = formatter.formatToParts(now);
-
-    let day = '', month = '', year = '';
-
-    parts.forEach(part => {
-      if (part.type === 'day') day = part.value;
-      if (part.type === 'month') month = part.value;
-      if (part.type === 'year') year = part.value;
-    });
-
-    const monthMap = {
-      'Muharram': 'Muharram',
-      'Safar': 'Safar',
-      'Rabiʻ I': 'Rabi\' al-Awwal',
-      'Rabiʻ II': 'Rabi\' al-Thani',
-      'Jumada I': 'Jumada al-Awwal',
-      'Jumada II': 'Jumada al-Thani',
-      'Rajab': 'Rajab',
-      'Shaʻban': 'Sha\'ban',
-      'Ramadan': 'Ramadan',
-      'Shawwal': 'Shawwal',
-      'Dhuʻl-Qiʻdah': 'Dhu al-Qi\'dah',
-      'Dhuʻl-Hijjah': 'Dhu al-Hijjah'
-    };
-
-    const englishMonth = monthMap[month] || month;
-    return `${day} ${englishMonth} ${year}`;
-  } catch (error) {
-    return 'Hijri Date Unavailable';
+function getHijriDate(hijriData) {
+  if (!hijriData) {
+    // Fallback to browser method if API data not available
+    try {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-u-ca-islamic', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+      return formatter.format(now);
+    } catch (error) {
+      return 'Hijri Date Unavailable';
+    }
   }
+
+  // Use API's Hijri date (more reliable)
+  const day = hijriData.day;
+  const monthName = hijriData.month.en; // e.g., "Jumādá al-Ūlá"
+  const year = hijriData.year;
+
+  return `${day} ${monthName} ${year}`;
 }
 
 /**
