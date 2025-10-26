@@ -48,7 +48,7 @@ Personal project - All rights reserved
 
 ## 👨‍💻 Developer
 
-Junaed Jihad
+Junayed Jihad
 [junayedjihad48@gmail.com](mailto:junayedjihad48@gmail.com)
 
 ---
