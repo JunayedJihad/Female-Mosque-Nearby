@@ -23,7 +23,7 @@ async function getPrayerTimes(latitude, longitude, date = new Date()) {
       return {
         success: true,
         date: date,
-        hijriDate: data.data.date.hijri, // Add Hijri date from API
+        hijriDate: await getHijriDate(data.data.date.hijri),
         timings: {
           fajr: timings.Fajr,
           sunrise: timings.Sunrise,
@@ -302,11 +302,77 @@ function getPrayerStatus(timings) {
 }
 
 /**
- * Get Hijri date from API data (more reliable than browser Intl)
+ * Get Hijri date - prioritize manual override from Firebase with auto-increment
  */
-function getHijriDate(hijriData) {
+async function getHijriDate(hijriData) {
+  // Try to get manual override from Firebase
+  try {
+    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+
+    // Initialize Firebase if not already done
+    let db;
+    if (getApps().length === 0) {
+      const firebaseConfig = {
+        apiKey: "AIzaSyALo1YQ2M1GeoH9mORVV7dYSOl2FSCTc84",
+        authDomain: "herprayerplace.firebaseapp.com",
+        projectId: "herprayerplace",
+        storageBucket: "herprayerplace.firebasestorage.app",
+        messagingSenderId: "956020903317",
+        appId: "1:956020903317:web:030c848fbaa10d3e86ba9c"
+      };
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+    } else {
+      db = getFirestore();
+    }
+
+    const hijriRef = doc(db, 'settings', 'hijriDate');
+    const hijriSnap = await getDoc(hijriRef);
+
+    if (hijriSnap.exists()) {
+      const data = hijriSnap.data();
+      const setDate = new Date(data.updatedAt || data.createdAt);
+      const today = new Date();
+
+      // Calculate days difference
+      const daysDiff = Math.floor((today - setDate) / (1000 * 60 * 60 * 24));
+
+      // Add days to the Hijri day
+      let currentDay = data.day + daysDiff;
+      let currentMonth = data.month;
+      let currentYear = data.year;
+
+      // Handle month overflow (Islamic months are typically 29-30 days)
+      // Simplified: assume 30 days per month for auto-increment
+      while (currentDay > 30) {
+        currentDay -= 30;
+
+        // Move to next month
+        const months = [
+          'Muharram', 'Safar', "Rabi' al-Awwal", "Rabi' al-Thani",
+          'Jumada al-Ula', 'Jumada al-Akhirah', 'Rajab', "Sha'ban",
+          'Ramadan', 'Shawwal', "Dhu al-Qi'dah", "Dhu al-Hijjah"
+        ];
+
+        const currentMonthIndex = months.indexOf(currentMonth);
+        if (currentMonthIndex === 11) {
+          // New year
+          currentMonth = months[0];
+          currentYear++;
+        } else {
+          currentMonth = months[currentMonthIndex + 1];
+        }
+      }
+
+      return `${currentDay} ${currentMonth} ${currentYear}`;
+    }
+  } catch (error) {
+    console.log('No manual Hijri override found, using API data');
+  }
+
+  // Fallback to API data
   if (!hijriData) {
-    // Fallback to browser method if API data not available
     try {
       const now = new Date();
       const formatter = new Intl.DateTimeFormat('en-u-ca-islamic', {
@@ -320,9 +386,8 @@ function getHijriDate(hijriData) {
     }
   }
 
-  // Use API's Hijri date (more reliable)
   const day = hijriData.day;
-  const monthName = hijriData.month.en; // e.g., "Jumādá al-Ūlá"
+  const monthName = hijriData.month.en;
   const year = hijriData.year;
 
   return `${day} ${monthName} ${year}`;

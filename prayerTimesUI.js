@@ -416,7 +416,7 @@
 
           <div class="prayer-date-container">
             <div class="prayer-english-date">${getEnglishDate()}</div>
-            <div class="prayer-hijri-date">${getHijriDate(prayerData.hijriDate)}</div>
+            <div class="prayer-hijri-date">${prayerData.hijriDate}</div>
           </div>
         </div>
       </div>
