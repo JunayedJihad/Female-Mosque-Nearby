@@ -24,7 +24,6 @@ A web application helping Muslim women in Bangladesh locate nearby mosques and p
 
 [herprayerplace.vercel.app](https://herprayerplace.vercel.app)
 
-
 ## 🌙 Hijri Date System
 
 The app uses a smart Hijri date system:
@@ -42,13 +41,9 @@ The app uses a smart Hijri date system:
 
 Created to help Muslim sisters in Bangladesh find safe, accessible prayer spaces while traveling or away from home.
 
-## 📄 License
-
-Personal project - All rights reserved
-
 ## 👨‍💻 Developer
 
-Junaed Jihad
+Junayed Jihad
 [junayedjihad48@gmail.com](mailto:junayedjihad48@gmail.com)
 
 ---
