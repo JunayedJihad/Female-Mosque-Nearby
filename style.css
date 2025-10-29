@@ -207,21 +207,37 @@ body.dark-mode .hamburger-line {
 }
 
 .mobile-logo {
-  font-size: 20px;
-  font-weight: 800;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: flex;
-
+  align-items: center;
 }
+
+
 
 .mobile-logo img {
   width: 30px;
   height: 30px;
   margin-right: 5px;
 }
+
+.title-subtitle{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.title{
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: -4px;
+}
+.subtitle{
+  font-size: 8.8px;
+  font-weight:600;
+}
+
 
 body.dark-mode .mobile-logo {
   background: linear-gradient(135deg, #a78bfa 0%, #f093fb 100%);
@@ -1413,7 +1429,7 @@ body.dark-mode .prayer-timing-time {
 .prayer-circle-bg {
   fill: none;
   stroke: #e5e7eb;
-  stroke-width: 16;
+  stroke-width: 18;
 }
 
 body.dark-mode .prayer-circle-bg {
@@ -1423,8 +1439,8 @@ body.dark-mode .prayer-circle-bg {
 .prayer-circle-progress {
   fill: none;
   stroke: url(#prayerGradient);
-  stroke-width: 16;
-  stroke-linecap: round;
+  stroke-width: 18;
+  stroke-linecap: butt;
   transition: stroke-dashoffset 0.3s ease;
 }
 
