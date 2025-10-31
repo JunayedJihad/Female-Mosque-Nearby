@@ -350,7 +350,7 @@
               − 2 Days
             </button>
             <button class="btn btn-secondary" onclick="setToday()">
-               Today (API)
+              Today (API)
             </button>
             <button class="btn btn-primary" onclick="adjustHijriDate(2)">
               + 2 Days
@@ -359,21 +359,6 @@
               + 3 Days
             </button>
           </div>
-
-          <!-- Info Box -->
-          <!-- <div
-            style="margin-top: 32px; padding: 20px; background: #f8f9fc; border-radius: 12px; border-left: 4px solid #667eea;">
-            <div style="font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px;">
-              💡 How it works:
-            </div>
-            <div style="font-size: 13px; color: #64748b; line-height: 1.6;">
-              • The date you set will <strong>automatically increment daily</strong><br>
-              • Adjust only when Bangladesh moon sighting differs from API<br>
-              • Typically needs adjustment once per month (at new moon)<br>
-              • Click "Reset" to return to automatic API calculations
-            </div>
-          </div> -->
-
         </div>
       </div>
 
@@ -1080,52 +1065,57 @@
     async function loadCurrentHijriDate() {
       showLoading();
 
-      // Update English date
       const now = new Date();
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('englishDateDisplay').textContent = now.toLocaleDateString('en-US', options);
 
       try {
-        // Get API date first
         const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=23.8103&longitude=90.4125&method=1&school=1`);
         const data = await response.json();
         const apiHijriDate = data.data.date.hijri;
         const apiDateString = `${apiHijriDate.day} ${apiHijriDate.month.en} ${apiHijriDate.year}`;
 
-        // Check for override
         const hijriRef = window.doc(window.db, 'settings', 'hijriDate');
         const hijriSnap = await window.getDoc(hijriRef);
 
-        if (hijriSnap.exists()) {
-          const overrideData = hijriSnap.data();
-          const setDate = new Date(overrideData.updatedAt || overrideData.createdAt);
-          const daysDiff = Math.floor((now - setDate) / (1000 * 60 * 60 * 24));
+        if (hijriSnap.exists() && hijriSnap.data().hasOwnProperty('dayDifference')) {
+          const dayDiff = hijriSnap.data().dayDifference || 0;
 
-          let currentDay = overrideData.day + daysDiff;
-          let currentMonth = overrideData.month;
-          let currentYear = overrideData.year;
+          let adjustedDay = parseInt(apiHijriDate.day) + dayDiff;
+          let adjustedMonth = apiHijriDate.month.en;
+          let adjustedYear = parseInt(apiHijriDate.year);
 
-          // Handle month overflow
           const months = [
             'Muharram', 'Safar', "Rabi' al-Awwal", "Rabi' al-Thani",
             'Jumada al-Ula', 'Jumada al-Akhirah', 'Rajab', "Sha'ban",
             'Ramadan', 'Shawwal', "Dhu al-Qi'dah", "Dhu al-Hijjah"
           ];
 
-          while (currentDay > 30) {
-            currentDay -= 30;
-            const currentMonthIndex = months.indexOf(currentMonth);
-            if (currentMonthIndex === 11) {
-              currentMonth = months[0];
-              currentYear++;
+          while (adjustedDay > 30) {
+            adjustedDay -= 30;
+            const monthIndex = months.indexOf(adjustedMonth);
+            if (monthIndex === 11) {
+              adjustedMonth = months[0];
+              adjustedYear++;
             } else {
-              currentMonth = months[currentMonthIndex + 1];
+              adjustedMonth = months[monthIndex + 1];
             }
           }
 
-          currentHijriOverride = { day: currentDay, month: currentMonth, year: currentYear };
-          document.getElementById('displayHijriDate').textContent = `${currentDay} ${currentMonth} ${currentYear}`;
-          document.getElementById('hijriStatus').innerHTML = `<span style="color: rgb(235, 11, 11)">✓ Manual Override Active</span> (API: ${apiDateString})`;
+          while (adjustedDay < 1) {
+            adjustedDay += 30;
+            const monthIndex = months.indexOf(adjustedMonth);
+            if (monthIndex === 0) {
+              adjustedMonth = months[11];
+              adjustedYear--;
+            } else {
+              adjustedMonth = months[monthIndex - 1];
+            }
+          }
+
+          currentHijriOverride = { day: adjustedDay, month: adjustedMonth, year: adjustedYear };
+          document.getElementById('displayHijriDate').textContent = `${adjustedDay} ${adjustedMonth} ${adjustedYear}`;
+          document.getElementById('hijriStatus').innerHTML = `<span style="color: rgb(235, 11, 11)">✓ Manual Override Active (${dayDiff > 0 ? '+' : ''}${dayDiff} days)</span> (API: ${apiDateString})`;
         } else {
           currentHijriOverride = null;
           document.getElementById('displayHijriDate').textContent = apiDateString;
@@ -1144,27 +1134,30 @@
       showLoading();
 
       try {
-        // Get current date (either override or API)
-        let baseDate;
+        // Get current API date
+        const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=23.8103&longitude=90.4125&method=1&school=1`);
+        const data = await response.json();
+        const apiHijri = data.data.date.hijri;
 
-        if (currentHijriOverride) {
-          baseDate = currentHijriOverride;
-        } else {
-          // Get from API
-          const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=23.8103&longitude=90.4125&method=1&school=1`);
-          const data = await response.json();
-          const apiHijri = data.data.date.hijri;
-          baseDate = {
-            day: parseInt(apiHijri.day),
-            month: apiHijri.month.en,
-            year: parseInt(apiHijri.year)
-          };
+        const apiDay = parseInt(apiHijri.day);
+        const apiMonth = apiHijri.month.en;
+        const apiYear = parseInt(apiHijri.year);
+
+        // Calculate new difference
+        const settingsRef = window.doc(window.db, 'settings', 'hijriDate');
+        const hijriSnap = await window.getDoc(settingsRef);
+
+        let currentDifference = 0;
+        if (hijriSnap.exists() && hijriSnap.data().hasOwnProperty('dayDifference')) {
+          currentDifference = hijriSnap.data().dayDifference || 0;
         }
 
-        // Apply adjustment
-        let newDay = baseDate.day + days;
-        let newMonth = baseDate.month;
-        let newYear = baseDate.year;
+        const newDifference = currentDifference + days;
+
+        // Calculate what the adjusted date will be
+        let adjustedDay = apiDay + newDifference;
+        let adjustedMonth = apiMonth;
+        let adjustedYear = apiYear;
 
         const months = [
           'Muharram', 'Safar', "Rabi' al-Awwal", "Rabi' al-Thani",
@@ -1172,44 +1165,38 @@
           'Ramadan', 'Shawwal', "Dhu al-Qi'dah", "Dhu al-Hijjah"
         ];
 
-        // Handle day overflow/underflow
-        while (newDay > 30) {
-          newDay -= 30;
-          const monthIndex = months.indexOf(newMonth);
+        // Handle overflow
+        while (adjustedDay > 30) {
+          adjustedDay -= 30;
+          const monthIndex = months.indexOf(adjustedMonth);
           if (monthIndex === 11) {
-            newMonth = months[0];
-            newYear++;
+            adjustedMonth = months[0];
+            adjustedYear++;
           } else {
-            newMonth = months[monthIndex + 1];
+            adjustedMonth = months[monthIndex + 1];
           }
         }
 
-        while (newDay < 1) {
-          newDay += 30;
-          const monthIndex = months.indexOf(newMonth);
+        while (adjustedDay < 1) {
+          adjustedDay += 30;
+          const monthIndex = months.indexOf(adjustedMonth);
           if (monthIndex === 0) {
-            newMonth = months[11];
-            newYear--;
+            adjustedMonth = months[11];
+            adjustedYear--;
           } else {
-            newMonth = months[monthIndex - 1];
+            adjustedMonth = months[monthIndex - 1];
           }
         }
 
-        // Save to Firebase
-        const settingsRef = window.doc(window.db, 'settings', 'hijriDate');
-
+        // Save only the difference
         try {
           await window.updateDoc(settingsRef, {
-            day: newDay,
-            month: newMonth,
-            year: newYear,
+            dayDifference: newDifference,
             updatedAt: new Date().toISOString()
           });
         } catch (e) {
           await window.setDoc(settingsRef, {
-            day: newDay,
-            month: newMonth,
-            year: newYear,
+            dayDifference: newDifference,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
@@ -1229,31 +1216,23 @@
       showLoading();
 
       try {
-        const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=23.8103&longitude=90.4125&method=1&school=1`);
-        const data = await response.json();
-        const apiHijri = data.data.date.hijri;
-
         const settingsRef = window.doc(window.db, 'settings', 'hijriDate');
 
         try {
           await window.updateDoc(settingsRef, {
-            day: parseInt(apiHijri.day),
-            month: apiHijri.month.en,
-            year: parseInt(apiHijri.year),
+            dayDifference: 0,
             updatedAt: new Date().toISOString()
           });
         } catch (e) {
           await window.setDoc(settingsRef, {
-            day: parseInt(apiHijri.day),
-            month: apiHijri.month.en,
-            year: parseInt(apiHijri.year),
+            dayDifference: 0,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
         }
 
         hideLoading();
-        showSuccess('✓ Hijri date set to API default (today)');
+        showSuccess('✓ Hijri date set to API default (difference reset to 0)');
         loadCurrentHijriDate();
       } catch (error) {
         hideLoading();
@@ -1270,7 +1249,22 @@
       showLoading();
 
       try {
-        await window.deleteDoc(window.doc(window.db, 'settings', 'hijriDate'));
+        const settingsRef = window.doc(window.db, 'settings', 'hijriDate');
+
+        try {
+          await window.updateDoc(settingsRef, {
+            dayDifference: 0,
+            updatedAt: new Date().toISOString()
+          });
+        } catch (e) {
+          // If document doesn't exist, create it with 0 difference
+          await window.setDoc(settingsRef, {
+            dayDifference: 0,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+
         hideLoading();
         showSuccess('✓ Manual override removed. Using API default.');
         loadCurrentHijriDate();
@@ -1279,8 +1273,7 @@
         showError('Error resetting: ' + error.message);
       }
     }
-
-
+    
     // Enter key handler for login
     document.addEventListener('DOMContentLoaded', () => {
       const passwordInput = document.getElementById('adminPassword');

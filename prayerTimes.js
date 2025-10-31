@@ -302,15 +302,33 @@ function getPrayerStatus(timings) {
 }
 
 /**
- * Get Hijri date - prioritize manual override with smart increment
+ * Get Hijri date - apply stored difference to current API date
  */
 async function getHijriDate(hijriData) {
-  // Try to get manual override from Firebase
+  // Fallback to API data if no hijriData passed
+  if (!hijriData) {
+    try {
+      const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=23.8103&longitude=90.4125&method=1&school=1`);
+      const data = await response.json();
+      if (data.code === 200) {
+        hijriData = data.data.date.hijri;
+      } else {
+        return 'Hijri Date Unavailable';
+      }
+    } catch (error) {
+      return 'Hijri Date Unavailable';
+    }
+  }
+
+  const apiDay = parseInt(hijriData.day);
+  const apiMonth = hijriData.month.en;
+  const apiYear = parseInt(hijriData.year);
+
+  // Try to get manual override difference from Firebase
   try {
     const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
     const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
 
-    // Initialize Firebase if not already done
     let db;
     if (getApps().length === 0) {
       const firebaseConfig = {
@@ -333,118 +351,54 @@ async function getHijriDate(hijriData) {
     if (hijriSnap.exists()) {
       const overrideData = hijriSnap.data();
 
-      // Get current API date
-      const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=23.8103&longitude=90.4125&method=1&school=1`);
-      const data = await response.json();
+      // Check if we have a stored difference
+      if (overrideData.hasOwnProperty('dayDifference')) {
+        // Apply the stored difference to current API date
+        const dayDiff = overrideData.dayDifference || 0;
 
-      if (data.code === 200) {
-        const currentApiHijri = data.data.date.hijri;
-        const currentApiDay = parseInt(currentApiHijri.day);
-        const currentApiMonth = currentApiHijri.month.en;
-        const currentApiYear = parseInt(currentApiHijri.year);
+        let adjustedDay = apiDay + dayDiff;
+        let adjustedMonth = apiMonth;
+        let adjustedYear = apiYear;
 
-        // Get the API date from when override was set
-        const setDate = new Date(overrideData.updatedAt || overrideData.createdAt);
-        const setTimestamp = Math.floor(setDate.getTime() / 1000);
+        const months = [
+          'Muharram', 'Safar', "Rabi' al-Awwal", "Rabi' al-Thani",
+          'Jumada al-Ula', 'Jumada al-Akhirah', 'Rajab', "Sha'ban",
+          'Ramadan', 'Shawwal', "Dhu al-Qi'dah", "Dhu al-Hijjah"
+        ];
 
-        const setResponse = await fetch(`https://api.aladhan.com/v1/timings/${setTimestamp}?latitude=23.8103&longitude=90.4125&method=1&school=1`);
-        const setData = await setResponse.json();
-
-        if (setData.code === 200) {
-          const setApiHijri = setData.data.date.hijri;
-          const setApiDay = parseInt(setApiHijri.day);
-          const setApiMonth = setApiHijri.month.en;
-          const setApiYear = parseInt(setApiHijri.year);
-
-          // Calculate the difference you made
-          let dayDifference = overrideData.day - setApiDay;
-          let monthDifference = 0;
-          let yearDifference = overrideData.year - setApiYear;
-
-          const months = [
-            'Muharram', 'Safar', "Rabi' al-Awwal", "Rabi' al-Thani",
-            'Jumada al-Ula', 'Jumada al-Akhirah', 'Rajab', "Sha'ban",
-            'Ramadan', 'Shawwal', "Dhu al-Qi'dah", "Dhu al-Hijjah"
-          ];
-
-          const setMonthIndex = months.indexOf(setApiMonth);
-          const overrideMonthIndex = months.indexOf(overrideData.month);
-          monthDifference = overrideMonthIndex - setMonthIndex;
-
-          // Apply the same difference to current API date
-          let adjustedDay = currentApiDay + dayDifference;
-          let adjustedMonth = currentApiMonth;
-          let adjustedYear = currentApiYear + yearDifference;
-
-          // Handle month difference
-          if (monthDifference !== 0) {
-            let currentMonthIndex = months.indexOf(currentApiMonth);
-            currentMonthIndex += monthDifference;
-
-            // Handle year boundaries
-            while (currentMonthIndex > 11) {
-              currentMonthIndex -= 12;
-              adjustedYear++;
-            }
-            while (currentMonthIndex < 0) {
-              currentMonthIndex += 12;
-              adjustedYear--;
-            }
-
-            adjustedMonth = months[currentMonthIndex];
+        // Handle day overflow
+        while (adjustedDay > 30) {
+          adjustedDay -= 30;
+          const monthIndex = months.indexOf(adjustedMonth);
+          if (monthIndex === 11) {
+            adjustedMonth = months[0];
+            adjustedYear++;
+          } else {
+            adjustedMonth = months[monthIndex + 1];
           }
-
-          // Handle day overflow/underflow
-          while (adjustedDay > 30) {
-            adjustedDay -= 30;
-            let monthIndex = months.indexOf(adjustedMonth);
-            if (monthIndex === 11) {
-              adjustedMonth = months[0];
-              adjustedYear++;
-            } else {
-              adjustedMonth = months[monthIndex + 1];
-            }
-          }
-
-          while (adjustedDay < 1) {
-            adjustedDay += 30;
-            let monthIndex = months.indexOf(adjustedMonth);
-            if (monthIndex === 0) {
-              adjustedMonth = months[11];
-              adjustedYear--;
-            } else {
-              adjustedMonth = months[monthIndex - 1];
-            }
-          }
-
-          return `${adjustedDay} ${adjustedMonth} ${adjustedYear}`;
         }
+
+        // Handle day underflow
+        while (adjustedDay < 1) {
+          adjustedDay += 30;
+          const monthIndex = months.indexOf(adjustedMonth);
+          if (monthIndex === 0) {
+            adjustedMonth = months[11];
+            adjustedYear--;
+          } else {
+            adjustedMonth = months[monthIndex - 1];
+          }
+        }
+
+        return `${adjustedDay} ${adjustedMonth} ${adjustedYear}`;
       }
     }
   } catch (error) {
     console.log('No manual Hijri override found, using API data');
   }
 
-  // Fallback to API data
-  if (!hijriData) {
-    try {
-      const now = new Date();
-      const formatter = new Intl.DateTimeFormat('en-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-      return formatter.format(now);
-    } catch (error) {
-      return 'Hijri Date Unavailable';
-    }
-  }
-
-  const day = hijriData.day;
-  const monthName = hijriData.month.en;
-  const year = hijriData.year;
-
-  return `${day} ${monthName} ${year}`;
+  // Return API date if no override
+  return `${apiDay} ${apiMonth} ${apiYear}`;
 }
 
 /**
