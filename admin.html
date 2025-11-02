@@ -887,13 +887,13 @@
 
       if (mosques.length === 0) {
         tbody.innerHTML = `
-          <tr>
-            <td colspan="6" class="no-data">
-              <div class="no-data-icon">📍</div>
-              <div>No locations found</div>
-            </td>
-          </tr>
-        `;
+      <tr>
+        <td colspan="6" class="no-data">
+          <div class="no-data-icon">📍</div>
+          <div>No locations found</div>
+        </td>
+      </tr>
+    `;
         return;
       }
 
@@ -901,26 +901,39 @@
         const row = document.createElement('tr');
         row.setAttribute('data-id', mosque.id);
         row.innerHTML = `
-          <td><strong>${index + 1}</strong></td>
-          <td><strong>${mosque.name}</strong></td>
-          <td>${mosque.district || mosque.division || 'Not set'}</td>
-          <td class="coord-display">${mosque.lat.toFixed(6)}, ${mosque.lng.toFixed(6)}</td>
-          <td><span class="badge badge-success">Verified</span></td>
-          <td>
-            <div class="table-actions">
-              <button class="action-btn edit" onclick='openEditModal(${JSON.stringify(mosque).replace(/'/g, "\\'")})'  title="Edit">
-                 Edit
-              </button>
-              <button class="action-btn delete" onclick="deleteMosque('${mosque.id}', '${mosque.name.replace(/'/g, "\\'")}')" title="Delete">
-                 Delete
-              </button>
-            </div>
-          </td>
-        `;
+      <td><strong>${index + 1}</strong></td>
+      <td><strong>${mosque.name}</strong></td>
+      <td>${mosque.district || mosque.division || 'Not set'}</td>
+      <td class="coord-display">${mosque.lat.toFixed(6)}, ${mosque.lng.toFixed(6)}</td>
+      <td><span class="badge badge-success">Verified</span></td>
+      <td>
+        <div class="table-actions">
+          <button class="action-btn edit" data-mosque-id="${mosque.id}" title="Edit">
+             Edit
+          </button>
+          <button class="action-btn delete" data-mosque-id="${mosque.id}" title="Delete">
+             Delete
+          </button>
+        </div>
+      </td>
+    `;
+
+        // Add event listeners after row is created
+        const editBtn = row.querySelector('.action-btn.edit');
+        const deleteBtn = row.querySelector('.action-btn.delete');
+
+        if (editBtn) {
+          editBtn.addEventListener('click', () => openEditModal(mosque));
+        }
+
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', () => deleteMosque(mosque.id, mosque.name));
+        }
+
         tbody.appendChild(row);
       });
     }
-
+    
     // Update Stats
     function updateStats() {
       document.getElementById('totalCount').textContent = allMosques.length;
@@ -1273,7 +1286,7 @@
         showError('Error resetting: ' + error.message);
       }
     }
-    
+
     // Enter key handler for login
     document.addEventListener('DOMContentLoaded', () => {
       const passwordInput = document.getElementById('adminPassword');
