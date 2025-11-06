@@ -39,7 +39,57 @@ const duas = [
      { text: "Our Lord, indeed You are Kind and Merciful.", reference: "Quran 59:10" },
      { text: "Our Lord, upon You we have relied, and to You we have returned, and to You is the destination.", reference: "Quran 60:4" },
      { text: "Our Lord, make us not [objects of] torment for the disbelievers and forgive us, our Lord. Indeed, You are the Exalted in Might, the Wise.", reference: "Quran 60:5" },
-     { text: "Our Lord, perfect for us our light and forgive us. Indeed, You are over all things competent.", reference: "Quran 66:8" }
+     { text: "Our Lord, perfect for us our light and forgive us. Indeed, You are over all things competent.", reference: "Quran 66:8" },
+
+     {
+          text: "O Allah, You are my Lord. There is no god worthy of worship except You. You have created me, and I am Your slave, and I am under Your covenant and pledge to the best of my ability. I seek Your protection from the evil that I have done. I acknowledge the favours that You have bestowed upon me, and I admit my sins. Forgive me, for none forgives sins but You.",
+          reference: "Sahih al-Bukhari"
+     },
+     {
+          text: "O Allah, I take refuge in You from anxiety and sorrow, weakness and laziness, miserliness and cowardice, the burden of debts and from being overpowered by men.",
+          reference: "Sahih al-Bukhari"
+     },
+     {
+          text: "O Allah, I have greatly wronged myself and no one forgives sins but You. So grant me forgiveness from You, and have mercy on me. Surely, You are Forgiving, Merciful.",
+          reference: "Sahih al-Bukhari 834"
+     },
+     {
+          text: "O Allah! I seek Your refuge from knowledge that does not benefit, and from a heart that is not humble, and from a soul that is never satisfied, and from a supplication that is not answered.",
+          reference: "Sahih Muslim"
+     },
+     {
+          text: "O Ever-Living, O Self-Subsisting Sustainer of all, by Your mercy I seek help.",
+          reference: "Jami` at-Tirmidhi"
+     },
+     {
+          text: "O Allah, grant my soul its piety and purify it, You are the best to purify it, You are its Guardian and its Master.",
+          reference: "Sahih Muslim "
+     },
+     {
+          text: "O Allah, Turner of the hearts, make my heart firm upon Your religion.",
+          reference: "Jami` at-Tirmidhi"
+     },
+     {
+          text: "O Allah, I ask You for guidance, piety, chastity, and self-sufficiency.",
+          reference: "Sahih Muslim"
+     },
+     {
+          text: "O Allah, I take refuge in You from the punishment of the grave, and from the punishment of Hell-fire, and from the trials of life and death, and from the evil trial of the Masih al-Dajjal.",
+          reference: "Sahih al-Bukhari "
+     },
+     {
+          text: "We have entered morning and at this time the whole kingdom belongs to Allah. Praise is due to Allah. There is no god but Allah, the One, having no partner with Him. His is the sovereignty and to Him is praise due, and He is Potent over everything. My Lord, I beg of You good in this day and good after this day. My Lord, I seek refuge in You from sloth and from the evil of old age. My Lord, I seek refuge in You from torment in the Fire and torment in the grave.",
+          reference: "Sahih Muslim "
+     },
+     {
+          text: "We have entered evening and at this time the whole kingdom belongs to Allah... [Same as above, replace 'morning' with 'evening' and 'day' with 'night']",
+          reference: "Sahih Muslim"
+     },
+     {
+          text: "O Allah, I am Your slave, son of Your slave, son of Your female slave. My forelock is in Your Hand. Your command concerning me is executed. Your decree concerning me is just. I ask You by every name belonging to You, which You named Yourself with, or revealed in Your Book, or taught to any ofYour creation, or preserved in the knowledge of the unseen with You, that You make the Quran the spring of my heart, the light of my chest, the remover of my sadness, and the reliever of my anxiety.",
+          reference: "Musnad Ahmad"
+     }
+
 ];
 
 
