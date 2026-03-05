@@ -122,11 +122,8 @@
           </button>
         </div>
         <div class="card-body">
-          <!-- <div class="alert alert-info show" style="margin-bottom: 24px;">
-            <span>ℹ️</span>
-            <span>Paste any Google Maps link → Click Extract → Verify → Add to database. System automatically checks for duplicates.</span>
-          </div> -->
 
+          <!-- ── SECTION A: Extract from Google Maps Link ── -->
           <div class="form-group full-width" style="margin-bottom: 16px;">
             <label style="color: rgb(2, 109, 250);">Google Maps Link <span class="required">*</span></label>
             <input type="text" id="mapsLink" placeholder="https://maps.google.com/..."
@@ -240,6 +237,116 @@
               </button>
             </div>
           </div>
+
+          <!-- ── DIVIDER ── -->
+          <div style="display: flex; align-items: center; gap: 16px; margin: 32px 0;">
+            <div style="flex:1; height:1px; background:#e2e8f0;"></div>
+            <span style="font-size:13px; font-weight:600; color:#94a3b8; letter-spacing:0.05em;">OR ADD MANUALLY</span>
+            <div style="flex:1; height:1px; background:#e2e8f0;"></div>
+          </div>
+
+          <!-- ── SECTION B: Manual Entry ── -->
+          <div style="padding: 24px; background: #f8faff; border: 2px solid #bfdbfe; border-radius: 12px;">
+            <h3 style="color: #3b82f6; margin-bottom: 16px; font-size: 16px; font-weight: 700;">✏️ Manual Entry</h3>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Location Name <span class="required">*</span></label>
+                <input type="text" id="manualName" placeholder="Enter location name">
+              </div>
+
+              <div class="form-group">
+                <label>District <span class="required">*</span></label>
+                <select id="manualDistrict">
+                  <option value="">Select District</option>
+                  <option value="Bagerhat">Bagerhat</option>
+                  <option value="Bandarban">Bandarban</option>
+                  <option value="Barguna">Barguna</option>
+                  <option value="Barishal">Barishal</option>
+                  <option value="Bhola">Bhola</option>
+                  <option value="Bogura">Bogura</option>
+                  <option value="Brahmanbaria">Brahmanbaria</option>
+                  <option value="Chandpur">Chandpur</option>
+                  <option value="Chapainawabganj">Chapainawabganj</option>
+                  <option value="Chattogram">Chattogram</option>
+                  <option value="Chuadanga">Chuadanga</option>
+                  <option value="Cox's Bazar">Cox's Bazar</option>
+                  <option value="Cumilla">Cumilla</option>
+                  <option value="Dhaka">Dhaka</option>
+                  <option value="Dinajpur">Dinajpur</option>
+                  <option value="Faridpur">Faridpur</option>
+                  <option value="Feni">Feni</option>
+                  <option value="Gaibandha">Gaibandha</option>
+                  <option value="Gazipur">Gazipur</option>
+                  <option value="Gopalganj">Gopalganj</option>
+                  <option value="Habiganj">Habiganj</option>
+                  <option value="Jamalpur">Jamalpur</option>
+                  <option value="Jashore">Jashore</option>
+                  <option value="Jhalokathi">Jhalokathi</option>
+                  <option value="Jhenaidah">Jhenaidah</option>
+                  <option value="Joypurhat">Joypurhat</option>
+                  <option value="Khagrachhari">Khagrachhari</option>
+                  <option value="Khulna">Khulna</option>
+                  <option value="Kishoreganj">Kishoreganj</option>
+                  <option value="Kurigram">Kurigram</option>
+                  <option value="Kushtia">Kushtia</option>
+                  <option value="Lakshmipur">Lakshmipur</option>
+                  <option value="Lalmonirhat">Lalmonirhat</option>
+                  <option value="Madaripur">Madaripur</option>
+                  <option value="Magura">Magura</option>
+                  <option value="Manikganj">Manikganj</option>
+                  <option value="Meherpur">Meherpur</option>
+                  <option value="Moulvibazar">Moulvibazar</option>
+                  <option value="Munshiganj">Munshiganj</option>
+                  <option value="Mymensingh">Mymensingh</option>
+                  <option value="Naogaon">Naogaon</option>
+                  <option value="Narail">Narail</option>
+                  <option value="Narayanganj">Narayanganj</option>
+                  <option value="Narsingdi">Narsingdi</option>
+                  <option value="Natore">Natore</option>
+                  <option value="Netrokona">Netrokona</option>
+                  <option value="Nilphamari">Nilphamari</option>
+                  <option value="Noakhali">Noakhali</option>
+                  <option value="Pabna">Pabna</option>
+                  <option value="Panchagarh">Panchagarh</option>
+                  <option value="Patuakhali">Patuakhali</option>
+                  <option value="Pirojpur">Pirojpur</option>
+                  <option value="Rajbari">Rajbari</option>
+                  <option value="Rajshahi">Rajshahi</option>
+                  <option value="Rangamati">Rangamati</option>
+                  <option value="Rangpur">Rangpur</option>
+                  <option value="Satkhira">Satkhira</option>
+                  <option value="Shariatpur">Shariatpur</option>
+                  <option value="Sherpur">Sherpur</option>
+                  <option value="Sirajganj">Sirajganj</option>
+                  <option value="Sunamganj">Sunamganj</option>
+                  <option value="Sylhet">Sylhet</option>
+                  <option value="Tangail">Tangail</option>
+                  <option value="Thakurgaon">Thakurgaon</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Latitude <span class="required">*</span></label>
+                <input type="number" step="any" id="manualLat" placeholder="e.g. 23.810300">
+              </div>
+
+              <div class="form-group">
+                <label>Longitude <span class="required">*</span></label>
+                <input type="number" step="any" id="manualLng" placeholder="e.g. 90.412500">
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="addManualToDatabase()" id="manualAddBtn">
+                ➕ Add to Database
+              </button>
+              <button class="btn btn-secondary" onclick="resetManualForm()">
+                Clear
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -618,7 +725,7 @@
       document.getElementById('warningAlert').classList.remove('show');
     }
 
-    // Reset Form
+    // Reset Form (Maps Link section)
     function resetForm() {
       document.getElementById('mapsLink').value = '';
       document.getElementById('extractedInfo').style.display = 'none';
@@ -628,6 +735,14 @@
       document.getElementById('extractedLng').value = '';
       extractedData = null;
       clearDuplicateHighlights();
+    }
+
+    // Reset Manual Form
+    function resetManualForm() {
+      document.getElementById('manualName').value = '';
+      document.getElementById('manualDistrict').value = '';
+      document.getElementById('manualLat').value = '';
+      document.getElementById('manualLng').value = '';
     }
 
     // Clear Duplicate Highlights
@@ -706,7 +821,13 @@
       return '';
     }
 
-    // Extract Coordinates
+    // ─── FIX: Extract Coordinates ───────────────────────────────────────────────
+    // Priority order:
+    //   1. !3d<lat>!4d<lng>  → the actual PIN coordinate in Google Maps embed URLs
+    //   2. ?q=<lat>,<lng>    → direct query coordinate
+    //   3. @<lat>,<lng>      → map camera/center (least precise – used as fallback only)
+    //   4. ll=, center=      → other fallbacks
+    // ────────────────────────────────────────────────────────────────────────────
     function extractCoordinates() {
       const link = document.getElementById('mapsLink').value.trim();
 
@@ -726,27 +847,40 @@
           return;
         }
 
-        let lat, lng, name = "Unknown Location";
+        let lat, lng;
+        let name = "Unknown Location";
 
-        const patterns = [
-          /@(-?\d+\.\d+),(-?\d+\.\d+)/,
-          /\?q=(-?\d+\.\d+),(-?\d+\.\d+)/,
-          /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/,
-          /ll=(-?\d+\.\d+),(-?\d+\.\d+)/,
-          /center=(-?\d+\.\d+),(-?\d+\.\d+)/
-        ];
+        // --- Pattern 1 (highest priority): pin coordinates embedded in URL path ---
+        // Matches !3d23.8103456!4d90.4125789  (full precision, any number of decimals)
+        const pinMatch = link.match(/!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)/);
 
-        let match = null;
-        for (const pattern of patterns) {
-          match = link.match(pattern);
-          if (match) {
-            lat = parseFloat(match[1]);
-            lng = parseFloat(match[2]);
-            break;
+        if (pinMatch) {
+          lat = parseFloat(pinMatch[1]);
+          lng = parseFloat(pinMatch[2]);
+        } else {
+          // --- Pattern 2: ?q=lat,lng ---
+          const qMatch = link.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+          if (qMatch) {
+            lat = parseFloat(qMatch[1]);
+            lng = parseFloat(qMatch[2]);
+          } else {
+            // --- Pattern 3 (fallback): @lat,lng (camera center) ---
+            const atMatch = link.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+            if (atMatch) {
+              lat = parseFloat(atMatch[1]);
+              lng = parseFloat(atMatch[2]);
+            } else {
+              // --- Pattern 4: ll= or center= ---
+              const llMatch = link.match(/(?:ll|center)=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+              if (llMatch) {
+                lat = parseFloat(llMatch[1]);
+                lng = parseFloat(llMatch[2]);
+              }
+            }
           }
         }
 
-        if (!match) {
+        if (lat === undefined || lng === undefined || isNaN(lat) || isNaN(lng)) {
           hideLoading();
           showError('Could not extract coordinates. Make sure you copied the full URL');
           return;
@@ -808,7 +942,7 @@
       });
     }
 
-    // Add to Database
+    // Add to Database (from Maps Link extraction)
     async function addToDatabase() {
       if (!extractedData) {
         showError('Please extract coordinates first');
@@ -847,6 +981,61 @@
         hideLoading();
         showSuccess('✓ Location added successfully!');
         resetForm();
+        loadMosques();
+
+      } catch (error) {
+        hideLoading();
+        showError('Error adding location: ' + error.message);
+      }
+    }
+
+    // Add to Database (from Manual Entry)
+    async function addManualToDatabase() {
+      const name = document.getElementById('manualName').value.trim();
+      if (!name) {
+        showError('Please enter a location name');
+        return;
+      }
+
+      const district = document.getElementById('manualDistrict').value;
+      if (!district) {
+        showError('Please select a district');
+        return;
+      }
+
+      const lat = parseFloat(document.getElementById('manualLat').value);
+      const lng = parseFloat(document.getElementById('manualLng').value);
+
+      if (isNaN(lat) || isNaN(lng)) {
+        showError('Please enter valid latitude and longitude values');
+        return;
+      }
+
+      if (lat < 20.5 || lat > 26.6 || lng < 88.0 || lng > 92.7) {
+        const outside = confirm('⚠️ These coordinates appear to be outside Bangladesh. Add anyway?');
+        if (!outside) return;
+      }
+
+      const duplicates = await checkForDuplicates(lat, lng, name);
+      if (duplicates.length > 0) {
+        const confirmed = confirm(`Found ${duplicates.length} potential duplicate(s). Are you sure you want to add this location?`);
+        if (!confirmed) return;
+      }
+
+      showLoading();
+
+      try {
+        await window.addDoc(window.collection(window.db, 'mosques'), {
+          name: name,
+          lat: lat,
+          lng: lng,
+          district: district,
+          createdAt: new Date().toISOString()
+        });
+
+        hideLoading();
+        showSuccess('✓ Location added manually!');
+        resetManualForm();
         loadMosques();
 
       } catch (error) {
@@ -918,7 +1107,6 @@
       </td>
     `;
 
-        // Add event listeners after row is created
         const editBtn = row.querySelector('.action-btn.edit');
         const deleteBtn = row.querySelector('.action-btn.delete');
 
@@ -933,7 +1121,7 @@
         tbody.appendChild(row);
       });
     }
-    
+
     // Update Stats
     function updateStats() {
       document.getElementById('totalCount').textContent = allMosques.length;
@@ -1051,19 +1239,16 @@
 
     // Show/Hide Sections
     function showSection(section) {
-      // Hide all sections
       document.querySelectorAll('.main-content').forEach(el => {
         if (el.id !== 'adminPanel') {
           el.style.display = 'none';
         }
       });
 
-      // Remove active class from all nav items
       document.querySelectorAll('.nav-item').forEach(el => {
         el.classList.remove('active');
       });
 
-      // Show selected section
       if (section === 'database') {
         document.querySelector('.main-content:not(#hijriSection)').style.display = 'block';
         document.getElementById('navDatabase').classList.add('active');
@@ -1147,7 +1332,6 @@
       showLoading();
 
       try {
-        // Get current API date
         const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=23.8103&longitude=90.4125&method=1&school=1`);
         const data = await response.json();
         const apiHijri = data.data.date.hijri;
@@ -1156,7 +1340,6 @@
         const apiMonth = apiHijri.month.en;
         const apiYear = parseInt(apiHijri.year);
 
-        // Calculate new difference
         const settingsRef = window.doc(window.db, 'settings', 'hijriDate');
         const hijriSnap = await window.getDoc(settingsRef);
 
@@ -1167,7 +1350,6 @@
 
         const newDifference = currentDifference + days;
 
-        // Calculate what the adjusted date will be
         let adjustedDay = apiDay + newDifference;
         let adjustedMonth = apiMonth;
         let adjustedYear = apiYear;
@@ -1178,7 +1360,6 @@
           'Ramadan', 'Shawwal', "Dhu al-Qi'dah", "Dhu al-Hijjah"
         ];
 
-        // Handle overflow
         while (adjustedDay > 30) {
           adjustedDay -= 30;
           const monthIndex = months.indexOf(adjustedMonth);
@@ -1201,7 +1382,6 @@
           }
         }
 
-        // Save only the difference
         try {
           await window.updateDoc(settingsRef, {
             dayDifference: newDifference,
@@ -1270,7 +1450,6 @@
             updatedAt: new Date().toISOString()
           });
         } catch (e) {
-          // If document doesn't exist, create it with 0 difference
           await window.setDoc(settingsRef, {
             dayDifference: 0,
             createdAt: new Date().toISOString(),
