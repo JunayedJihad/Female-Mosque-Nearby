@@ -705,7 +705,7 @@ if (fabLocate) {
           let errorMsg = "";
           switch (error.code) {
             case error.PERMISSION_DENIED:
-              errorMsg = "❌ Location access denied. Please enable location permissions in your browser settings.";
+              errorMsg = "❌ Location access denied. Please enable the location.";
               break;
             case error.POSITION_UNAVAILABLE:
               errorMsg = "❌ Location unavailable. Please check your device settings.";
